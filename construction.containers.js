@@ -1,5 +1,9 @@
 module.exports = {
     perform: function(room) {
+        if(Game.time % 100 != 0 || room.find(FIND_MY_SPAWNS).length == 0) {
+            return;
+        }
+        
         if(room.controller) {
             this.buildContainer(room.controller);
         }
