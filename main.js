@@ -9,6 +9,7 @@ var roles = [
 
 var constructions = [
     require("construction.extensions"),
+    require("construction.containers"),
     require("construction.extractor"),
     require("construction.ramparts"),
     require("construction.roads")
@@ -27,14 +28,14 @@ module.exports.loop = function() {
             spawnClaimGroup.perform(spawn);
         }
     }
-    
+
     for(var role of roles) {
         var creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
         for(var creep of creeps) {
             role.run(creep);
         }
     }
-    
+
     for(var roomName in Game.rooms) {
         var room = Game.rooms[roomName]
         for(var tower of room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {
