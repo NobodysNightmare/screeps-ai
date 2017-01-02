@@ -16,6 +16,22 @@ module.exports = {
         return spawnHelper.bestAvailableParts(room, this.partConfigs);
     },
     run: function(creep) {
+        var controller = creep.room.controller;
+        var container = this.containerFor(controller);
+        if(container && container.store.energy > 0) {
+          var withdrawResult = creep.withdraw(container, RESOURCE_ENERGY);
+          console.log(withdrawResult);
+          if(withdrawResult == OK) {
+              if(creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
+                  creep.moveTo(controller);
+              }
+          } else if(withdrawResult == ERR_NOT_IN_RANGE) {
+              creep.moveTo(container);
+          }
+          
+          return;
+        }
+        
         if(creep.memory.upgrading && creep.carry.energy == 0) {
             creep.memory.upgrading = false;
         }
@@ -24,15 +40,19 @@ module.exports = {
         }
 
         if(creep.memory.upgrading) {
-            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller);
+            if(creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(controller);
             }
         }
         else {
-            var source = creep.room.controller.pos.findClosestByRange(FIND_SOURCES);
+            var source = controller.pos.findClosestByRange(FIND_SOURCES);
             if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
             }
         }
+    },
+    containerFor: function(target) {
+        var structures = target.pos.findInRange(FIND_STRUCTURES, 2);
+        return _.find(structures, (r) => r.structureType == STRUCTURE_CONTAINER);
     }
 };
