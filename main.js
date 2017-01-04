@@ -2,7 +2,8 @@ var roles = [
     require("role.harvester"),
     require("role.upgrader"),
     require("role.builder"),
-    require("role.claimer")
+    require("role.claimer"),
+    require("role.reserver")
 ];
 
 var constructionExtensions = require("construction.extensions");
