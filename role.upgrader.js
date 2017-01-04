@@ -1,6 +1,7 @@
 module.exports = {
     name: "upgrader",
     partConfigs: [
+        [WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE, CARRY, CARRY, MOVE],
         [WORK, WORK, WORK, WORK, CARRY, WORK, MOVE, CARRY, MOVE, CARRY, MOVE],
         [WORK, CARRY, WORK, MOVE, CARRY, MOVE, CARRY, MOVE],
         [WORK, WORK, CARRY, MOVE, CARRY, MOVE],
