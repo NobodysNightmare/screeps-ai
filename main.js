@@ -3,6 +3,7 @@ var roles = [
     require("role.upgrader"),
     require("role.builder"),
     require("role.claimer"),
+    require("role.conqueror"),
     require("role.reserver")
 ];
 
