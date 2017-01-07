@@ -3,9 +3,12 @@ var spawnHelper = require('helper.spawning');
 module.exports = {
     name: "harvester",
     partConfigs: [
-        [WORK, CARRY, WORK, MOVE, CARRY, MOVE, CARRY, MOVE],
-        [WORK, WORK, CARRY, MOVE, CARRY, MOVE],
-        [WORK, WORK, CARRY, MOVE]
+        [WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        [WORK, WORK, MOVE, WORK, WORK, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        [WORK, WORK, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        [WORK, WORK, MOVE, CARRY, CARRY, MOVE],
+        [WORK, WORK, CARRY, MOVE],
+        [WORK, CARRY, MOVE]
     ],
     shouldBuild: function(spawn) {
         return spawnHelper.numberOfCreeps(spawn.room, this.name) < 2;

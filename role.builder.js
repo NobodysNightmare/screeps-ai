@@ -4,9 +4,10 @@ var fullHealthEquiv = 50000;
 module.exports = {
     name: "builder",
     partConfigs: [
+        [WORK, MOVE, WORK, MOVE, WORK, MOVE, WORK, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE],
         [WORK, MOVE, WORK, MOVE, WORK, MOVE, WORK, MOVE, CARRY, MOVE, CARRY, MOVE],
         [WORK, MOVE, WORK, MOVE, CARRY, MOVE, CARRY, MOVE],
-        [WORK, WORK, CARRY, MOVE, CARRY, MOVE],
+        [WORK, WORK, MOVE, CARRY, CARRY, MOVE],
         [WORK, WORK, CARRY, MOVE]
     ],
     shouldBuild: function(spawn) {
