@@ -1,3 +1,5 @@
+var spawnHelper = require('helper.spawning');
+
 module.exports = {
     name: "upgrader",
     partConfigs: [
@@ -8,7 +10,10 @@ module.exports = {
         [WORK, WORK, CARRY, MOVE]
     ],
     shouldBuild: function(spawn) {
-        return spawn.room.find(FIND_MY_CREEPS, { filter: (creep) => creep.memory.role == this.name }).length < 4;
+        return spawnHelper.numberOfCreeps(spawn.room, this.name) < 4;
+    },
+    chooseParts: function(room) {
+        return spawnHelper.bestAvailableParts(room, this.partConfigs);
     },
     run: function(creep) {
         if(creep.memory.upgrading && creep.carry.energy == 0) {

@@ -1,3 +1,5 @@
+var spawnHelper = require('helper.spawning');
+
 module.exports = {
     name: "harvester",
     partConfigs: [
@@ -6,7 +8,14 @@ module.exports = {
         [WORK, WORK, CARRY, MOVE]
     ],
     shouldBuild: function(spawn) {
-        return spawn.room.find(FIND_MY_CREEPS, { filter: (creep) => creep.memory.role == this.name }).length < 2;
+        return spawnHelper.numberOfCreeps(spawn.room, this.name) < 2;
+    },
+    chooseParts: function(room) {
+        if(spawnHelper.numberOfCreeps(room, this.name) == 0) {
+            return spawnHelper.bestAffordableParts(room, this.partConfigs);
+        }
+        
+        return spawnHelper.bestAvailableParts(room, this.partConfigs);
     },
     run: function(creep) {
         if(creep.memory.delivering && creep.carry.energy == 0) {

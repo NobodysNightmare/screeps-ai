@@ -1,3 +1,5 @@
+var spawnHelper = require('helper.spawning');
+
 module.exports = {
     name: "claimer",
     partConfigs: [
@@ -5,6 +7,9 @@ module.exports = {
     ],
     shouldBuild: function(spawn) {
         return false;
+    },
+    chooseParts: function(room) {
+        return spawnHelper.bestAvailableParts(room, this.partConfigs);
     },
     run: function(creep) {
         var targetPos = new RoomPosition(creep.memory.target.x, creep.memory.target.y, creep.memory.target.roomName);
