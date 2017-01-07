@@ -7,8 +7,12 @@ var roles = [
     require("role.reserver")
 ];
 
-var constructionExtensions = require("construction.extensions");
-var constructionRoads = require("construction.roads");
+var constructions = [
+    require("construction.extensions"),
+    require("construction.extractor"),
+    require("construction.roads")
+];
+
 var constructionClaimSpawn = require("construction.claimSpawn");
 var spawnRoomService = require("spawn.roomService");
 var spawnClaimGroup = require("spawn.claimGroup");
@@ -35,8 +39,9 @@ module.exports.loop = function() {
         for(var tower of room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {
             structureTower.run(tower);
         }
-        constructionExtensions.perform(room);
-        constructionRoads.perform(room);
+        for(var construction of constructions) {
+            construction.perform(room);
+        }
     }
     constructionClaimSpawn.perform();
 
