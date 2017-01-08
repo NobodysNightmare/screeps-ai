@@ -10,6 +10,7 @@ var roles = [
 var constructions = [
     require("construction.extensions"),
     require("construction.extractor"),
+    require("construction.ramparts"),
     require("construction.roads")
 ];
 
