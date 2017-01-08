@@ -35,7 +35,12 @@ module.exports = {
         }
     },
     constructStructures: function(creep) {
-        var target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES);
+        var target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType != STRUCTURE_ROAD });
+        
+        if(!target) {
+            target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType == STRUCTURE_ROAD });
+        }
+        
         if(target) {
             if(creep.build(target) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
