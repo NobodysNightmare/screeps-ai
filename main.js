@@ -19,6 +19,7 @@ var constructionClaimSpawn = require("construction.claimSpawn");
 var spawnRoomService = require("spawn.roomService");
 var spawnClaimGroup = require("spawn.claimGroup");
 var structureTower = require("structure.tower");
+var structureTerminal = require("structure.terminal");
 
 module.exports.loop = function() {
     for(var spawnName in Game.spawns) {
@@ -41,6 +42,11 @@ module.exports.loop = function() {
         for(var tower of room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {
             structureTower.run(tower);
         }
+        
+        if(room.terminal) {
+            structureTerminal(room.terminal).run();
+        }
+        
         for(var construction of constructions) {
             construction.perform(room);
         }
