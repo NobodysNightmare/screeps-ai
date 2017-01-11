@@ -37,10 +37,20 @@ module.exports = {
             });
             
             if(!target) {
-                target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
                     filter: (structure) => {
                         return structure.structureType == STRUCTURE_TOWER &&
                             structure.energy < structure.energyCapacity;
+                    }
+                });
+            }
+            
+            if(!target) {
+                target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+                    filter: (structure) => {
+                        return structure.structureType == STRUCTURE_TERMINAL &&
+                            _.sum(structure.store) < structure.storeCapacity &&
+                            structure.store[RESOURCE_ENERGY] < 10000;
                     }
                 });
             }
