@@ -24,8 +24,16 @@ module.exports = function(terminal) {
                 }
                 
                 var dealAmount = Math.min(remainingStore, buyer.amount);
+                var dealCost = Game.market.calcTransactionCost(dealAmount, terminal.room.name, buyer.roomName);
+                var energyAvailable = terminal.store[RESOURCE_ENERGY];
+                var energyDepleted = false;
+                if(dealCost > energyAvailable) {
+                    dealAmount = Math.floor(dealAmount * (energyAvailable / dealCost));
+                    energyDepleted = true;
+                }
+                
                 var result = Game.market.deal(buyer.id, dealAmount, terminal.room.name);
-                if(result != OK) {
+                if(result != OK || energyDepleted) {
                     break;
                 }
                 
