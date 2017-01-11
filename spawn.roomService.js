@@ -1,7 +1,8 @@
 var roles = [
     require("role.harvester"),
     require("role.upgrader"),
-    require("role.builder")
+    require("role.builder"),
+    require("role.miner")
 ];
 
 module.exports = {
@@ -9,7 +10,16 @@ module.exports = {
         for(var role of roles) {
             if(role.shouldBuild(spawn)) {
                 var parts = role.chooseParts(spawn.room);
-                spawn.createCreep(parts, undefined, { role: role.name });
+                var memory = { role: role.name };
+                
+                // TODO: have mineral controller that is responsible for spawning miner
+                if(role.name == 'miner') {
+                    var mineral = spawn.room.find(FIND_MINERALS)[0];
+                    memory.target = mineral.id;
+                    memory.resource = mineral.mineralType;
+                }
+                
+                spawn.createCreep(parts, undefined, memory);
                 return true;
             }
         }
