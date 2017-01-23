@@ -13,6 +13,8 @@ module.exports = {
         spawn.room.memory.claimQueue = [
             "claimer",
             "conqueror",
+            "conqueror",
+            "conqueror",
             "conqueror"
         ];
     },
