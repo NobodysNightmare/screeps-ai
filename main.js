@@ -8,28 +8,11 @@ var roles = [
     require("role.reserver")
 ];
 
-var constructions = [
-    require("construction.extensions"),
-    require("construction.extractor"),
-    require("construction.ramparts"),
-    require("construction.roads")
-];
-
 var constructionClaimSpawn = require("construction.claimSpawn");
-var spawnRoomService = require("spawn.roomService");
-var spawnClaimGroup = require("spawn.claimGroup");
-var structureTower = require("structure.tower");
-var structureTerminal = require("structure.terminal");
+
+var roomAi = require('roomai.base');
 
 module.exports.loop = function() {
-    for(var spawnName in Game.spawns) {
-        var spawn = Game.spawns[spawnName];
-        var spawning = spawnRoomService.perform(spawn);
-        if(!spawning && spawnName == "Root") {
-            spawnClaimGroup.perform(spawn);
-        }
-    }
-    
     for(var role of roles) {
         var creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
         for(var creep of creeps) {
@@ -38,18 +21,7 @@ module.exports.loop = function() {
     }
     
     for(var roomName in Game.rooms) {
-        var room = Game.rooms[roomName]
-        for(var tower of room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {
-            structureTower.run(tower);
-        }
-        
-        if(room.terminal) {
-            structureTerminal(room.terminal).run();
-        }
-        
-        for(var construction of constructions) {
-            construction.perform(room);
-        }
+        roomAi(Game.rooms[roomName]).run();
     }
     constructionClaimSpawn.perform();
 
