@@ -50,7 +50,7 @@ module.exports = {
                     filter: (structure) => {
                         return structure.structureType == STRUCTURE_TERMINAL &&
                             _.sum(structure.store) < structure.storeCapacity &&
-                            structure.store[RESOURCE_ENERGY] < 50000;
+                            structure.store[RESOURCE_ENERGY] < 100000;
                     }
                 });
             }
