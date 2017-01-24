@@ -1,7 +1,6 @@
 var roles = [
     require("role.harvester"),
-    require("role.upgrader"),
-    require("role.builder")
+    require("role.upgrader")
 ];
 
 module.exports = {

@@ -6,6 +6,7 @@ var constructions = [
 ];
 
 var aspects = [
+    require("roomaspect.builders"),
     require("roomaspect.minerals")
 ];
 

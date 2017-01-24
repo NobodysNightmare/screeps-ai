@@ -1,4 +1,3 @@
-var spawnHelper = require('helper.spawning');
 var fullHealthEquiv = 50000;
 
 module.exports = {
@@ -10,12 +9,6 @@ module.exports = {
         [WORK, WORK, MOVE, CARRY, CARRY, MOVE],
         [WORK, WORK, CARRY, MOVE]
     ],
-    shouldBuild: function(spawn) {
-        return spawnHelper.numberOfCreeps(spawn.room, this.name) < 2;
-    },
-    chooseParts: function(room) {
-        return spawnHelper.bestAvailableParts(room, this.partConfigs);
-    },
     run: function(creep) {
         if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
