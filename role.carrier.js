@@ -13,14 +13,7 @@ module.exports = {
         return false;
     },
     run: function(creep) {
-        if(creep.memory.delivering && _.sum(creep.carry) == 0) {
-            creep.memory.delivering = false;
-        }
-        if(!creep.memory.delivering && _.sum(creep.carry) == creep.carryCapacity) {
-            creep.memory.delivering = true;
-        }
-
-        if(creep.memory.delivering) {
+        if(_.sum(creep.carry) > 0) {
             var target = logistic.storeFor(this.destination(creep));
             if(creep.transfer(target, creep.memory.resource) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
@@ -29,8 +22,11 @@ module.exports = {
         else {
             // TODO: also collect raw resources lying around the source
             var target = logistic.storeFor(this.source(creep));
-            if(creep.withdraw(target, creep.memory.resource) == ERR_NOT_IN_RANGE) {
+            var result = creep.withdraw(target, creep.memory.resource);
+            if(result == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
+            } else if(result == OK) {
+                creep.memory.delivering = true;
             }
         }
     },
