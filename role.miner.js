@@ -1,10 +1,5 @@
 var spawnHelper = require('helper.spawning');
-var storeStructures = [
-    STRUCTURE_CONTAINER, 
-    STRUCTURE_LINK,
-    STRUCTURE_STORAGE,
-    STRUCTURE_TERMINAL
-];
+var logistic = require('helper.logistic');
 
 module.exports = {
     name: "miner",
@@ -27,8 +22,12 @@ module.exports = {
     run: function(creep) {
         // spawning: initialize with target and resource
         var target = Game.getObjectById(creep.memory.target);
-        var store = this.storeFor(target);
-        var harvestResult = creep.harvest(target);
+        var store = logistic.storeFor(target);
+        var harvestResult = OK;
+        if(_.sum(creep.carry) < creep.carryCapacity) {
+            harvestResult = creep.harvest(target);
+        }
+        
         if(harvestResult == OK) {
             if(creep.transfer(store, creep.memory.resource) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(store);
@@ -36,9 +35,5 @@ module.exports = {
         } else if(harvestResult == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
         }
-    },
-    storeFor: function(target) {
-        var structures = target.pos.findInRange(FIND_STRUCTURES, 2);
-        return _.find(structures, (r) => storeStructures.includes(r.structureType));
     }
 };
