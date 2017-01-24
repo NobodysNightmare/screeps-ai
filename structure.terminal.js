@@ -13,7 +13,7 @@ module.exports = function(terminal) {
         },
         trade: function(resource) {
             var sales = Game.market.getAllOrders((o) => o.type == "sell" && o.resourceType == resource && o.remainingAmount > 100);
-            var minPrice = Math.max(0.75, _.min(sales, 'price').price * 0.90); // TODO: 0.75 is a development safeguard
+            var minPrice = _.min(sales, 'price').price * 0.90;
             var buyers = Game.market.getAllOrders((o) => o.type == "buy" && o.resourceType == resource && o.amount > 0 && o.price >= minPrice);
             buyers = _.sortBy(buyers, (b) => Game.map.getRoomLinearDistance(b.roomName, terminal.room.name, true));
             buyers = _.sortBy(buyers, (b) => -b.price);
