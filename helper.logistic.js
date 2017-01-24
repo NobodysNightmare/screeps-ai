@@ -6,8 +6,18 @@ var storeStructures = [
 ];
 
 module.exports = {
-    storeFor: function(target) {
+    storeFor: function(target, includeConstructions) {
         var structures = target.pos.findInRange(FIND_STRUCTURES, 2);
-        return _.find(structures, (r) => storeStructures.includes(r.structureType));
+        var store = _.find(structures, (r) => storeStructures.includes(r.structureType));
+        if(store) {
+            return store;
+        }
+        
+        if(includeConstructions) {
+            var constructions = object.pos.findInRange(FIND_CONSTRUCTION_SITES, 2);
+            return _.find(constructions, (r) => storeStructures.includes(r.structureType));
+        } else {
+            return null;
+        }
     }
 };

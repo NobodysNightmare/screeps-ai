@@ -5,6 +5,10 @@ var constructions = [
     require("construction.roads")
 ];
 
+var aspects = [
+    require("roomaspect.minerals")
+];
+
 var spawnRoomService = require("spawn.roomService");
 var spawnClaimGroup = require("spawn.claimGroup");
 var structureTower = require("structure.tower");
@@ -12,6 +16,7 @@ var structureTerminal = require("structure.terminal");
 
 module.exports = function(room) {
     var spawns = room.find(FIND_MY_SPAWNS);
+    var availableSpawns = _.filter(spawns, (s) => !s.spawning);
     
     return {
         room: room,
@@ -21,6 +26,10 @@ module.exports = function(room) {
                 if(!spawning && spawn.name == "Root") {
                     spawnClaimGroup.perform(spawn);
                 }
+            }
+            
+            for(var aspect of aspects) {
+                aspect(this).run();
             }
             
             for(var tower of room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {
@@ -36,18 +45,20 @@ module.exports = function(room) {
             }
         },
         spawn: function(parts, memory) {
-            var spawn = this.availableSpawns()[0];
+            var spawn = availableSpawns[0];
             if(!spawn) {
                 return false;
             }
             
-            return spawn.createCreep(parts, undefined, memory);
+            var result = spawn.createCreep(parts, undefined, memory);
+            if(_.isString(result)) {
+                availableSpawns.shift();
+            }
+            
+            return result;
         },
         canSpawn: function() {
-            return this.availableSpawns().length > 0;
-        },
-        availableSpawns: function() {
-            return _.filter(spawns, (s) => s.spawning);
+            return availableSpawns.length > 0;
         }
     };
 };
