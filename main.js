@@ -5,7 +5,8 @@ var roles = [
     require("role.builder"),
     require("role.claimer"),
     require("role.conqueror"),
-    require("role.reserver")
+    require("role.reserver"),
+    require("role.carrier"),
 ];
 
 var constructionClaimSpawn = require("construction.claimSpawn");
