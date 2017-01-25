@@ -13,15 +13,17 @@ module.exports = function(roomai) {
                 return;
             }
             
-            this.buildMiner();
-            this.buildCarrier();
+            if(this.hasExtractor()) {
+                if(this.needWorkers()) {
+                    this.buildMiner();
+                    this.buildCarrier();
+                }
+            }
+            
             this.buildStructures();
         },
         buildMiner: function() {
-            if(!roomai.canSpawn() ||
-                mineral.mineralAmount == 0 ||
-                spawnHelper.numberOfCreeps(room, miner.name) > 0 ||
-                room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_EXTRACTOR }).length == 0) {
+            if(spawnHelper.numberOfCreeps(room, miner.name) > 0) {
                 return;
             }
             
@@ -35,9 +37,7 @@ module.exports = function(roomai) {
             roomai.spawn(parts, memory);
         },
         buildCarrier: function() {
-            if(!roomai.canSpawn() ||
-                mineral.mineralAmount == 0 ||
-                !this.masterRoom() ||
+            if(!this.masterRoom() ||
                 !this.masterRoom().terminal ||
                 _.filter(Game.creeps, (creep) => creep.memory.role == carrier.name && creep.memory.source == mineral.id).length > 0) {
                 return;
@@ -63,6 +63,12 @@ module.exports = function(roomai) {
         },
         masterRoom: function() {
             return Game.rooms[room.memory.slaveOf];
+        },
+        hasExtractor: function() {
+            return room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_EXTRACTOR }).length > 0;
+        },
+        needWorkers: function() {
+            return roomai.canSpawn() && mineral.mineralAmount > 0;
         }
     }
 };
