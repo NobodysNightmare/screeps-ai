@@ -33,7 +33,7 @@ module.exports = function(roomai) {
                         
                     // TODO: using best affordable to prevent "deadlocks" with
                     // supply carriers not getting further resources b.c. of missing miner
-                    var parts = spawnHelper.bestAffordableParts(room, miner.partConfigs);
+                    var parts = spawnHelper.bestAffordableParts(room, miner.energyConfigs);
                     var memory = {
                         role: miner.name,
                         target: source.id,

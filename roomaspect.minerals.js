@@ -27,7 +27,7 @@ module.exports = function(roomai) {
                 return;
             }
             
-            var parts = spawnHelper.bestAvailableParts(room, miner.partConfigs);
+            var parts = spawnHelper.bestAvailableParts(room, miner.mineralConfigs);
             var memory = {
                 role: miner.name,
                 target: mineral.id,

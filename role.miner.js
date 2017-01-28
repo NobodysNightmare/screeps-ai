@@ -2,7 +2,12 @@ var logistic = require('helper.logistic');
 
 module.exports = {
     name: "miner",
-    partConfigs: [
+    energyConfigs: [
+        [WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE],
+        [WORK, WORK, MOVE, WORK, CARRY, MOVE],
+        [WORK, WORK, CARRY, MOVE]
+    ],
+    mineralConfigs: [
         [WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE],
         [WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE],
         [WORK, WORK, MOVE, WORK, CARRY, MOVE],
