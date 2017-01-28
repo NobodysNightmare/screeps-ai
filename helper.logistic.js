@@ -14,7 +14,7 @@ module.exports = {
         }
         
         if(includeConstructions) {
-            var constructions = object.pos.findInRange(FIND_CONSTRUCTION_SITES, 2);
+            var constructions = target.pos.findInRange(FIND_CONSTRUCTION_SITES, 2);
             return _.find(constructions, (r) => storeStructures.includes(r.structureType));
         } else {
             return null;
