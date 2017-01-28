@@ -7,6 +7,7 @@ var constructions = [
 
 var aspects = [
     require("roomaspect.supplies"),
+    require("roomaspect.sources"),
     require("roomaspect.controller"),
     require("roomaspect.builders"),
     require("roomaspect.minerals")
@@ -22,6 +23,7 @@ module.exports = function(room) {
     
     return {
         room: room,
+        spawns: spawns,
         run: function() {
             for(var aspect of aspects) {
                 aspect(this).run();

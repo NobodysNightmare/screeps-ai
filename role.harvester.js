@@ -1,8 +1,14 @@
 var spawnHelper = require('helper.spawning');
+var logistic = require('helper.logistic');
 
 module.exports = {
     name: "harvester",
-    partConfigs: [
+    carryConfigs: [
+        [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        [CARRY, CARRY, MOVE]
+    ],
+    miningConfigs: [
         [WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [WORK, WORK, MOVE, WORK, WORK, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [WORK, WORK, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
@@ -53,9 +59,20 @@ module.exports = {
                 creep.memory.delivering = false;
             }
         } else {
+            // TODO: var source = Game.getObjectById(creep.memory.source);
             var source = creep.pos.findClosestByRange(FIND_SOURCES);
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
+            var store = logistic.storeFor(source);
+            if(store && store.store.energy > 0) {
+                var result = creep.withdraw(store, RESOURCE_ENERGY);
+                if(result == OK) {
+                    creep.memory.delivering = true;
+                } else if(result == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(store);
+                }
+            } else {
+                if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(source);
+                }
             }
         }
     }

@@ -18,7 +18,10 @@ module.exports = {
                     return _.sum(_.map(config, (part) => BODYPART_COST[part])) <= room.energyAvailable;
                 });
     },
+    creepsWithRole: function(room, role) {
+        return room.find(FIND_MY_CREEPS, { filter: (creep) => creep.memory.role == role })
+    },
     numberOfCreeps: function(room, role) {
-        return room.find(FIND_MY_CREEPS, { filter: (creep) => creep.memory.role == role }).length;
+        return this.creepsWithRole(room, role).length;
     }
 };
