@@ -47,19 +47,21 @@ module.exports = function(room) {
         },
         spawn: function(parts, memory) {
             var spawn = availableSpawns[0];
-            if(!spawn) {
+            if(!spawn || this.spawnReserved) {
                 return false;
             }
             
             var result = spawn.createCreep(parts, undefined, memory);
             if(_.isString(result)) {
                 availableSpawns.shift();
+            } else if(result == ERR_NOT_ENOUGH_ENERGY) {
+                this.spawnReserved = true;
             }
             
             return result;
         },
         canSpawn: function() {
-            return availableSpawns.length > 0;
+            return !this.spawnReserved && availableSpawns.length > 0;
         }
     };
 };
