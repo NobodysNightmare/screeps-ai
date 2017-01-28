@@ -10,12 +10,6 @@ module.exports = {
         [WORK, WORK, CARRY, MOVE, CARRY, MOVE],
         [WORK, WORK, CARRY, MOVE]
     ],
-    shouldBuild: function(spawn) {
-        return spawnHelper.numberOfCreeps(spawn.room, this.name) < 4;
-    },
-    chooseParts: function(room) {
-        return spawnHelper.bestAvailableParts(room, this.partConfigs);
-    },
     run: function(creep) {
         var controller = creep.room.controller;
         var container = logistic.storeFor(controller);

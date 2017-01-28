@@ -6,11 +6,12 @@ var constructions = [
 ];
 
 var aspects = [
+    require("roomaspect.supplies"),
+    require("roomaspect.controller"),
     require("roomaspect.builders"),
     require("roomaspect.minerals")
 ];
 
-var spawnRoomService = require("spawn.roomService");
 var spawnClaimGroup = require("spawn.claimGroup");
 var structureTower = require("structure.tower");
 var structureTerminal = require("structure.terminal");
@@ -22,15 +23,14 @@ module.exports = function(room) {
     return {
         room: room,
         run: function() {
-            for(var spawn of spawns) {
-                var spawning = spawnRoomService.perform(spawn);
-                if(!spawning && spawn.name == "Root") {
-                    spawnClaimGroup.perform(spawn);
-                }
-            }
-            
             for(var aspect of aspects) {
                 aspect(this).run();
+            }
+            
+            // TODO: convert to aspect
+            var rootSpawn = Game.spawns["Root"];
+            if(rootSpawn) {
+                spawnClaimGroup.perform(rootSpawn);
             }
             
             for(var tower of room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {
