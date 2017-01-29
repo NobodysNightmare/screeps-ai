@@ -9,7 +9,7 @@ module.exports = {
         [CARRY, CARRY, MOVE]
     ],
     miningConfigs: [
-        [WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        [WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [WORK, WORK, MOVE, WORK, WORK, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [WORK, WORK, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [WORK, WORK, MOVE, CARRY, CARRY, MOVE],
@@ -59,8 +59,7 @@ module.exports = {
                 creep.memory.delivering = false;
             }
         } else {
-            // TODO: var source = Game.getObjectById(creep.memory.source);
-            var source = creep.pos.findClosestByRange(FIND_SOURCES);
+            var source = Game.getObjectById(creep.memory.source);
             var store = logistic.storeFor(source);
             if(store && store.store.energy > 0) {
                 var result = creep.withdraw(store, RESOURCE_ENERGY);

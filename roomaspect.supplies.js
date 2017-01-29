@@ -6,19 +6,21 @@ module.exports = function(roomai) {
     var room = roomai.room;
     return {
         run: function() {
-            if(!roomai.canSpawn() || spawnHelper.numberOfCreeps(room, harvester.name) >= 2) {
-                return;
-            }
-            
             var primarySpawn = roomai.spawns[0];
             var source = primarySpawn.pos.findClosestByRange(FIND_SOURCES);
             
-            this.buildHarvester(source);
+            this.buildHarvesters(source);
         },
-        buildHarvester: function(source) {
+        buildHarvesters: function(source) {
             var partConfigs = harvester.carryConfigs;
+            var neededHarvesters = 1;
             if(!logistic.storeFor(source)) {
                 partConfigs = harvester.miningConfigs;
+                neededHarvesters = 2;
+            }
+            
+            if(!roomai.canSpawn() || spawnHelper.numberOfCreeps(room, harvester.name) >= neededHarvesters) {
+                return;
             }
             
             var parts = null;
@@ -28,7 +30,6 @@ module.exports = function(roomai) {
                  parts = spawnHelper.bestAvailableParts(room, partConfigs);
             }
             
-            // TODO: make harvesters farm the given source
             roomai.spawn(parts, { role: harvester.name, source: source.id });
         }
     }
