@@ -9,7 +9,7 @@ module.exports = function(roomai) {
     var mineral = room.find(FIND_MINERALS)[0];
     return {
         run: function() {
-            if(!room.controller || room.controller.level < 6) {
+            if(room.controller.level < 6) {
                 return;
             }
             
@@ -23,7 +23,8 @@ module.exports = function(roomai) {
             this.buildStructures();
         },
         buildMiner: function() {
-            if(spawnHelper.numberOfCreeps(room, miner.name) > 0) {
+            var existingMiners = spawnHelper.creepsWithRole(room, miner.name);
+            if(_.any(existingMiners, (c) => c.memory.target == mineral.id)) {
                 return;
             }
             
