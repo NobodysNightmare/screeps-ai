@@ -7,6 +7,10 @@ var miner = require("role.miner");
 module.exports = function(roomai) {
     var room = roomai.room;
     var sources = room.find(FIND_SOURCES);
+    
+    // order sources by distance to primary spawn, to ensure that aspects
+    // work on that source first
+    sources = _.sortBy(sources, (s) => s.pos.getRangeTo(roomai.spawns[0]));
     return {
         run: function() {
             this.buildContainers();
