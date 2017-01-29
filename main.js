@@ -22,7 +22,10 @@ module.exports.loop = function() {
     }
     
     for(var roomName in Game.rooms) {
-        roomAi(Game.rooms[roomName]).run();
+        var room = Game.rooms[roomName];
+        if(room.controller && room.controller.my) {
+            roomAi(room).run();
+        }
     }
     constructionClaimSpawn.perform();
 
