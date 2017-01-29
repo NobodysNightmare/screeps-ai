@@ -40,9 +40,7 @@ module.exports = {
         }
         else {
             var source = controller.pos.findClosestByRange(FIND_SOURCES);
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
-            }
+            logistic.obtainEnergy(creep, source);
         }
     }
 };

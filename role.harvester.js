@@ -60,18 +60,9 @@ module.exports = {
             }
         } else {
             var source = Game.getObjectById(creep.memory.source);
-            var store = logistic.storeFor(source);
-            if(store && store.store.energy > 0) {
-                var result = creep.withdraw(store, RESOURCE_ENERGY);
-                if(result == OK) {
-                    creep.memory.delivering = true;
-                } else if(result == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(store);
-                }
-            } else {
-                if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(source);
-                }
+            var result = logistic.obtainEnergy(creep, source);
+            if(result == logistic.obtainResults.withdrawn) {
+                creep.memory.delivering = true;
             }
         }
     }

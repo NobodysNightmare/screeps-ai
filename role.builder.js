@@ -1,3 +1,5 @@
+var logistic = require("helper.logistic");
+
 var fullHealthEquiv = 50000;
 
 module.exports = {
@@ -63,11 +65,7 @@ module.exports = {
     },
     harvestEnergy: function(creep) {
         var source = creep.pos.findClosestByRange(FIND_SOURCES);
-        if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(source);
-        }
-        
-        return source;
+        logistic.obtainEnergy(creep, source);
     },
     moveAndRepair: function(creep, target) {
         var result = creep.repair(target);
