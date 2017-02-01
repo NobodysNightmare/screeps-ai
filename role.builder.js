@@ -1,6 +1,8 @@
 var logistic = require("helper.logistic");
 
 var fullHealthEquiv = 50000;
+var emergencyHitpoints = 1500;
+var emergencyHitPercent = 0.3;
 
 module.exports = {
     name: "builder",
@@ -21,47 +23,81 @@ module.exports = {
         }
 
         if(creep.memory.building) {
-            if(!this.constructStructures(creep)) {
-                this.repairStructures(creep);
-            }
+            var target = this.chooseTarget(creep);
+            this.constructOrRepair(creep, target);
         }
         else {
             this.harvestEnergy(creep);
         }
     },
-    constructStructures: function(creep) {
-        var target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType != STRUCTURE_ROAD && cs.structureType != STRUCTURE_RAMPART });
-        
-        if(!target) {
-            target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType == STRUCTURE_ROAD || cs.structureType == STRUCTURE_RAMPART });
-        }
-        
-        if(target) {
-            if(creep.build(target) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+    chooseTarget: function(creep) {
+        var lastTarget = Game.getObjectById(creep.memory.lastTarget);
+        if(lastTarget) {
+            if(this.isConstructionSite(lastTarget) || (!this.isConstructionSite(lastTarget) && lastTarget.hits < lastTarget.hitsMax)) {
+                return lastTarget;
             }
         }
+        
+        var target = this.findEmergencyRepairTarget(creep) ||
+                     this.findNormalPriorityConstructionTarget(creep) ||
+                     this.findLowPriorityConstructionTarget(creep) ||
+                     this.findNormalRepairTarget(creep);
+        
         return target;
     },
-    repairStructures: function(creep) {
-        var lastTarget = Game.getObjectById(creep.memory.lastTarget)
-        if(lastTarget && lastTarget.hits < lastTarget.hitsMax) {
-            this.moveAndRepair(creep, lastTarget);
-            return true;
-        }
-        
+    findNormalPriorityConstructionTarget: function(creep) {
+        return creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType != STRUCTURE_ROAD && cs.structureType != STRUCTURE_RAMPART });
+    },
+    findLowPriorityConstructionTarget: function(creep) {
+        return creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType == STRUCTURE_ROAD || cs.structureType == STRUCTURE_RAMPART });
+    },
+    findNormalRepairTarget: function(creep) {
         var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
             return structure.hits < structure.hitsMax && 
                     structure.hits < (fullHealthEquiv * 2) &&
                     structure.structureType != STRUCTURE_CONTROLLER;
         } });
         if(targets.length > 0) {
-            var target = _.sortBy(targets, (t) => t.hits / _.min([t.hitsMax, fullHealthEquiv]))[0];
-            this.moveAndRepair(creep, target);
-            return true;
+            return _.sortBy(targets, (t) => t.hits / _.min([t.hitsMax, fullHealthEquiv]))[0];
         }
         
-        return false;
+        return null;
+    },
+    findEmergencyRepairTarget: function(creep) {
+        var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
+            return structure.hits < emergencyHitpoints &&
+                    structure.hits / structure.hitsMax < emergencyHitPercent && 
+                    structure.hits < (fullHealthEquiv * 2) &&
+                    structure.structureType != STRUCTURE_CONTROLLER;
+        } });
+        if(targets.length > 0) {
+            var targetsByDistance = _.sortBy(targets, (t) => creep.pos.getRangeTo(t)); 
+            return _.sortBy(targetsByDistance, (t) => t.hits)[0];
+        }
+        
+        return null;
+    },
+    constructOrRepair: function(creep, target) {
+        if(!target) return;
+        
+        if(this.isConstructionSite(target)) {
+            creep.memory.lastTarget = target.id;
+            if(creep.build(target) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            }
+        } else {
+            var result = creep.repair(target);
+            
+            if(result == OK) {
+                // only lock to repair targets that are in range
+                creep.memory.lastTarget = target.id;
+            } else if(result == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            }
+        }
+    },
+    isConstructionSite: function(target) {
+        return !target.hits;
     },
     harvestEnergy: function(creep) {
         var source = creep.pos.findClosestByRange(FIND_SOURCES);
