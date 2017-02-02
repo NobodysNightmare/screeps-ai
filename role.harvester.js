@@ -41,14 +41,18 @@ module.exports = {
                 });
             }
             
-            if(!target) {
-                target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
-                    filter: (structure) => {
-                        return structure.structureType == STRUCTURE_TERMINAL &&
-                            _.sum(structure.store) < structure.storeCapacity &&
-                            structure.store[RESOURCE_ENERGY] < 100000;
-                    }
-                });
+            if(!target && creep.room.terminal) {
+                var terminal = creep.room.terminal;
+                if(_.sum(terminal.store) < terminal.storeCapacity && terminal.store[RESOURCE_ENERGY] < 100000) {
+                    target = terminal;
+                }
+            }
+            
+            if(!target && creep.room.storage) {
+                var storage = creep.room.storage;
+                if(_.sum(storage.store) < storage.storeCapacity) {
+                    target = storage;
+                }
             }
             
             if(target) {
