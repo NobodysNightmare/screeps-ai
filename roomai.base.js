@@ -8,6 +8,7 @@ var constructions = [
 var aspects = [
     require("roomaspect.supplies"),
     require("roomaspect.sources"),
+    require("roomaspect.defense"),
     require("roomaspect.controller"),
     require("roomaspect.builders"),
     require("roomaspect.minerals")
