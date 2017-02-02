@@ -9,9 +9,15 @@ module.exports = {
     obtainResults: {
         withdrawn: 0,
         harvested: 1,
-        moving: 2
+        moving: 2,
+        pickedUp: 3
     },
     obtainEnergy: function(creep, source) {
+        var resources = creep.pos.lookFor(LOOK_ENERGY);
+        if(resources && resources.length > 0) {
+            creep.pickup(resources[0]);
+        }
+        
         if(!source) return null;
         
         var store = this.storeFor(source);
