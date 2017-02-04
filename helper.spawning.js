@@ -9,13 +9,14 @@
 
 module.exports = {
     bestAvailableParts: function(room, partConfigs) {
-        return _.find(partConfigs, function(config) {
-                    return _.sum(_.map(config, (part) => BODYPART_COST[part])) <= room.energyCapacityAvailable;
-                });
+        return this.bestPartsForPrice(partConfigs, room.energyCapacityAvailable);
     },
     bestAffordableParts: function(room, partConfigs) {
+        return this.bestPartsForPrice(partConfigs, room.energyAvailable);
+    },
+    bestPartsForPrice: function(partConfigs, price) {
         return _.find(partConfigs, function(config) {
-                    return _.sum(_.map(config, (part) => BODYPART_COST[part])) <= room.energyAvailable;
+                    return _.sum(_.map(config, (part) => BODYPART_COST[part])) <= price;
                 });
     },
     creepsWithRole: function(room, role) {
