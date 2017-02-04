@@ -12,22 +12,24 @@ module.exports = {
         moving: 2,
         pickedUp: 3
     },
-    obtainEnergy: function(creep, source) {
+    obtainEnergy: function(creep, source, considerStorage) {
         this.pickupSpareEnergy(creep);
+        
+        if(considerStorage) {
+            var result = this.obtainEnergyFromStore(creep, creep.room.storage);
+            if(result) {
+                return result;
+            }
+        }
         
         if(!source) return null;
         
         var store = this.storeFor(source);
-        if(store && store.store.energy > 0) {
-            var result = creep.withdraw(store, RESOURCE_ENERGY);
-            if(result == OK) {
-                return this.obtainResults.withdrawn;
-            } else if(result == ERR_NOT_IN_RANGE) {
-                creep.moveTo(store);
-                return this.obtainResults.moving;
-            }
+        var result = this.obtainEnergyFromStore(creep, store);
+        if(result) {
+            return result;
         } else {
-            var result = creep.harvest(source);
+            result = creep.harvest(source);
             if(result == OK) {
                 return this.obtainResults.harvested;
             } else if(result == ERR_NOT_IN_RANGE) {
@@ -37,6 +39,19 @@ module.exports = {
         }
         return null; // something unexpected happened
     },
+    obtainEnergyFromStore: function(creep, store) {
+        if(store && store.store.energy > 0) {
+            var result = creep.withdraw(store, RESOURCE_ENERGY);
+            if(result == OK) {
+                return this.obtainResults.withdrawn;
+            } else if(result == ERR_NOT_IN_RANGE) {
+                creep.moveTo(store);
+                return this.obtainResults.moving;
+            }
+        }
+        
+        return null;
+    },
     pickupSpareEnergy: function(creep) {
         var resources = creep.pos.lookFor(LOOK_ENERGY);
         if(resources.length > 0) {
@@ -44,6 +59,8 @@ module.exports = {
         }
     },
     storeFor: function(target, includeConstructions) {
+        if(target && storeStructures.includes(target.structureType)) return target;
+        
         if(!includeConstructions) {
             var stores = target.room.memory.stores;
             if(stores) {

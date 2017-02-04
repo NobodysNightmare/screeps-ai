@@ -99,7 +99,7 @@ module.exports = {
     },
     harvestEnergy: function(creep) {
         var source = creep.pos.findClosestByRange(FIND_SOURCES);
-        logistic.obtainEnergy(creep, source);
+        logistic.obtainEnergy(creep, source, true);
     },
     moveAndRepair: function(creep, target) {
         var result = creep.repair(target);

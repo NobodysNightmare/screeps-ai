@@ -1,5 +1,7 @@
 var spawnHelper = require("helper.spawning");
-var harvester = require("role.harvester")
+var carrier = require("role.carrier");
+var harvester = require("role.harvester");
+var miner = require("role.miner");
 var logistic = require('helper.logistic');
 
 module.exports = function(roomai) {
@@ -10,6 +12,7 @@ module.exports = function(roomai) {
             var source = primarySpawn.pos.findClosestByRange(FIND_SOURCES);
             
             this.buildHarvesters(source);
+            this.buildCollectors();
         },
         buildHarvesters: function(source) {
             var partConfigs = harvester.carryConfigs;
@@ -31,6 +34,26 @@ module.exports = function(roomai) {
             }
             
             roomai.spawn(parts, { role: harvester.name, source: source.id });
+        },
+        buildCollectors: function() {
+            var storage = room.storage;
+            if(!storage) return;
+            
+            var sources = room.find(FIND_SOURCES);
+    
+            // FIXME: ordering duplicated with miners
+            sources = _.sortBy(sources, (s) => s.pos.getRangeTo(roomai.spawns[0]));
+            
+            var existingCollectors = spawnHelper.creepsWithRole(room, carrier.name);
+            var existingMiners = spawnHelper.creepsWithRole(room, miner.name);
+            for(var source of sources) {
+                if(roomai.canSpawn() &&
+                    !_.any(existingCollectors, (m) => m.memory.source == source.id && m.memory.destination == storage.id) &&
+                    _.any(existingMiners, (m) => m.memory.target == source.id)) {
+                    var parts = spawnHelper.bestAffordableParts(room, carrier.partConfigs);
+                    roomai.spawn(parts, { role: carrier.name, source: source.id, destination: storage.id, resource: RESOURCE_ENERGY });
+                }
+            }
         }
     }
 };

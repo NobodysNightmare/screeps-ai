@@ -48,13 +48,6 @@ module.exports = {
                 }
             }
             
-            if(!target && creep.room.storage) {
-                var storage = creep.room.storage;
-                if(_.sum(storage.store) < storage.storeCapacity) {
-                    target = storage;
-                }
-            }
-            
             if(target) {
                 if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
@@ -64,7 +57,7 @@ module.exports = {
             }
         } else {
             var source = Game.getObjectById(creep.memory.source);
-            var result = logistic.obtainEnergy(creep, source);
+            var result = logistic.obtainEnergy(creep, source, true);
             if(result == logistic.obtainResults.withdrawn) {
                 creep.memory.delivering = true;
             }
