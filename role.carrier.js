@@ -8,6 +8,10 @@ module.exports = {
         [CARRY, CARRY, MOVE]
     ],
     run: function(creep) {
+        if(creep.memory.resource == RESOURCE_ENERGY) {
+            logistic.pickupSpareEnergy(creep);
+        }
+        
         if(_.sum(creep.carry) > 0) {
             var target = logistic.storeFor(this.destination(creep));
             if(creep.transfer(target, creep.memory.resource) == ERR_NOT_IN_RANGE) {

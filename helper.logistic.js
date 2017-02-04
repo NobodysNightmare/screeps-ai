@@ -13,10 +13,7 @@ module.exports = {
         pickedUp: 3
     },
     obtainEnergy: function(creep, source) {
-        var resources = creep.pos.lookFor(LOOK_ENERGY);
-        if(resources && resources.length > 0) {
-            creep.pickup(resources[0]);
-        }
+        this.pickupSpareEnergy(creep);
         
         if(!source) return null;
         
@@ -39,6 +36,12 @@ module.exports = {
             }
         }
         return null; // something unexpected happened
+    },
+    pickupSpareEnergy: function(creep) {
+        var resources = creep.pos.lookFor(LOOK_ENERGY);
+        if(resources.length > 0) {
+            creep.pickup(resources[0]);
+        }
     },
     storeFor: function(target, includeConstructions) {
         var structures = target.pos.findInRange(FIND_STRUCTURES, 2);
