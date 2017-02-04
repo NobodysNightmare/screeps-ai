@@ -44,9 +44,19 @@ module.exports = {
         }
     },
     storeFor: function(target, includeConstructions) {
+        if(!includeConstructions) {
+            var stores = target.room.memory.stores;
+            if(stores) {
+                var store = Game.getObjectById(stores[target.id]);
+                if(store) return store;
+            }
+        }
+        
         var structures = target.pos.findInRange(FIND_STRUCTURES, 2);
         var store = _.find(structures, (r) => storeStructures.includes(r.structureType));
         if(store) {
+            target.room.memory.stores = target.room.memory.stores || {};
+            target.room.memory.stores[target.id] = store.id;
             return store;
         }
         
