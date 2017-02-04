@@ -6,7 +6,8 @@ module.exports = {
         [ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE]
     ],
     run: function(creep) {
-        var target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        var room = Game.rooms[creep.memory.room];
+        var target = Game.getObjectById(room.memory.primaryHostile);
         if(target) {
             this.attack(creep, target);
         } else {
