@@ -11,8 +11,13 @@ module.exports = {
     bestAvailableParts: function(room, partConfigs) {
         return this.bestPartsForPrice(partConfigs, room.energyCapacityAvailable);
     },
-    bestAffordableParts: function(room, partConfigs) {
-        return this.bestPartsForPrice(partConfigs, room.energyAvailable);
+    bestAffordableParts: function(room, partConfigs, includeStorage) {
+        var energy = room.energyAvailable;
+        if(includeStorage && room.storage) {
+            energy += room.storage.store.energy;
+            energy = _.min([energy, room.energyCapacityAvailable]);
+        }
+        return this.bestPartsForPrice(partConfigs, energy);
     },
     bestPartsForPrice: function(partConfigs, price) {
         return _.find(partConfigs, function(config) {

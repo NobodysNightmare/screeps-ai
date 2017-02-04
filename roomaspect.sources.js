@@ -35,9 +35,7 @@ module.exports = function(roomai) {
                 if(!_.any(existingMiners, (m) => m.memory.target == source.id) &&
                     logistic.storeFor(source)) {
                         
-                    // TODO: using best affordable to prevent "deadlocks" with
-                    // supply carriers not getting further resources b.c. of missing miner
-                    var parts = spawnHelper.bestAffordableParts(room, miner.energyConfigs);
+                    var parts = spawnHelper.bestAffordableParts(room, miner.energyConfigs, true);
                     var memory = {
                         role: miner.name,
                         target: source.id,
