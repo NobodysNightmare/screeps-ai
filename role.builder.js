@@ -79,21 +79,19 @@ module.exports = {
     },
     constructOrRepair: function(creep, target) {
         if(!target) return;
+        var result;
         
         if(this.isConstructionSite(target)) {
-            creep.memory.lastTarget = target.id;
-            if(creep.build(target) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
-            }
+            result = creep.build(target);
         } else {
-            var result = creep.repair(target);
-            
-            if(result == OK) {
-                // only lock to repair targets that are in range
-                creep.memory.lastTarget = target.id;
-            } else if(result == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
-            }
+            result = creep.repair(target);
+        }
+        
+        if(result == OK) {
+            // lock onto target as soon as actual work is happening
+            creep.memory.lastTarget = target.id;
+        } else if(result == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target);
         }
     },
     isConstructionSite: function(target) {
