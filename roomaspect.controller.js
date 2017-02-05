@@ -27,22 +27,34 @@ module.exports = function(roomai) {
             roomai.spawn(parts, { role: upgrader.name });
         },
         buildCarriers: function() {
+            if(!roomai.canSpawn()) return;
+            
             var existingCarriers = spawnHelper.creepsWithRole(room, carrier.name);
             existingCarriers = _.filter(existingCarriers, (c) => c.memory.destination == controller.id);
-            for(var source of room.find(FIND_SOURCES)) {
-                if(!_.any(existingCarriers, (m) => m.memory.source == source.id) &&
-                    logistic.storeFor(source)) {
-                    var parts = spawnHelper.bestAvailableParts(room, carrier.partConfigs);
-                    var memory = {
-                        role: carrier.name,
-                        source: source.id,
-                        destination: controller.id,
-                        resource: RESOURCE_ENERGY
-                    };
-                    
-                    roomai.spawn(parts, memory);
+            if(room.storage) {
+                if(existingCarriers.length > 0) return;
+                this.spawnCarrier(room.storage);
+            } else {
+                for(var source of room.find(FIND_SOURCES)) {
+                    if(!_.any(existingCarriers, (m) => m.memory.source == source.id) &&
+                        logistic.storeFor(source)) {
+                        this.spawnCarrier(source);
+                    }
                 }
             }
+        },
+        spawnCarrier: function(source) {
+            // TODO: this should adapt based on number of carriers and demand
+            var capacity = logistic.distanceByPath(source, controller) * 2 * 10;
+            var parts = spawnHelper.bestAvailableParts(room, carrier.configsForCapacity(capacity));
+            var memory = {
+                role: carrier.name,
+                source: source.id,
+                destination: controller.id,
+                resource: RESOURCE_ENERGY
+            };
+            
+            roomai.spawn(parts, memory);
         }
     }
 };
