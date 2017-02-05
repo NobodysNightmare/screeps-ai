@@ -50,10 +50,14 @@ module.exports = function(roomai) {
                 if(roomai.canSpawn() &&
                     !_.any(existingCollectors, (m) => m.memory.source == source.id && m.memory.destination == storage.id) &&
                     _.any(existingMiners, (m) => m.memory.target == source.id)) {
-                    var parts = spawnHelper.bestAffordableParts(room, carrier.partConfigs, true);
+                    var parts = spawnHelper.bestAffordableParts(room, carrier.configsForCapacity(this.neededCollectorCapacity(source)), true);
                     roomai.spawn(parts, { role: carrier.name, source: source.id, destination: storage.id, resource: RESOURCE_ENERGY });
                 }
             }
+        },
+        neededCollectorCapacity: function(source) {
+            // back and forth while 10 energy per tick are generated
+            return logistic.distanceByPath(source, room.storage) * 20;
         }
     }
 };

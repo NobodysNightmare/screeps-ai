@@ -83,5 +83,16 @@ module.exports = {
         } else {
             return null;
         }
+    },
+    distanceByPath: function(source, destination) {
+        if(Memory.distances && Memory.distances[source.id] && Memory.distances[source.id][destination.id]) {
+            return Memory.distances[source.id][destination.id];
+        }
+        
+        var path = source.pos.findPathTo(destination, { ignoreCreeps: true, ignoreRoads: true });
+        Memory.distances = Memory.distances || {};
+        Memory.distances[source.id] = Memory.distances[source.id] || {};
+        Memory.distances[source.id][destination.id] = path.length;
+        return path.length;
     }
 };

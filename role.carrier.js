@@ -7,6 +7,14 @@ module.exports = {
         [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [CARRY, CARRY, MOVE]
     ],
+    configsForCapacity: function(capacity) {
+        var configs = [];
+        for(var carries = Math.ceil(capacity / 50); carries >= 2; carries -= 1) {
+            configs.push(Array(carries).fill(CARRY).concat(Array(Math.ceil(carries / 2)).fill(MOVE)));
+        }
+        
+        return configs;
+    },
     run: function(creep) {
         if(creep.memory.resource == RESOURCE_ENERGY) {
             logistic.pickupSpareEnergy(creep);
