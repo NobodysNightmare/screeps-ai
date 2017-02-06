@@ -45,7 +45,9 @@ module.exports = function(roomai) {
         },
         spawnCarrier: function(source) {
             // TODO: this should adapt based on number of carriers and demand
-            var capacity = logistic.distanceByPath(source, controller) * 2 * 10;
+            var deliveryPerTick = 10;
+            if(room.storage && room.storage.store.energy > 50000) deliveryPerTick = 20;
+            var capacity = logistic.distanceByPath(source, controller) * 2 * deliveryPerTick;
             var parts = spawnHelper.bestAvailableParts(room, carrier.configsForCapacity(capacity));
             var memory = {
                 role: carrier.name,
