@@ -57,7 +57,9 @@ module.exports = function(roomai) {
         },
         neededCollectorCapacity: function(source) {
             // back and forth while 10 energy per tick are generated
-            return logistic.distanceByPath(source, room.storage) * 20;
+            var needed = logistic.distanceByPath(source, room.storage) * 20;
+            // adding at least one extra CARRY to make up for inefficiencies
+            return needed + 60;
         }
     }
 };
