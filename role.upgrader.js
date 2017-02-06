@@ -12,7 +12,7 @@ module.exports = {
     run: function(creep) {
         var controller = creep.room.controller;
         var container = logistic.storeFor(controller);
-        if(container && container.store.energy > 0) {
+        if(container && (container.store.energy > 0 || creep.carry.energy > 0)) {
             var withdrawResult = OK;
             
             // only really withdraw when the carry is empty, because only one
