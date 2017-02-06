@@ -47,6 +47,14 @@ module.exports = function(room) {
             for(var construction of constructions) {
                 construction.perform(room);
             }
+            
+            for(var spawn of spawns) {
+                if(spawn.spawning) {
+                    var role = Game.creeps[spawn.spawning.name].memory.role;
+                    var remaining = spawn.spawning.remainingTime;
+                    room.visual.text(role + " (" + remaining + ")", spawn.pos.x + 0.5, spawn.pos.y + 0.5, { align: "left", size: 0.6 })
+                }
+            }
         },
         spawn: function(parts, memory) {
             var spawn = availableSpawns[0];
