@@ -1,7 +1,6 @@
 var logistic = require("helper.logistic");
 
 var fullHealthEquiv = 50000;
-var emergencyHitpoints = 1500;
 var emergencyHitPercent = 0.3;
 
 module.exports = {
@@ -64,8 +63,9 @@ module.exports = {
         return null;
     },
     findEmergencyRepairTarget: function(creep) {
+        var that = this;
         var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
-            return structure.hits < emergencyHitpoints &&
+            return structure.hits < that.emergencyHitpoints(structure) &&
                     structure.hits / structure.hitsMax < emergencyHitPercent && 
                     structure.hits < (fullHealthEquiv * 2) &&
                     structure.structureType != STRUCTURE_CONTROLLER;
@@ -76,6 +76,13 @@ module.exports = {
         }
         
         return null;
+    },
+    emergencyHitpoints: function(structure) {
+        if(structure.structureType == STRUCTURE_CONTAINER) {
+            return 10000;
+        } else {
+            return 1500;
+        }
     },
     constructOrRepair: function(creep, target) {
         if(!target) return;
