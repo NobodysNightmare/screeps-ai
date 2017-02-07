@@ -23,7 +23,7 @@ module.exports = function(roomai) {
                 return;
             }
             
-            var parts = spawnHelper.bestAvailableParts(room, upgrader.partConfigs);
+            var parts = spawnHelper.bestAvailableParts(room, upgrader.configsForEnergyPerTick(this.energyPerTick() / 2));
             roomai.spawn(parts, { role: upgrader.name });
         },
         buildCarriers: function() {
@@ -38,16 +38,14 @@ module.exports = function(roomai) {
                 for(var source of room.find(FIND_SOURCES)) {
                     if(!_.any(existingCarriers, (m) => m.memory.source == source.id) &&
                         logistic.storeFor(source)) {
-                        this.spawnCarrier(source);
+                        this.spawnCarrier(source, 300);
                     }
                 }
             }
         },
-        spawnCarrier: function(source) {
-            // TODO: this should adapt based on number of carriers and demand
-            var deliveryPerTick = 10;
-            if(room.storage && room.storage.store.energy > 50000) deliveryPerTick = 20;
-            var capacity = logistic.distanceByPath(source, controller) * 2 * deliveryPerTick;
+        spawnCarrier: function(source, capacityOverride) {
+            // TODO: capacityOverride is a hack to ensure that my current main room isn't drained by an unneccessarily large carrier
+            var capacity = capacityOverride || logistic.distanceByPath(source, controller) * 2 * this.energyPerTick();
             var parts = spawnHelper.bestAvailableParts(room, carrier.configsForCapacity(capacity));
             var memory = {
                 role: carrier.name,
@@ -57,6 +55,14 @@ module.exports = function(roomai) {
             };
             
             roomai.spawn(parts, memory);
+        },
+        energyPerTick: function() {
+            // TODO: this should adapt based on number of carriers and demand
+            if(room.storage && room.storage.store.energy > 50000) {
+                return 20;
+            } else {
+                return 10;
+            }
         }
     }
 };

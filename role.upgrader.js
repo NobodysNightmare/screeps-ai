@@ -9,6 +9,14 @@ module.exports = {
         [WORK, WORK, MOVE, WORK, CARRY, MOVE],
         [WORK, WORK, CARRY, MOVE]
     ],
+    configsForEnergyPerTick: function(energyPerTick) {
+        var configs = [];
+        for(var workCount = energyPerTick; workCount >= 1; workCount -= 1) {
+            configs.push(Array(workCount).fill(WORK).concat([CARRY]).concat(Array(Math.ceil((workCount + 1) / 2)).fill(MOVE)));
+        }
+        
+        return configs;
+    },
     run: function(creep) {
         var controller = creep.room.controller;
         var container = logistic.storeFor(controller);
