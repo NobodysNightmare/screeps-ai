@@ -8,7 +8,8 @@ var roles = [
     require("role.reserver"),
     require("role.carrier"),
     require("role.defender"),
-    require("role.flagHunter")
+    require("role.flagHunter"),
+    require("role.attacker")
 ];
 
 var constructionClaimSpawn = require("construction.claimSpawn");
