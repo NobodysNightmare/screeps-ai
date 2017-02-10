@@ -17,6 +17,10 @@ module.exports = {
             target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         }
         
+        if(!target) {
+            target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType != STRUCTURE_CONTROLLER });
+        }
+        
         if(target) {
             this.attack(creep, target);
         }
