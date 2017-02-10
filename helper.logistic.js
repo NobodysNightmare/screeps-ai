@@ -90,7 +90,9 @@ module.exports = {
             return Memory.distances[source.id][destination.id];
         }
         
-        var path = source.pos.findPathTo(destination, { ignoreCreeps: true, ignoreRoads: true });
+        // TODO: consider some kinds of obstacles?
+        var pathResult = PathFinder.search(source.pos, [{ pos: destination.pos, range: 1 }]);
+        var path = pathResult.path;
         Memory.distances = Memory.distances || {};
         Memory.distances[source.id] = Memory.distances[source.id] || {};
         Memory.distances[source.id][destination.id] = path.length;

@@ -44,8 +44,7 @@ module.exports = function(roomai) {
                 var hasStore = logistic.storeFor(source);
                 var hasCarrier = _.any(Game.creeps, (c) => c.memory.role == carrier.name && c.memory.source == source.id);
                 if(hasStore && !hasCarrier) {
-                    // TODO: find right carrier size
-                    roomai.spawn(spawnHelper.bestAvailableParts(room, carrier.partConfigs), { role: carrier.name, source: source.id, destination: room.storage.id });
+                    roomai.spawn(spawnHelper.bestAvailableParts(room, carrier.configsForCapacity(this.neededCollectorCapacity(source))), { role: carrier.name, source: source.id, destination: room.storage.id });
                 }
             }
         },
@@ -53,6 +52,12 @@ module.exports = function(roomai) {
             if(!_.any(Game.creeps, (c) => c.memory.role == observer.name && c.memory.target == roomName)) {
                 roomai.spawn(observer.parts, { role: observer.name, target: roomName });
             }
+        },
+        neededCollectorCapacity: function(source) {
+            // back and forth while 10 energy per tick are generated
+            var needed = logistic.distanceByPath(source, room.storage) * 20;
+            // adding at least one extra CARRY to make up for inefficiencies
+            return _.min([needed + 60, 2000]);
         }
     }
 };
