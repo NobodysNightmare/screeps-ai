@@ -9,6 +9,8 @@ module.exports = function(roomai) {
     return {
         run: function() {
             var primarySpawn = roomai.spawns[0];
+            if(!primarySpawn) return;
+            
             var source = primarySpawn.pos.findClosestByRange(FIND_SOURCES);
             
             this.buildHarvesters(source);
