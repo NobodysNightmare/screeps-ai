@@ -44,7 +44,13 @@ module.exports = function(roomai) {
                 var hasStore = logistic.storeFor(source);
                 var hasCarrier = _.any(Game.creeps, (c) => c.memory.role == carrier.name && c.memory.source == source.id);
                 if(hasStore && !hasCarrier) {
-                    roomai.spawn(spawnHelper.bestAvailableParts(room, carrier.configsForCapacity(this.neededCollectorCapacity(source))), { role: carrier.name, source: source.id, destination: room.storage.id });
+                    let memory = {
+                        role: carrier.name, 
+                        source: source.id, 
+                        destination: room.storage.id,
+                        resource: RESOURCE_ENERGY 
+                    };
+                    roomai.spawn(spawnHelper.bestAvailableParts(room, carrier.configsForCapacity(this.neededCollectorCapacity(source))), memory);
                 }
             }
         },
