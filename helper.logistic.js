@@ -54,7 +54,8 @@ module.exports = {
     },
     pickupSpareEnergy: function(creep) {
         var resources = creep.pos.lookFor(LOOK_ENERGY);
-        if(resources.length > 0) {
+        // TODO: fix to work with any resource (and not pickup resource even if we want energy)
+        if(resources.length > 0 && resources[0].resourceType == RESOURCE_ENERGY) {
             creep.pickup(resources[0]);
         }
     },
