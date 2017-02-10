@@ -20,6 +20,7 @@ module.exports = {
         
         if(creep.room.find(FIND_MY_SPAWNS).length > 0) {
             creep.memory.role = "harvester";
+            creep.memory.source = creep.pos.findClosestByRange(FIND_SOURCES).id;
             creep.say("Spawn is there. Becoming a harvester...");
             return;
         }
@@ -39,7 +40,7 @@ module.exports = {
         }
     },
     constructStructures: function(creep) {
-        var target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES);
+        var target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType == STRUCTURE_SPAWN });
         if(target) {
             if(creep.build(target) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
@@ -48,7 +49,7 @@ module.exports = {
         return target;
     },
     harvestEnergy: function(creep) {
-        var source = creep.pos.findClosestByRange(FIND_SOURCES);
+        var source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
         if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
             creep.moveTo(source);
         }
