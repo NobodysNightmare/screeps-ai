@@ -1,20 +1,14 @@
-var spawnHelper = require('helper.spawning');
+const movement = require("helper.movement");
 
 module.exports = {
     name: "reserver",
     partConfigs: [
+        [CLAIM, CLAIM,  MOVE, MOVE],
         [CLAIM, MOVE]
     ],
-    shouldBuild: function(spawn) {
-        return false;
-    },
-    chooseParts: function(room) {
-        return spawnHelper.bestAvailableParts(room, this.partConfigs);
-    },
     run: function(creep) {
-        var targetPos = new RoomPosition(creep.memory.target.x, creep.memory.target.y, creep.memory.target.roomName);
-        if(creep.room.name != targetPos.roomName) {
-            creep.moveTo(targetPos);
+        if(creep.room.name != creep.memory.target) {
+            movement.moveToRoom(creep, creep.memory.target);
             return;
         }
 
