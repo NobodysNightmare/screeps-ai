@@ -46,6 +46,8 @@ module.exports = {
         }
         if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
             creep.memory.upgrading = true;
+            // move to the controller at least once to make room on the source
+            creep.moveTo(controller);
         }
 
         if(creep.memory.upgrading) {
