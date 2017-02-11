@@ -7,10 +7,11 @@ module.exports = {
         [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [CARRY, CARRY, MOVE]
     ],
-    configsForCapacity: function(capacity) {
+    configsForCapacity: function(capacity, options) {
+        var workParts = (options && options.workParts) || 0;
         var configs = [];
         for(var carries = Math.ceil(capacity / 50); carries >= 2; carries -= 1) {
-            configs.push(Array(carries).fill(CARRY).concat(Array(Math.ceil(carries / 2)).fill(MOVE)));
+            configs.push(Array(workParts).fill(WORK).concat(Array(carries).fill(CARRY)).concat(Array(Math.ceil((carries + workParts) / 2)).fill(MOVE)));
         }
         
         return configs;
@@ -21,6 +22,16 @@ module.exports = {
         }
         
         if(_.sum(creep.carry) > 0) {
+            if(creep.memory.selfSustaining) {
+                var road = _.find(creep.pos.lookFor(LOOK_STRUCTURES), (s) => s.structureType == STRUCTURE_ROAD);
+                if(road && road.hits < 3000) {
+                    creep.repair(road);
+                } else {
+                    this.buildRoad(creep);
+                    return; // stop on pending construction sites
+                }
+            }
+            
             var target = logistic.storeFor(this.destination(creep));
             if(creep.transfer(target, creep.memory.resource) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
@@ -35,6 +46,14 @@ module.exports = {
             } else if(result == OK) {
                 creep.memory.delivering = true;
             }
+        }
+    },
+    buildRoad: function(creep) {
+        var constructionSite = _.find(creep.pos.lookFor(LOOK_CONSTRUCTION_SITES), (cs) => cs.structureType == STRUCTURE_ROAD);
+        if(constructionSite) {
+            creep.build(constructionSite);
+        } else {
+            creep.pos.createConstructionSite(STRUCTURE_ROAD);
         }
     },
     source: function(creep) {

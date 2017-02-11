@@ -48,9 +48,10 @@ module.exports = function(roomai) {
                         role: carrier.name, 
                         source: source.id, 
                         destination: room.storage.id,
-                        resource: RESOURCE_ENERGY 
+                        resource: RESOURCE_ENERGY,
+                        selfSustaining: true
                     };
-                    roomai.spawn(spawnHelper.bestAvailableParts(room, carrier.configsForCapacity(this.neededCollectorCapacity(source))), memory);
+                    roomai.spawn(spawnHelper.bestAvailableParts(room, carrier.configsForCapacity(this.neededCollectorCapacity(source), { workParts: 1 })), memory);
                 }
             }
         },
