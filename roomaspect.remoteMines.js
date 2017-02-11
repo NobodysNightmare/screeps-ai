@@ -26,9 +26,9 @@ module.exports = function(roomai) {
         },
         spawnReserver: function(remoteRoom) {
             var needReservation = !remoteRoom.controller.reservation || remoteRoom.controller.reservation.ticksToEnd < 2000;
-            var hasReserver = _.any(Game.creeps, (c) => c.memory.role == reserver.name && c.memory.target == remoteRoom.name);
+            var hasReserver = _.any(Game.creeps, (c) => c.memory.role == reserver.name && c.memory.target == remoteRoom.controller.id);
             if(needReservation && !hasReserver) {
-                roomai.spawn(spawnHelper.bestAvailableParts(room, reserver.partConfigs), { role: reserver.name, target: remoteRoom.name });
+                roomai.spawn(spawnHelper.bestAvailableParts(room, reserver.partConfigs), { role: reserver.name, target: remoteRoom.controller.id });
             }
         },
         spawnMiners: function(remoteRoom) {
