@@ -4,6 +4,7 @@ var logistic = require('helper.logistic');
 module.exports = {
     name: "harvester",
     carryConfigs: [
+        [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [CARRY, CARRY, MOVE]
