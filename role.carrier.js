@@ -24,8 +24,10 @@ module.exports = {
         if(_.sum(creep.carry) > 0) {
             if(creep.memory.selfSustaining) {
                 var road = _.find(creep.pos.lookFor(LOOK_STRUCTURES), (s) => s.structureType == STRUCTURE_ROAD);
-                if(road && road.hits < 3000) {
-                    creep.repair(road);
+                if(road) {
+                    if(road.hits < 3000) {
+                        creep.repair(road);
+                    }
                 } else {
                     this.buildRoad(creep);
                     return; // stop on pending construction sites
