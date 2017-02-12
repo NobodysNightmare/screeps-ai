@@ -22,7 +22,7 @@ module.exports = function(roomai) {
             }
             
             var parts = spawnHelper.bestAffordableParts(room, defender.meeleeConfigs, true);
-            roomai.spawn(parts, { role: defender.name, room: room.name });
+            roomai.spawn(parts, { role: defender.name, room: room.name, originRoom: room.name });
         }
     }
 };

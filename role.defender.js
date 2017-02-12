@@ -1,3 +1,5 @@
+const movement = require("helper.movement");
+
 module.exports = {
     name: "defender",
     meeleeConfigs: [
@@ -7,6 +9,11 @@ module.exports = {
     ],
     run: function(creep) {
         var room = Game.rooms[creep.memory.room];
+        if(!room) {
+            movement.moveToRoom(creep, creep.memory.room);
+            return;
+        }
+        
         var target = Game.getObjectById(room.memory.primaryHostile);
         if(target) {
             this.attack(creep, target);
@@ -21,6 +28,11 @@ module.exports = {
     },
     recycle: function(creep) {
         var spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
+        if(!spawn) {
+            movement.moveToRoom(creep, creep.memory.originRoom);
+            return;
+        }
+        
         if(creep.pos.isNearTo(spawn)) {
             spawn.recycleCreep(creep);
         } else {

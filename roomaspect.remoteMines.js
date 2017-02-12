@@ -1,4 +1,5 @@
 const carrier = require('role.carrier');
+const defender = require('role.defender');
 const miner = require('role.miner');
 const observer = require('role.observer');
 const reserver = require('role.reserver');
@@ -16,12 +17,23 @@ module.exports = function(roomai) {
             for(var roomName of room.memory.remoteMines) {
                 var remoteRoom = Game.rooms[roomName];
                 if(remoteRoom) {
+                    this.spawnDefender(remoteRoom);
                     this.spawnReserver(remoteRoom);
                     this.spawnMiners(remoteRoom);
                     this.spawnCarriers(remoteRoom);
                 } else {
                     this.spawnObserver(roomName);
                 }
+            }
+        },
+        spawnDefender: function(remoteRoom) {
+            var hostile = remoteRoom.find(FIND_HOSTILE_CREEPS)[0];
+            remoteRoom.memory.primaryHostile = hostile && hostile.id;
+            if(!hostile) return;
+            
+            var hasDefender = _.any(Game.creeps, (c) => c.memory.role == defender.name && c.memory.room == remoteRoom.name);
+            if(!hasDefender) {
+                roomai.spawn(spawnHelper.bestAvailableParts(room, defender.meeleeConfigs), { role: defender.name, room: remoteRoom.name, originRoom: room.name });
             }
         },
         spawnReserver: function(remoteRoom) {
