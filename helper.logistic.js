@@ -7,10 +7,10 @@ var storeStructures = [
 
 module.exports = {
     obtainResults: {
-        withdrawn: 0,
-        harvested: 1,
-        moving: 2,
-        pickedUp: 3
+        withdrawn: 1,
+        harvested: 2,
+        moving: 3,
+        pickedUp: 4
     },
     obtainEnergy: function(creep, source, considerStorage) {
         this.pickupSpareEnergy(creep);
