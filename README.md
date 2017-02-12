@@ -17,5 +17,3 @@ This is my personal AI for the computer game [Screeps](https://screeps.com).
     * more independence on "main" room
     * more accessible way to initiate claiming
     * automatically start claiming as soon as room is ready
-* misc improvements
-    * place containers adjacent to source (and also diagonally)

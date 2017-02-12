@@ -9,7 +9,7 @@ module.exports = {
         var pos = target.pos;
         for(var xDir = -1; xDir <= 1; xDir++) {
             for(var yDir = -1; yDir <= 1; yDir++) {
-                if((xDir == 0 || yDir == 0) && target.room.lookForAt(LOOK_TERRAIN, pos.x + xDir, pos.y + yDir) != "wall") {
+                if((xDir != 0 || yDir != 0) && target.room.lookForAt(LOOK_TERRAIN, pos.x + xDir, pos.y + yDir) != "wall") {
                     if(this.buildContainerInDirection(target, xDir, yDir)) {
                         return;
                     }
@@ -19,7 +19,7 @@ module.exports = {
     },
     buildContainerInDirection: function(target, xDir, yDir) {
         var pos = target.pos;
-        var result = target.room.createConstructionSite(pos.x + xDir * 2, pos.y + yDir * 2, STRUCTURE_CONTAINER)
+        var result = target.room.createConstructionSite(pos.x + xDir, pos.y + yDir, STRUCTURE_CONTAINER)
         return result == OK;
     }
 };
