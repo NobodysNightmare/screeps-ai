@@ -12,7 +12,10 @@ This is my personal AI for the computer game [Screeps](https://screeps.com).
     * towers should attack target picked by defense aspect
     * defense aspect should actually "think" about which target to pick
     * while defending a reloader should keep towers supplied with energy
+    * defend remote mines
 * Rework room claiming
     * more independence on "main" room
     * more accessible way to initiate claiming
     * automatically start claiming as soon as room is ready
+* misc improvements
+    * place containers adjacent to source (and also diagonally)
