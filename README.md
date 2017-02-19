@@ -19,3 +19,7 @@ This is my personal AI for the computer game [Screeps](https://screeps.com).
 * Properly support multiple Spawns
 * Be more conservative during supply shortage
     * e.g. only spawn one upgrader
+* Improve base building
+    * build storage in a good location
+    * build clustered sets of extensions (without blocking pathways)
+    * build towers 
