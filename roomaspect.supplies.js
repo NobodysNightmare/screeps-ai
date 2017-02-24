@@ -1,11 +1,13 @@
 var spawnHelper = require("helper.spawning");
 var carrier = require("role.carrier");
 var harvester = require("role.harvester");
+var linkCollector = require("role.linkCollector");
 var miner = require("role.miner");
 var logistic = require('helper.logistic');
 
 module.exports = function(roomai) {
     var room = roomai.room;
+    var linksEnabled = room.storage && roomai.links.storage();
     return {
         run: function() {
             var primarySpawn = roomai.spawns[0];
@@ -14,6 +16,18 @@ module.exports = function(roomai) {
             var source = primarySpawn.pos.findClosestByRange(FIND_SOURCES);
             
             this.buildHarvesters(source);
+            
+            if(linksEnabled) {
+                let collector = room.find(FIND_MY_CREEPS, { filter: (creep) => creep.memory.role == linkCollector.name })[0];
+                if(collector) {
+                    this.runLinkCollector(collector);
+                } else {
+                    this.buildLinkCollector();
+                }
+                
+                this.runLinks();
+            }
+            
             this.buildCollectors();
         },
         buildHarvesters: function(source) {
@@ -51,6 +65,7 @@ module.exports = function(roomai) {
             for(var source of sources) {
                 if(roomai.canSpawn() &&
                     !_.any(existingCollectors, (m) => m.memory.source == source.id && m.memory.destination == storage.id) &&
+                    (!linksEnabled || !roomai.links.linkAt(source)) &&
                     _.any(existingMiners, (m) => m.memory.target == source.id)) {
                     var parts = spawnHelper.bestAffordableParts(room, carrier.configsForCapacity(this.neededCollectorCapacity(source)), true);
                     roomai.spawn(parts, { role: carrier.name, source: source.id, destination: storage.id, resource: RESOURCE_ENERGY });
@@ -62,6 +77,31 @@ module.exports = function(roomai) {
             var needed = logistic.distanceByPath(source, room.storage) * 20;
             // adding at least one extra CARRY to make up for inefficiencies
             return needed + 60;
+        },
+        runLinkCollector: function(creep) {
+            if(creep.carry.energy == 0) {
+                if(creep.withdraw(roomai.links.storage(), RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(roomai.links.storage());
+                }
+            } else {
+                if(creep.transfer(room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(room.storage);
+                }
+            }
+        },
+        buildLinkCollector: function() {
+            if(!roomai.canSpawn()) {
+                return;
+            }
+            
+            roomai.spawn(linkCollector.parts, { role: linkCollector.name });
+        },
+        runLinks: function() {
+            for(var link of roomai.links.sources()) {
+                if(link.energy / link.energyCapacity >= 0.5) {
+                    link.transferEnergy(roomai.links.storage());
+                }
+            }
         }
     }
 };

@@ -19,6 +19,8 @@ var spawnClaimGroup = require("spawn.claimGroup");
 var structureTower = require("structure.tower");
 var structureTerminal = require("structure.terminal");
 
+const linksService = require("roomservice.links");
+
 module.exports = function(room) {
     var spawns = room.find(FIND_MY_SPAWNS);
     var availableSpawns = _.filter(spawns, (s) => !s.spawning);
@@ -26,6 +28,7 @@ module.exports = function(room) {
     return {
         room: room,
         spawns: spawns,
+        links: linksService(room),
         run: function() {
             for(var aspect of aspects) {
                 aspect(this).run();

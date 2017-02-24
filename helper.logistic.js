@@ -40,7 +40,7 @@ module.exports = {
         return null; // something unexpected happened
     },
     obtainEnergyFromStore: function(creep, store) {
-        if(store && store.store.energy > 0) {
+        if(store && (store.energy > 0 || store.store.energy > 0)) {
             var result = creep.withdraw(store, RESOURCE_ENERGY);
             if(result == OK) {
                 return this.obtainResults.withdrawn;
@@ -59,10 +59,10 @@ module.exports = {
             creep.pickup(resources[0]);
         }
     },
-    storeFor: function(target, includeConstructions) {
-        if(target && storeStructures.includes(target.structureType)) return target;
+    storeFor: function(target, includeConstructions, structureType) {
+        if(target && storeStructures.includes(target.structureType) && (!structureType || structureType == target.structureType)) return target;
         
-        if(!includeConstructions) {
+        if(!includeConstructions || !structureType) {
             var stores = target.room.memory.stores;
             if(stores) {
                 var store = Game.getObjectById(stores[target.id]);
@@ -71,7 +71,7 @@ module.exports = {
         }
         
         var structures = target.pos.findInRange(FIND_STRUCTURES, 2);
-        var store = _.find(structures, (r) => storeStructures.includes(r.structureType));
+        var store = _.find(structures, (r) => storeStructures.includes(r.structureType) && (!structureType || structureType == r.structureType));
         if(store) {
             target.room.memory.stores = target.room.memory.stores || {};
             target.room.memory.stores[target.id] = store.id;
@@ -80,7 +80,7 @@ module.exports = {
         
         if(includeConstructions) {
             var constructions = target.pos.findInRange(FIND_CONSTRUCTION_SITES, 2);
-            return _.find(constructions, (r) => storeStructures.includes(r.structureType));
+            return _.find(constructions, (r) => storeStructures.includes(r.structureType) && (!structureType || structureType == r.structureType));
         } else {
             return null;
         }
