@@ -62,7 +62,7 @@ module.exports = {
     storeFor: function(target, includeConstructions, structureType) {
         if(target && storeStructures.includes(target.structureType) && (!structureType || structureType == target.structureType)) return target;
         
-        if(!includeConstructions || !structureType) {
+        if(!includeConstructions && !structureType) {
             var stores = target.room.memory.stores;
             if(stores) {
                 var store = Game.getObjectById(stores[target.id]);
