@@ -12,7 +12,11 @@ module.exports = {
         }
     },
     attackRoom: function(creep) {
-        var target = creep.pos.findClosestByRange(FIND_HOSTILE_SPAWNS);
+        var target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_TOWER });
+        if(!target) {
+            target = creep.pos.findClosestByRange(FIND_HOSTILE_SPAWNS);
+        }
+        
         if(!target) {
             target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         }
