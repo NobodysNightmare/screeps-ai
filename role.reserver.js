@@ -7,8 +7,13 @@ module.exports = {
     run: function(creep) {
         var target = Game.getObjectById(creep.memory.target);
         if(!target) return;
-        
-        if(creep.reserveController(target) == ERR_NOT_IN_RANGE) {
+
+        let result = creep.reserveController(target);
+        if(result == OK) {
+          if(!target.sign || target.sign.username !== "NobodysNightmare") {
+            creep.signController(target, "Owned by Y Pact.");
+          }
+        } else if(result == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
         }
     }
