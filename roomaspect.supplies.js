@@ -33,7 +33,7 @@ module.exports = function(roomai) {
         buildHarvesters: function(source) {
             var partConfigs = harvester.carryConfigs;
             var neededHarvesters = 1;
-            if(!logistic.storeFor(source)) {
+            if(!logistic.storeFor(source) && !room.storage && !room.storage.store.energy) {
                 partConfigs = harvester.miningConfigs;
                 neededHarvesters = 2;
             }
