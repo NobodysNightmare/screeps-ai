@@ -7,7 +7,12 @@ module.exports = {
         if(!room) return;
         if(!room.controller.my) return;
         
-        room.createConstructionSite(flag.pos, STRUCTURE_SPAWN);
-        flag.remove();
+        for(var structure of room.find(FIND_HOSTILE_STRUCTURES)) {
+            structure.destroy();
+        }
+        
+        if(room.createConstructionSite(flag.pos, STRUCTURE_SPAWN) == OK) {
+            flag.remove();
+        }
     }
 };
