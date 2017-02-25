@@ -7,7 +7,7 @@ var miner = require("role.miner");
 module.exports = function(roomai) {
     var room = roomai.room;
     var sources = room.find(FIND_SOURCES);
-    
+
     // order sources by distance to primary spawn, to ensure that aspects
     // work on that source first
     sources = _.sortBy(sources, (s) => s.pos.getRangeTo(roomai.spawns[0]));
@@ -20,7 +20,7 @@ module.exports = function(roomai) {
             if(Game.time % 20 != 0) {
                 return;
             }
-            
+
             for(var source of sources) {
                 container.buildNear(source);
             }
@@ -29,23 +29,23 @@ module.exports = function(roomai) {
             if(!roomai.canSpawn()) {
                 return;
             }
-            
-            var existingMiners = spawnHelper.creepsWithRole(room, miner.name);
+
+            var existingMiners = spawnHelper.localCreepsWithRole(roomai, miner.name);
             for(var source of sources) {
                 if(!_.any(existingMiners, (m) => m.memory.target == source.id) &&
                     logistic.storeFor(source)) {
-                        
+
                     var parts = spawnHelper.bestAffordableParts(room, miner.energyConfigs, true);
                     var memory = {
                         role: miner.name,
                         target: source.id,
                         resource: RESOURCE_ENERGY
                     };
-                    
+
                     roomai.spawn(parts, memory);
                 }
             }
-        
+
         }
     }
 };

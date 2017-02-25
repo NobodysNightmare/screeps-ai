@@ -15,21 +15,21 @@ module.exports = function(roomai) {
             } else {
                 container.buildNear(controller);
             }
-            
+
             this.buildUpgraders();
         },
         buildUpgraders: function() {
-            if(!roomai.canSpawn() || spawnHelper.numberOfCreeps(room, upgrader.name) >= 2) {
+            if(!roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(roomai, upgrader.name) >= 2) {
                 return;
             }
-            
+
             var parts = spawnHelper.bestAvailableParts(room, upgrader.configsForEnergyPerTick(this.energyPerTick() / 2));
             roomai.spawn(parts, { role: upgrader.name });
         },
         buildCarriers: function() {
             if(!roomai.canSpawn()) return;
-            
-            var existingCarriers = spawnHelper.creepsWithRole(room, carrier.name);
+
+            var existingCarriers = spawnHelper.localCreepsWithRole(roomai, carrier.name);
             existingCarriers = _.filter(existingCarriers, (c) => c.memory.destination == controller.id);
             if(room.storage) {
                 if(existingCarriers.length > 0) return;
@@ -53,7 +53,7 @@ module.exports = function(roomai) {
                 destination: controller.id,
                 resource: RESOURCE_ENERGY
             };
-            
+
             roomai.spawn(parts, memory);
         },
         energyPerTick: function() {

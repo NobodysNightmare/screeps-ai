@@ -13,7 +13,7 @@ module.exports = function(roomai) {
         run: function() {
             if(!room.storage) return;
             if(!room.memory.remoteMines) return;
-            
+
             for(var roomName of room.memory.remoteMines) {
                 var remoteRoom = Game.rooms[roomName];
                 if(remoteRoom) {
@@ -30,22 +30,22 @@ module.exports = function(roomai) {
             var hostile = remoteRoom.find(FIND_HOSTILE_CREEPS)[0];
             remoteRoom.memory.primaryHostile = hostile && hostile.id;
             if(!hostile) return;
-            
-            var hasDefender = _.any(Game.creeps, (c) => c.memory.role == defender.name && c.memory.room == remoteRoom.name);
+
+            var hasDefender = _.any(spawnHelper.globalCreepsWithRole(defender.name), (c) => c.memory.room == remoteRoom.name);
             if(!hasDefender) {
                 roomai.spawn(spawnHelper.bestAvailableParts(room, defender.meeleeConfigs), { role: defender.name, room: remoteRoom.name, originRoom: room.name });
             }
         },
         spawnReserver: function(remoteRoom) {
             var needReservation = !remoteRoom.controller.reservation || remoteRoom.controller.reservation.ticksToEnd < 2000;
-            var hasReserver = _.any(Game.creeps, (c) => c.memory.role == reserver.name && c.memory.target == remoteRoom.controller.id);
+            var hasReserver = _.any(spawnHelper.globalCreepsWithRole(reserver.name), (c) => c.memory.target == remoteRoom.controller.id);
             if(needReservation && !hasReserver) {
                 roomai.spawn(spawnHelper.bestAvailableParts(room, reserver.partConfigs), { role: reserver.name, target: remoteRoom.controller.id });
             }
         },
         spawnMiners: function(remoteRoom) {
             for(var source of remoteRoom.find(FIND_SOURCES)) {
-                var hasMiner = _.any(Game.creeps, (c) => c.memory.role == miner.name && c.memory.target == source.id);
+                var hasMiner = _.any(spawnHelper.globalCreepsWithRole(miner.name), (c) => c.memory.target == source.id);
                 if(!hasMiner) {
                     roomai.spawn(spawnHelper.bestAvailableParts(room, miner.energyConfigs), { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true });
                 }
@@ -54,11 +54,11 @@ module.exports = function(roomai) {
         spawnCarriers: function(remoteRoom) {
             for(var source of remoteRoom.find(FIND_SOURCES)) {
                 var hasStore = logistic.storeFor(source);
-                var hasCarrier = _.any(Game.creeps, (c) => c.memory.role == carrier.name && c.memory.source == source.id);
+                var hasCarrier = _.any(spawnHelper.globalCreepsWithRole(carrier.name), (c) => c.memory.source == source.id);
                 if(hasStore && !hasCarrier) {
                     let memory = {
-                        role: carrier.name, 
-                        source: source.id, 
+                        role: carrier.name,
+                        source: source.id,
                         destination: room.storage.id,
                         resource: RESOURCE_ENERGY,
                         selfSustaining: true
@@ -68,7 +68,7 @@ module.exports = function(roomai) {
             }
         },
         spawnObserver: function(roomName) {
-            if(!_.any(Game.creeps, (c) => c.memory.role == observer.name && c.memory.target == roomName)) {
+            if(!_.any(spawnHelper.globalCreepsWithRole(observer.name), (c) => c.memory.target == roomName)) {
                 roomai.spawn(observer.parts, { role: observer.name, target: roomName });
             }
         },

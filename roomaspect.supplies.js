@@ -12,22 +12,22 @@ module.exports = function(roomai) {
         run: function() {
             var primarySpawn = roomai.spawns[0];
             if(!primarySpawn) return;
-            
+
             var source = primarySpawn.pos.findClosestByRange(FIND_SOURCES);
-            
+
             this.buildHarvesters(source);
-            
+
             if(linksEnabled) {
-                let collector = room.find(FIND_MY_CREEPS, { filter: (creep) => creep.memory.role == linkCollector.name })[0];
+                let collector = spawnHelper.localCreepsWithRole(roomai, linkCollector.name)[0];
                 if(collector) {
                     this.runLinkCollector(collector);
                 } else {
                     this.buildLinkCollector();
                 }
-                
+
                 this.runLinks();
             }
-            
+
             this.buildCollectors();
         },
         buildHarvesters: function(source) {
@@ -37,31 +37,31 @@ module.exports = function(roomai) {
                 partConfigs = harvester.miningConfigs;
                 neededHarvesters = 2;
             }
-            
-            if(!roomai.canSpawn() || spawnHelper.numberOfCreeps(room, harvester.name) >= neededHarvesters) {
+
+            if(!roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(roomai, harvester.name) >= neededHarvesters) {
                 return;
             }
-            
+
             var parts = null;
-            if(spawnHelper.numberOfCreeps(room, harvester.name) == 0) {
+            if(spawnHelper.numberOfLocalCreeps(roomai, harvester.name) == 0) {
                  parts = spawnHelper.bestAffordableParts(room, partConfigs);
             } else {
                  parts = spawnHelper.bestAvailableParts(room, partConfigs);
             }
-            
+
             roomai.spawn(parts, { role: harvester.name, source: source.id });
         },
         buildCollectors: function() {
             var storage = room.storage;
             if(!storage) return;
-            
+
             var sources = room.find(FIND_SOURCES);
-    
+
             // FIXME: ordering duplicated with miners
             sources = _.sortBy(sources, (s) => s.pos.getRangeTo(roomai.spawns[0]));
-            
-            var existingCollectors = spawnHelper.creepsWithRole(room, carrier.name);
-            var existingMiners = spawnHelper.creepsWithRole(room, miner.name);
+
+            var existingCollectors = spawnHelper.localCreepsWithRole(roomai, carrier.name);
+            var existingMiners = spawnHelper.localCreepsWithRole(roomai, miner.name);
             for(var source of sources) {
                 if(roomai.canSpawn() &&
                     !_.any(existingCollectors, (m) => m.memory.source == source.id && m.memory.destination == storage.id) &&
@@ -83,7 +83,9 @@ module.exports = function(roomai) {
                 if(creep.withdraw(roomai.links.storage(), RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(roomai.links.storage());
                 }
-            } else {
+            }
+            // TODO: withdraw + transfer in one step
+            if(creep.carry.energy > 0){
                 if(creep.transfer(room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(room.storage);
                 }
@@ -93,7 +95,7 @@ module.exports = function(roomai) {
             if(!roomai.canSpawn()) {
                 return;
             }
-            
+
             roomai.spawn(linkCollector.parts, { role: linkCollector.name });
         },
         runLinks: function() {

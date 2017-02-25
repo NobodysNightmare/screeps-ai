@@ -24,10 +24,17 @@ module.exports = {
                     return _.sum(_.map(config, (part) => BODYPART_COST[part])) <= price;
                 });
     },
-    creepsWithRole: function(room, role) {
-        return room.find(FIND_MY_CREEPS, { filter: (creep) => creep.memory.role == role })
+    localCreepsWithRole: function(roomai, role) {
+        let creeps = roomai.room.find(FIND_MY_CREEPS);
+        creeps = creeps.concat(_.compact(_.map(roomai.spawns, (spawn) => spawn.spawning && Game.creeps[spawn.spawning.name])));
+        return _.filter(creeps, (creep) => creep.memory.role == role);
     },
-    numberOfCreeps: function(room, role) {
-        return this.creepsWithRole(room, role).length;
+    numberOfLocalCreeps: function(roomai, role) {
+        return this.localCreepsWithRole(roomai, role).length;
+    },
+    globalCreepsWithRole: function(role) {
+        let creeps = _.values(Game.creeps);
+        creeps = creeps.concat(_.compact(_.map(Game.spawns, (spawn) => spawn.spawning && Game.creeps[spawn.spawning.name])));
+        return _.filter(creeps, (creep) => creep.memory.role == role);
     }
 };

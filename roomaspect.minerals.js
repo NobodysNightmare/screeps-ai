@@ -12,38 +12,38 @@ module.exports = function(roomai) {
             if(room.controller.level < 6) {
                 return;
             }
-            
+
             if(this.hasExtractor()) {
                 if(this.needWorkers()) {
                     this.buildMiner();
                     this.buildCarrier();
                 }
             }
-            
+
             this.buildStructures();
         },
         buildMiner: function() {
-            var existingMiners = spawnHelper.creepsWithRole(room, miner.name);
+            var existingMiners = spawnHelper.localCreepsWithRole(roomai, miner.name);
             if(_.any(existingMiners, (c) => c.memory.target == mineral.id)) {
                 return;
             }
-            
+
             var parts = spawnHelper.bestAvailableParts(room, miner.mineralConfigs);
             var memory = {
                 role: miner.name,
                 target: mineral.id,
                 resource: mineral.mineralType
             };
-            
+
             roomai.spawn(parts, memory);
         },
         buildCarrier: function() {
             if(!this.masterRoom() ||
                 !this.masterRoom().terminal ||
-                _.filter(Game.creeps, (creep) => creep.memory.role == carrier.name && creep.memory.source == mineral.id).length > 0) {
+                _.filter(spawnHelper.globalCreepsWithRole(carrier.name), (creep) => creep.memory.source == mineral.id).length > 0) {
                 return;
             }
-            
+
             var parts = spawnHelper.bestAvailableParts(room, carrier.partConfigs);
             var memory = {
                 role: carrier.name,
@@ -51,14 +51,14 @@ module.exports = function(roomai) {
                 destination: this.masterRoom().terminal.id,
                 resource: mineral.mineralType
             };
-            
+
             roomai.spawn(parts, memory);
         },
         buildStructures: function() {
             if(Game.time % 20 != 0) {
                 return;
             }
-            
+
             room.createConstructionSite(mineral.pos, STRUCTURE_EXTRACTOR);
             container.buildNear(mineral);
         },
