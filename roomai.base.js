@@ -53,11 +53,7 @@ module.exports = function(room) {
             }
             
             for(var spawn of spawns) {
-                if(spawn.spawning) {
-                    var role = Game.creeps[spawn.spawning.name].memory.role;
-                    var remaining = spawn.spawning.remainingTime;
-                    room.visual.text(role + " (" + remaining + ")", spawn.pos.x + 0.5, spawn.pos.y + 0.5, { align: "left", size: 0.6 })
-                }
+                this.renderSpawnOverlay(spawn);
             }
         },
         spawn: function(parts, memory) {
@@ -77,6 +73,16 @@ module.exports = function(room) {
         },
         canSpawn: function() {
             return !this.spawnReserved && availableSpawns.length > 0;
+        },
+        renderSpawnOverlay: function(spawn) {
+            if(spawn.spawning) {
+                let role = Game.creeps[spawn.spawning.name].memory.role;
+                let remaining = spawn.spawning.remainingTime;
+                spawn.room.visual.rect(spawn.pos.x - 1.3, spawn.pos.y + 0.9, 2.6, 0.6,{fill: '#333', opacity: 0.8, stroke: '#fff', strokeWidth: 0.03 });
+                spawn.room.visual.text(role, spawn.pos.x - 0.0, spawn.pos.y + 1.3, { align: "center", size: 0.4 });
+                spawn.room.visual.circle(spawn.pos, {fill: '#000000', radius: 0.5, opacity: 0.8 });
+                spawn.room.visual.text(remaining, spawn.pos.x - 0.0, spawn.pos.y + 0.2, { align: "center", size: 0.6 })
+            }
         }
     };
 };
