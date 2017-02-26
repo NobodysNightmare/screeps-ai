@@ -11,7 +11,9 @@ module.exports = {
         var workParts = (options && options.workParts) || 0;
         var configs = [];
         for(var carries = Math.ceil(capacity / 50); carries >= 2; carries -= 1) {
-            configs.push(Array(workParts).fill(WORK).concat(Array(carries).fill(CARRY)).concat(Array(Math.ceil((carries + workParts) / 2)).fill(MOVE)));
+            let config = Array(workParts).fill(WORK).concat(Array(carries).fill(CARRY)).concat(Array(Math.ceil((carries + workParts) / 2)).fill(MOVE));
+            // maximum creep size is 50 parts
+            if(config.length <= 50) configs.push(config);
         }
         
         return configs;
