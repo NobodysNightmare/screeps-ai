@@ -10,7 +10,17 @@ module.exports = function(roomai) {
     var controller = room.controller;
     return {
         run: function() {
-            if(logistic.storeFor(controller)) {
+            let link = roomai.links.controller();
+            if(link && roomai.links.storage()) {
+                if(link.energy / link.energyCapacity <= 0.5) {
+                    roomai.links.requestEnergy(link);
+                } else {
+                    // always canceling pending requests, in case we
+                    // accidentially requested too much (which happens because of
+                    // bad timing -.-)
+                    roomai.links.cancelRequest(link);
+                }
+            } else if(logistic.storeFor(controller)) {
                 this.buildCarriers();
             } else {
                 container.buildNear(controller);

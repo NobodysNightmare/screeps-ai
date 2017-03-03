@@ -4,9 +4,7 @@ This is my personal AI for the computer game [Screeps](https://screeps.com).
 
 ## TODOs
 
-* Use links
-    * ... to move energy to controller
-    * ... to collect energy from remote mines at room border
+* Use links to collect energy from remote mines at room border
 * Better defense mechanics
     * towers should attack target picked by defense aspect
     * defense aspect should actually "think" about which target to pick

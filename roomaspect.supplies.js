@@ -20,12 +20,15 @@ module.exports = function(roomai) {
             if(linksEnabled) {
                 let collector = spawnHelper.localCreepsWithRole(roomai, linkCollector.name)[0];
                 if(collector) {
-                    this.runLinkCollector(collector);
+                    linkCollector.runWithRoomAI(collector, roomai);
                 } else {
                     this.buildLinkCollector();
                 }
 
                 this.runLinks();
+                if(roomai.links.checkOpenRequests()) {
+                    roomai.links.fullfillRequests();
+                }
             }
 
             this.buildCollectors();
@@ -77,19 +80,6 @@ module.exports = function(roomai) {
             var needed = logistic.distanceByPath(source, room.storage) * 20;
             // adding at least one extra CARRY to make up for inefficiencies
             return needed + 60;
-        },
-        runLinkCollector: function(creep) {
-            if(creep.carry.energy == 0) {
-                if(creep.withdraw(roomai.links.storage(), RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(roomai.links.storage());
-                }
-            }
-            // TODO: withdraw + transfer in one step
-            if(creep.carry.energy > 0){
-                if(creep.transfer(room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(room.storage);
-                }
-            }
         },
         buildLinkCollector: function() {
             if(!roomai.canSpawn()) {
