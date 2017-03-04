@@ -11,6 +11,7 @@ var roles = [
     require("role.flagHunter"),
     require("role.attacker"),
     require("role.healer"),
+    require("role.hopper"),
     require("role.observer")
 ];
 

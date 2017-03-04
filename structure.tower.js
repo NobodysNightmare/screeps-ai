@@ -6,7 +6,7 @@ module.exports = {
             return;
         }
         
-        var closestFriendly = tower.pos.findClosestByRange(FIND_MY_CREEPS, { filter: (creep) => creep.hits < creep.hitsMax });
+        var closestFriendly = tower.pos.findClosestByRange(FIND_MY_CREEPS, { filter: (creep) => creep.hits < creep.hitsMax && creep.memory.role !== "hopper" });
         if(closestFriendly) {
             tower.heal(closestFriendly);
             return;
