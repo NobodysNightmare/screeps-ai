@@ -27,6 +27,9 @@ module.exports = {
         }
     },
     findNewTarget: function(creep) {
-        // TODO: find new target or be useful otherwise
+        let newTarget = creep.pos.findClosestByRange(FIND_MY_CREEPS, { filter: (c) => c.hits < c.hitsMax });
+        if(!newTarget) return;
+        
+        creep.memory.target = newTarget.name;
     }
 };
