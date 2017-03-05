@@ -5,6 +5,9 @@ var spawnHelper = require("helper.spawning");
 var carrier = require("role.carrier");
 var upgrader = require("role.upgrader");
 
+const LOW_ENERGY_LIMIT = 50000;
+const HIGH_ENERGY_LIMIT = 200000;
+
 module.exports = function(roomai) {
     var room = roomai.room;
     var controller = room.controller;
@@ -29,11 +32,11 @@ module.exports = function(roomai) {
             this.buildUpgraders();
         },
         buildUpgraders: function() {
-            if(!roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(roomai, upgrader.name) >= 2) {
+            if(!roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(roomai, upgrader.name) >= this.upgraderCount()) {
                 return;
             }
 
-            var parts = spawnHelper.bestAvailableParts(room, upgrader.configsForEnergyPerTick(this.energyPerTick() / 2));
+            var parts = spawnHelper.bestAvailableParts(room, upgrader.configsForEnergyPerTick(this.energyPerTick() / this.upgraderCount()));
             roomai.spawn(parts, { role: upgrader.name });
         },
         buildCarriers: function() {
@@ -67,11 +70,27 @@ module.exports = function(roomai) {
             roomai.spawn(parts, memory);
         },
         energyPerTick: function() {
-            // TODO: this should adapt based on number of carriers and demand
-            if(room.storage && room.storage.store.energy > 50000) {
-                return 20;
+            if(room.storage) {
+                if(room.storage.store.energy > HIGH_ENERGY_LIMIT) {
+                    return 20;
+                } else if(room.storage.store.energy < LOW_ENERGY_LIMIT) {
+                    return 4;
+                } else {
+                    return 10;
+                }
             } else {
                 return 10;
+            }
+        },
+        upgraderCount: function() {
+            if(room.controller.level >= 7) {
+                return 1;
+            } else {
+                if(room.storage && room.storage.store.energy < LOW_ENERGY_LIMIT) {
+                    return 1;
+                } else {
+                    return 2;
+                }
             }
         }
     }

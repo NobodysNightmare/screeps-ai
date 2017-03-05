@@ -43,7 +43,7 @@ module.exports = {
             }
             
             if(!target && creep.room.terminal) {
-                if(creep.room.storage && creep.room.storage.store.energy > 30000) {
+                if(creep.room.storage && creep.room.storage.store.energy > 100000) {
                     var terminal = creep.room.terminal;
                     if(_.sum(terminal.store) < terminal.storeCapacity && terminal.store[RESOURCE_ENERGY] < 100000) {
                         target = terminal;
