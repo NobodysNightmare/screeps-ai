@@ -20,6 +20,5 @@ This is my personal AI for the computer game [Screeps](https://screeps.com).
     * e.g. only spawn one upgrader
 * Improve base building
     * build storage in a good location
-    * build clustered sets of extensions (without blocking pathways)
     * build towers
 * Allow to define and recognize allied players (do not harm them)
