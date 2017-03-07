@@ -7,6 +7,7 @@ var upgrader = require("role.upgrader");
 
 const LOW_ENERGY_LIMIT = 50000;
 const HIGH_ENERGY_LIMIT = 200000;
+const EXCESSIVE_ENERGY_LIMIT = 500000;
 
 module.exports = function(roomai) {
     var room = roomai.room;
@@ -70,28 +71,38 @@ module.exports = function(roomai) {
             roomai.spawn(parts, memory);
         },
         energyPerTick: function() {
+            let energy = 10;
+            
             if(room.storage) {
-                if(room.storage.store.energy > HIGH_ENERGY_LIMIT) {
-                    return 20;
+                if(room.controller.level == 7 && room.storage.store.energy > EXCESSIVE_ENERGY_LIMIT) {
+                    energy = 40;
+                } else if(room.storage.store.energy > HIGH_ENERGY_LIMIT) {
+                    energy = 20;
                 } else if(room.storage.store.energy < LOW_ENERGY_LIMIT) {
-                    return 4;
-                } else {
-                    return 10;
+                    energy = 4;
                 }
+            }
+            
+            if(room.controller.level == 8) {
+                return _.min([15, energy]);
             } else {
-                return 10;
+                return energy;
             }
         },
         upgraderCount: function() {
-            if(room.controller.level >= 7) {
-                return 1;
-            } else {
-                if(room.storage && room.storage.store.energy < LOW_ENERGY_LIMIT) {
+            if(room.controller.level == 8) return 1;
+            
+            if(room.storage) {
+                if(room.storage.store.energy < LOW_ENERGY_LIMIT) {
                     return 1;
-                } else {
-                    return 2;
+                }
+                
+                if(room.controller.level == 7 && room.storage.store.energy < EXCESSIVE_ENERGY_LIMIT) {
+                    return 1;
                 }
             }
+            
+            return 2;
         }
     }
 };
