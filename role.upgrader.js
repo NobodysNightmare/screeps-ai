@@ -26,7 +26,7 @@ module.exports = {
             // only really withdraw when the carry is empty, because only one
             // creep can withdraw from a container in the same tick. So we ensure
             // that multiple ugraders can do their job simultaneously
-            if(creep.carry.energy == 0) {
+            if(creep.carry.energy < _.filter(creep.body, (part) => part.type == WORK).length) {
                 withdrawResult = creep.withdraw(container, RESOURCE_ENERGY);
             }
             
