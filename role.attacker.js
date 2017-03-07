@@ -1,3 +1,5 @@
+const ff = require("helper.friendFoeRecognition");
+
 module.exports = {
     name: "attacker",
     meeleeConfigs: [
@@ -18,7 +20,7 @@ module.exports = {
         }
         
         if(!target) {
-            target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+            target = ff.findClosestHostileByRange(creep.pos);
         }
         
         if(!target) {

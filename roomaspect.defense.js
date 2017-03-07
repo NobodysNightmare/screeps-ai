@@ -1,3 +1,4 @@
+const ff = require("helper.friendFoeRecognition");
 var spawnHelper = require("helper.spawning");
 var defender = require("role.defender");
 
@@ -9,7 +10,7 @@ module.exports = function(roomai) {
             
             if(!primaryHostile || primaryHostile.pos.roomName != room.name) {
                 primaryHostile = null;
-                var hostiles = room.find(FIND_HOSTILE_CREEPS);
+                var hostiles = ff.findHostiles(room);
                 if(hostiles.length > 0) {
                     primaryHostile = hostiles[0];
                 }

@@ -1,6 +1,8 @@
+const ff = require("helper.friendFoeRecognition");
+
 module.exports = {
     run: function(tower) {
-        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        var closestHostile = ff.findClosestHostileByRange(tower.pos);
         if(closestHostile) {
             tower.attack(closestHostile);
             return;
