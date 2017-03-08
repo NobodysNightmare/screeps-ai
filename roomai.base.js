@@ -12,7 +12,8 @@ var aspects = [
     require("roomaspect.controller"),
     require("roomaspect.builders"),
     require("roomaspect.minerals"),
-    require("roomaspect.remoteMines")
+    require("roomaspect.remoteMines"),
+    require("roomaspect.manualOperations")
 ];
 
 var spawnClaimGroup = require("spawn.claimGroup");

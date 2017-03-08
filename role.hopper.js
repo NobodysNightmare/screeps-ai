@@ -4,9 +4,15 @@ const movement = require("helper.movement");
 // Goal is to drain energy out of the room using hostile towers
 module.exports = {
     name: "hopper",
-    configs: [
-        [TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
-    ],
+    configs: function() {
+        var configs = [];
+        for(var toughness = 25; toughness >= 10; toughness -= 1) {
+            let config = Array(toughness).fill(TOUGH).concat(Array(toughness).fill(MOVE));
+            configs.push(config);
+        }
+        
+        return configs;
+    },
     run: function(creep) {
         let targetName = creep.memory.room;
         if(creep.room.name !== targetName) {
