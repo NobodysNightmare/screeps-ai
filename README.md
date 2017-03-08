@@ -2,10 +2,26 @@
 
 This is my personal AI for the computer game [Screeps](https://screeps.com).
 
+## Manual control
+
+### Build Extension Cluster
+
+Place a flag called **extensionCluster** inside a claimed room.
+This will mark a permanent area for extensions.
+
+A **clear** flag on the same spot will remove that area again.
+
+### Draining a hostile room
+
+To spawn some creeps that drain a hostile room by attracting the towers
+fire, place a **drain** flag in the target room and a **spawnDrain** flag
+in the room that shall spawn the creeps for that operation.
+
 ## TODOs
 
 * Use links to collect energy from remote mines at room border
 * Better defense mechanics
+    * Automatic Safe-Mode activation
     * towers should attack target picked by defense aspect
     * defense aspect should actually "think" about which target to pick
     * while defending a reloader should keep towers supplied with energy
