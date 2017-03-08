@@ -23,8 +23,8 @@ module.exports = function(roomai) {
             let hoppers = spawnHelper.globalCreepsWithRole(hopper.name, { filter: (c) => c.memory.room == targetRoom });
             
             for(let hopper of hoppers) {
-                if(!_.any(healers, (c) => c.memory.target == hopper.id)) {
-                    roomai.spawn(spawnHelper.bestAffordableParts(room, healer.configs({ minHeal: 5, maxHeal: 20, healRatio: 2 })), { role: healer.name, target: hopper.id, avoidHostileRooms: true });
+                if(!_.any(healers, (c) => c.memory.target == hopper.name)) {
+                    roomai.spawn(spawnHelper.bestAffordableParts(room, healer.configs({ minHeal: 5, maxHeal: 20, healRatio: 2 })), { role: healer.name, target: hopper.name, avoidHostileRooms: true });
                 }
             }
             
