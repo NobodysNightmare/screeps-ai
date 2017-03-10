@@ -10,10 +10,12 @@ module.exports = {
             let config = Array(toughness).fill(TOUGH).concat(Array(toughness).fill(MOVE));
             configs.push(config);
         }
-        
+
         return configs;
     },
     run: function(creep) {
+        if(creep.ticksToLive == 1500) creep.notifyWhenAttacked(false);
+
         let targetName = creep.memory.room;
         if(creep.room.name !== targetName) {
             if(creep.hits == creep.hitsMax) {
@@ -45,7 +47,7 @@ module.exports = {
             creep.move(creep.pos.getDirectionTo(creep.pos.findClosestByRange(FIND_EXIT)));
         }
     }
-};};
+};
 
 const profiler = require("screeps-profiler");
 profiler.registerObject(module.exports, 'hopper');
