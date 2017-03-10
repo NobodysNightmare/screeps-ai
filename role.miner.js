@@ -20,7 +20,7 @@ module.exports = {
         if(_.sum(creep.carry) < creep.carryCapacity) {
             harvestResult = creep.harvest(target);
         }
-        
+
         if(harvestResult == OK) {
             var store = logistic.storeFor(target);
             if(store) {
@@ -49,3 +49,6 @@ module.exports = {
         }
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'miner');

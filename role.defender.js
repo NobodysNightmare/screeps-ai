@@ -13,7 +13,7 @@ module.exports = {
             movement.moveToRoom(creep, creep.memory.room);
             return;
         }
-        
+
         var target = Game.getObjectById(room.memory.primaryHostile);
         if(target) {
             this.attack(creep, target);
@@ -32,7 +32,7 @@ module.exports = {
             movement.moveToRoom(creep, creep.memory.originRoom);
             return;
         }
-        
+
         if(creep.pos.isNearTo(spawn)) {
             spawn.recycleCreep(creep);
         } else {
@@ -40,3 +40,6 @@ module.exports = {
         }
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'defender');

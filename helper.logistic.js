@@ -1,5 +1,5 @@
 var storeStructures = [
-    STRUCTURE_CONTAINER, 
+    STRUCTURE_CONTAINER,
     STRUCTURE_LINK,
     STRUCTURE_STORAGE,
     STRUCTURE_TERMINAL
@@ -14,16 +14,16 @@ module.exports = {
     },
     obtainEnergy: function(creep, source, considerStorage) {
         this.pickupSpareEnergy(creep);
-        
+
         if(considerStorage) {
             var result = this.obtainEnergyFromStore(creep, creep.room.storage);
             if(result) {
                 return result;
             }
         }
-        
+
         if(!source) return null;
-        
+
         var store = this.storeFor(source);
         var result = this.obtainEnergyFromStore(creep, store);
         if(result) {
@@ -49,7 +49,7 @@ module.exports = {
                 return this.obtainResults.moving;
             }
         }
-        
+
         return null;
     },
     pickupSpareEnergy: function(creep) {
@@ -61,7 +61,7 @@ module.exports = {
     },
     storeFor: function(target, includeConstructions, structureType) {
         if(target && storeStructures.includes(target.structureType) && (!structureType || structureType == target.structureType)) return target;
-        
+
         if(!includeConstructions && !structureType) {
             var stores = target.room.memory.stores;
             if(stores) {
@@ -69,7 +69,7 @@ module.exports = {
                 if(store) return store;
             }
         }
-        
+
         var structures = target.pos.findInRange(FIND_STRUCTURES, 2);
         var store = _.find(structures, (r) => storeStructures.includes(r.structureType) && (!structureType || structureType == r.structureType));
         if(store) {
@@ -77,7 +77,7 @@ module.exports = {
             target.room.memory.stores[target.id] = store.id;
             return store;
         }
-        
+
         if(includeConstructions) {
             var constructions = target.pos.findInRange(FIND_CONSTRUCTION_SITES, 2);
             return _.find(constructions, (r) => storeStructures.includes(r.structureType) && (!structureType || structureType == r.structureType));
@@ -89,7 +89,7 @@ module.exports = {
         if(Memory.distances && Memory.distances[source.id] && Memory.distances[source.id][destination.id]) {
             return Memory.distances[source.id][destination.id];
         }
-        
+
         // TODO: consider some kinds of obstacles?
         var pathResult = PathFinder.search(source.pos, [{ pos: destination.pos, range: 1 }]);
         var path = pathResult.path;
@@ -99,3 +99,6 @@ module.exports = {
         return path.length;
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'logistics');

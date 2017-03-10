@@ -18,15 +18,15 @@ module.exports = {
         if(!target) {
             target = creep.pos.findClosestByRange(FIND_HOSTILE_SPAWNS);
         }
-        
+
         if(!target) {
             target = ff.findClosestHostileByRange(creep.pos);
         }
-        
+
         if(!target) {
             target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType != STRUCTURE_CONTROLLER });
         }
-        
+
         if(target) {
             this.attack(creep, target);
         }
@@ -37,3 +37,6 @@ module.exports = {
         }
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'attacker');

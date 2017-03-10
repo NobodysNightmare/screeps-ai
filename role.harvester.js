@@ -24,7 +24,7 @@ module.exports = {
         if(!creep.memory.delivering && creep.carry.energy == creep.carryCapacity) {
             creep.memory.delivering = true;
         }
-        
+
         if(creep.memory.delivering) {
             var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                     filter: (structure) => {
@@ -32,7 +32,7 @@ module.exports = {
                             structure.energy < structure.energyCapacity;
                     }
             });
-            
+
             if(!target) {
                 target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
                     filter: (structure) => {
@@ -41,7 +41,7 @@ module.exports = {
                     }
                 });
             }
-            
+
             if(!target && creep.room.terminal) {
                 if(creep.room.storage && creep.room.storage.store.energy > 100000) {
                     var terminal = creep.room.terminal;
@@ -50,7 +50,7 @@ module.exports = {
                     }
                 }
             }
-            
+
             if(target) {
                 if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
@@ -67,3 +67,6 @@ module.exports = {
         }
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'harvester');

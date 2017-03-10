@@ -15,14 +15,14 @@ module.exports = {
             // maximum creep size is 50 parts
             if(config.length <= 50) configs.push(config);
         }
-        
+
         return configs;
     },
     run: function(creep) {
         if(creep.memory.resource == RESOURCE_ENERGY) {
             logistic.pickupSpareEnergy(creep);
         }
-        
+
         if(_.sum(creep.carry) > 0) {
             if(creep.memory.selfSustaining) {
                 var road = _.find(creep.pos.lookFor(LOOK_STRUCTURES), (s) => s.structureType == STRUCTURE_ROAD);
@@ -35,7 +35,7 @@ module.exports = {
                     return; // stop on pending construction sites
                 }
             }
-            
+
             var target = logistic.storeFor(this.destination(creep));
             if(creep.transfer(target, creep.memory.resource) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
@@ -68,3 +68,6 @@ module.exports = {
       return Game.getObjectById(creep.memory.destination);
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'carrier');

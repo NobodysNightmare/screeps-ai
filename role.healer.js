@@ -11,7 +11,7 @@ module.exports = {
             let config = Array(heal).fill(HEAL).concat(Array(Math.ceil(heal / (options.healRatio || 1))).fill(MOVE));
             if(config.length <= 50) configs.push(config);
         }
-        
+
         return configs;
     },
     run: function(creep) {
@@ -19,7 +19,7 @@ module.exports = {
             this.heal(creep, creep);
             return;
         }
-        
+
         var target = Game.creeps[creep.memory.target];
         if(target) {
             this.heal(creep, target);
@@ -38,7 +38,10 @@ module.exports = {
     findNewTarget: function(creep) {
         let newTarget = creep.pos.findClosestByRange(FIND_MY_CREEPS, { filter: (c) => c.hits < c.hitsMax });
         if(!newTarget) return;
-        
+
         creep.memory.target = newTarget.name;
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'healer');

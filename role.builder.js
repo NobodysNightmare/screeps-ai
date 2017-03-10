@@ -37,12 +37,12 @@ module.exports = {
                 return lastTarget;
             }
         }
-        
+
         var target = this.findEmergencyRepairTarget(creep) ||
                      this.findNormalPriorityConstructionTarget(creep) ||
                      this.findLowPriorityConstructionTarget(creep) ||
                      this.findNormalRepairTarget(creep);
-        
+
         return target;
     },
     findNormalPriorityConstructionTarget: function(creep) {
@@ -53,7 +53,7 @@ module.exports = {
     },
     findNormalRepairTarget: function(creep) {
         var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
-            return structure.hits < structure.hitsMax && 
+            return structure.hits < structure.hitsMax &&
                     structure.hits < defenseMaxHealth &&
                     (structure.structureType != STRUCTURE_ROAD || (structure.hits / structure.hitsMax <= 0.8)) &&
                     structure.structureType != STRUCTURE_CONTROLLER;
@@ -61,22 +61,22 @@ module.exports = {
         if(targets.length > 0) {
             return _.sortBy(targets, (t) => t.hits / _.min([t.hitsMax, fullHealthEquiv]))[0];
         }
-        
+
         return null;
     },
     findEmergencyRepairTarget: function(creep) {
         var that = this;
         var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
             return structure.hits < that.emergencyHitpoints(structure) &&
-                    structure.hits / structure.hitsMax < emergencyHitPercent && 
+                    structure.hits / structure.hitsMax < emergencyHitPercent &&
                     structure.hits < (fullHealthEquiv * 2) &&
                     structure.structureType != STRUCTURE_CONTROLLER;
         } });
         if(targets.length > 0) {
-            var targetsByDistance = _.sortBy(targets, (t) => creep.pos.getRangeTo(t)); 
+            var targetsByDistance = _.sortBy(targets, (t) => creep.pos.getRangeTo(t));
             return _.sortBy(targetsByDistance, (t) => t.hits)[0];
         }
-        
+
         return null;
     },
     emergencyHitpoints: function(structure) {
@@ -89,13 +89,13 @@ module.exports = {
     constructOrRepair: function(creep, target) {
         if(!target) return;
         var result;
-        
+
         if(this.isConstructionSite(target)) {
             result = creep.build(target);
         } else {
             result = creep.repair(target);
         }
-        
+
         if(result == OK) {
             // lock onto target as soon as actual work is happening
             creep.memory.lastTarget = target.id;
@@ -122,3 +122,6 @@ module.exports = {
         }
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'builder');

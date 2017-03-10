@@ -8,3 +8,6 @@ module.exports = {
         creep.moveTo(target, { ignoreDestructibleStructures: creep.memory.ignoreDestructibleStructures });
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'flagHunter');

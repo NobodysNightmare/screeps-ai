@@ -7,3 +7,6 @@ module.exports = {
         movement.moveToRoom(creep, creep.memory.target);
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'observer');

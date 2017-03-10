@@ -19,27 +19,32 @@ var constructionClaimSpawn = require("construction.claimSpawn");
 
 var roomAi = require('roomai.base');
 
-module.exports.loop = function() {
-    for(var role of roles) {
-        var creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
-        for(var creep of creeps) {
-            role.run(creep);
-        }
-    }
-    
-    for(var roomName in Game.rooms) {
-        var room = Game.rooms[roomName];
-        if(room.controller && room.controller.my) {
-            roomAi(room).run();
-        }
-    }
-    constructionClaimSpawn.perform();
+const profiler = require('screeps-profiler');
+// profiler.enable();
 
-    if(Game.time % 100 == 50) {
-        for(var name in Memory.creeps) {
-            if(!Game.creeps[name]) {
-                delete Memory.creeps[name];
+module.exports.loop = function() {
+    profiler.wrap(function() {
+        for(var role of roles) {
+            var creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
+            for(var creep of creeps) {
+                role.run(creep);
             }
         }
-    }
+
+        for(var roomName in Game.rooms) {
+            var room = Game.rooms[roomName];
+            if(room.controller && room.controller.my) {
+                roomAi(room).run();
+            }
+        }
+        constructionClaimSpawn.perform();
+
+        if(Game.time % 100 == 50) {
+            for(var name in Memory.creeps) {
+                if(!Game.creeps[name]) {
+                    delete Memory.creeps[name];
+                }
+            }
+        }
+    });
 }

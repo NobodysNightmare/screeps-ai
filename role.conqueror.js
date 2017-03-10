@@ -17,14 +17,14 @@ module.exports = {
             creep.moveTo(targetPos);
             return;
         }
-        
+
         if(creep.room.find(FIND_MY_SPAWNS).length > 0) {
             creep.memory.role = "harvester";
             creep.memory.source = creep.pos.findClosestByRange(FIND_SOURCES).id;
             creep.say("Spawn is there. Becoming a harvester...");
             return;
         }
-        
+
         if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
         }
@@ -53,7 +53,10 @@ module.exports = {
         if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
             creep.moveTo(source);
         }
-        
+
         return source;
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'conqueror');

@@ -38,3 +38,6 @@ module.exports = {
         return _.filter(creeps, (creep) => creep.memory.role == role);
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'spawning');
