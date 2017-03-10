@@ -17,6 +17,9 @@ To spawn some creeps that drain a hostile room by attracting the towers
 fire, place a **drain** flag in the target room and a **spawnDrain** flag
 in the room that shall spawn the creeps for that operation.
 
+The color of the **spawnDrain** flag determines how many hopper/healer
+pairs are spawned (red = 1; white = 10).
+
 ## TODOs
 
 * Use links to collect energy from remote mines at room border

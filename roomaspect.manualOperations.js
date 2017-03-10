@@ -24,11 +24,11 @@ module.exports = function(roomai) {
             
             for(let hopperCreep of hoppers) {
                 if(!_.any(healers, (c) => c.memory.target == hopperCreep.name)) {
-                    roomai.spawn(spawnHelper.bestAffordableParts(room, healer.configs({ minHeal: 5, maxHeal: 20, healRatio: 2 })), { role: healer.name, target: hopperCreep.name, avoidHostileRooms: true });
+                    roomai.spawn(spawnHelper.bestAffordableParts(room, healer.configs({ minHeal: 5, maxHeal: 20, healRatio: 1 })), { role: healer.name, target: hopperCreep.name, avoidHostileRooms: true });
                 }
             }
             
-            if(hoppers.length < drainHopperCount) {
+            if(hoppers.length < Game.flags.spawnDrain.color) {
                 roomai.spawn(spawnHelper.bestAvailableParts(room, hopper.configs()), { role: hopper.name, room: targetRoom });
             }
         }
