@@ -33,7 +33,7 @@ module.exports = {
     },
     attack: function(creep, target) {
         if(creep.attack(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 0 });
         }
     }
 };
