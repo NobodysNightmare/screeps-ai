@@ -21,7 +21,6 @@ in the room that shall spawn the creeps for that operation.
 
 * Use links to collect energy from remote mines at room border
 * Better defense mechanics
-    * Automatic Safe-Mode activation
     * towers should attack target picked by defense aspect
     * defense aspect should actually "think" about which target to pick
     * while defending a reloader should keep towers supplied with energy
