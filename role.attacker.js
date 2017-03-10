@@ -14,7 +14,15 @@ module.exports = {
         }
     },
     attackRoom: function(creep) {
-        var target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_TOWER });
+        var target = null;
+        if(_.any(creep.body, (p) => p.type == RANGED_ATTACK)) {
+            target = ff.findClosestHostileByRange(creep.pos, { filter: (c) => creep.pos.inRangeTo(c, 3) });
+        }
+
+        if(!target) {
+            target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_TOWER });
+        }
+
         if(!target) {
             target = creep.pos.findClosestByRange(FIND_HOSTILE_SPAWNS);
         }
@@ -32,7 +40,9 @@ module.exports = {
         }
     },
     attack: function(creep, target) {
-        if(creep.attack(target) == ERR_NOT_IN_RANGE) {
+        let rangedResult = creep.rangedAttack(target);
+        let meleeResult = creep.attack(target);
+        if(rangedResult == ERR_NOT_IN_RANGE || meleeResult == ERR_NOT_IN_RANGE) {
             creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 0 });
         }
     }
