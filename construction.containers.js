@@ -23,3 +23,6 @@ module.exports = {
         return result == OK;
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'containers');

@@ -27,3 +27,6 @@ module.exports = {
         return room.find(FIND_HOSTILE_CREEPS, { filter: (c) => friends.includes(c.owner.username) && filter(c) });
     }
 };
+
+const profiler = require("screeps-profiler");
+profiler.registerObject(module.exports, 'ff');
