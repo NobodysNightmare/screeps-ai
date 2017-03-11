@@ -1,4 +1,5 @@
 const spawnHelper = require("helper.spawning");
+const attacker = require("role.attacker");
 const healer = require("role.healer");
 const hopper = require("role.hopper");
 
@@ -9,6 +10,7 @@ module.exports = function(roomai) {
     return {
         run: function() {
             this.drainRoom();
+            this.attackRoom();
         },
         drainRoom: function() {
             if(!(Game.flags.spawnDrain && Game.flags.spawnDrain.pos.roomName == room.name)) {
@@ -24,12 +26,33 @@ module.exports = function(roomai) {
             
             for(let hopperCreep of hoppers) {
                 if(!_.any(healers, (c) => c.memory.target == hopperCreep.name)) {
-                    roomai.spawn(spawnHelper.bestAffordableParts(room, healer.configs({ minHeal: 5, maxHeal: 20, healRatio: 1 })), { role: healer.name, target: hopperCreep.name, avoidHostileRooms: true });
+                    let healerParts;
+                    if(hopperCreep.spawning) {
+                        healerParts = spawnHelper.bestAvailableParts(room, healer.configs({ minHeal: 5, maxHeal: 20, healRatio: 1 }));
+                    } else {
+                        healerParts = spawnHelper.bestAffordableParts(room, healer.configs({ minHeal: 5, maxHeal: 20, healRatio: 1 }));
+                    }
+                    roomai.spawn(healerParts, { role: healer.name, target: hopperCreep.name, avoidHostileRooms: true });
                 }
             }
             
             if(hoppers.length < Game.flags.spawnDrain.color) {
                 roomai.spawn(spawnHelper.bestAvailableParts(room, hopper.configs()), { role: hopper.name, room: targetRoom });
+            }
+        },
+        attackRoom: function() {
+            if(!(Game.flags.spawnAttack && Game.flags.spawnAttack.pos.roomName == room.name)) {
+                return;
+            }
+            
+            if(!Game.flags.attack) return;
+            if(!roomai.canSpawn()) return;
+            
+            let targetRoom = Game.flags.attack.pos.roomName;
+            let attackers = spawnHelper.globalCreepsWithRole(attacker.name, { filter: (c) => c.memory.flag == "attack" });
+            
+            if(attackers.length < Game.flags.spawnAttack.color) {
+                roomai.spawn(spawnHelper.bestAvailableParts(room, attacker.meleeConfigs()), { role: attacker.name, flag: "attack" });
             }
         }
     }

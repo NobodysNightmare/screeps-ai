@@ -2,9 +2,16 @@ const ff = require("helper.friendFoeRecognition");
 
 module.exports = {
     name: "attacker",
-    meeleeConfigs: [
-        [ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE]
-    ],
+    meleeConfigs: function(options) {
+        options = options || {};
+        var configs = [];
+        for(var attack = (options.maxAttack || 25); attack >= (options.minAttack || 1); attack -= 1) {
+            let config = Array(attack).fill(ATTACK).concat(Array(attack).fill(MOVE));
+            if(config.length <= 50) configs.push(config);
+        }
+
+        return configs;
+    },
     run: function(creep) {
         var flag = Game.flags[creep.memory.flag];
         if(creep.pos.roomName == flag.pos.roomName) {

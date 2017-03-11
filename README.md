@@ -20,6 +20,15 @@ in the room that shall spawn the creeps for that operation.
 The color of the **spawnDrain** flag determines how many hopper/healer
 pairs are spawned (red = 1; white = 10).
 
+### Attacking a hostile room
+
+**Work in progress**
+
+To spawn some creeps that attack a hostile room, place an **attack** flag in the target room and a **spawnAttack** flag
+in the room that shall spawn the creeps for that operation.
+
+The color of the **spawnAttack** flag determines how many attackers are spawned (red = 1; white = 10).
+
 ## TODOs
 
 * Use links to collect energy from remote mines at room border
