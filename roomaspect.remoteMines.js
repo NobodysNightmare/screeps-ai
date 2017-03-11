@@ -6,6 +6,7 @@ const reserver = require('role.reserver');
 
 const logistic = require("helper.logistic");
 const spawnHelper = require("helper.spawning");
+const ff = require("helper.friendFoeRecognition");
 
 module.exports = function(roomai) {
     var room = roomai.room;
@@ -27,7 +28,7 @@ module.exports = function(roomai) {
             }
         },
         spawnDefender: function(remoteRoom) {
-            var hostile = remoteRoom.find(FIND_HOSTILE_CREEPS)[0];
+            var hostile = ff.findHostiles(remoteRoom)[0];
             remoteRoom.memory.primaryHostile = hostile && hostile.id;
             if(!hostile) return;
 
