@@ -72,6 +72,7 @@ function getFilter() {
 const functionBlackList = [
   'getUsed', // Let's avoid wrapping this... may lead to recursion issues and should be inexpensive.
   'constructor', // es6 class constructors need to be called with `new`
+  'emergencyHitpoints' // own method. It is cheap, but called very often...
 ];
 
 function wrapFunction(name, originalFunction) {
