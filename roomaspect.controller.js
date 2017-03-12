@@ -33,11 +33,13 @@ module.exports = function(roomai) {
             this.buildUpgraders();
         },
         buildUpgraders: function() {
-            if(!roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(roomai, upgrader.name) >= this.upgraderCount()) {
+            let parts = spawnHelper.bestAvailableParts(room, upgrader.configsForEnergyPerTick(this.energyPerTick() / this.upgraderCount()));
+            let spawnDuration = spawnHelper.spawnDuration(parts);
+            let existingUpgraders = _.filter(spawnHelper.localCreepsWithRole(roomai, upgrader.name), (c) => !c.ticksToLive || c.ticksToLive > spawnDuration);
+            if(!roomai.canSpawn() || existingUpgraders.length >= this.upgraderCount()) {
                 return;
             }
 
-            var parts = spawnHelper.bestAvailableParts(room, upgrader.configsForEnergyPerTick(this.energyPerTick() / this.upgraderCount()));
             roomai.spawn(parts, { role: upgrader.name });
         },
         buildCarriers: function() {

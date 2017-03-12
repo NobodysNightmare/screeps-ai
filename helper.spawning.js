@@ -24,6 +24,10 @@ module.exports = {
                     return _.sum(_.map(config, (part) => BODYPART_COST[part])) <= price;
                 });
     },
+    spawnDuration: function(config) {
+        if(!config) return 0;
+        return config.length * CREEP_SPAWN_TIME;
+    },
     localCreepsWithRole: function(roomai, role) {
         let creeps = roomai.room.find(FIND_MY_CREEPS);
         creeps = creeps.concat(_.compact(_.map(roomai.spawns, (spawn) => spawn.spawning && Game.creeps[spawn.spawning.name])));

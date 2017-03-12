@@ -30,12 +30,13 @@ module.exports = function(roomai) {
                 return;
             }
 
-            var existingMiners = spawnHelper.localCreepsWithRole(roomai, miner.name);
+            let parts = spawnHelper.bestAffordableParts(room, miner.energyConfigs, true);
+            let spawnDuration = spawnHelper.spawnDuration(parts);
+            let existingMiners = _.filter(spawnHelper.localCreepsWithRole(roomai, miner.name), (c) => !c.ticksToLive || c.ticksToLive > spawnDuration);
             for(var source of sources) {
                 if(!_.any(existingMiners, (m) => m.memory.target == source.id) &&
                     logistic.storeFor(source)) {
 
-                    var parts = spawnHelper.bestAffordableParts(room, miner.energyConfigs, true);
                     var memory = {
                         role: miner.name,
                         target: source.id,
