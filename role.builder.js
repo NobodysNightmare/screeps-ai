@@ -69,7 +69,6 @@ module.exports = {
         var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
             return structure.hits < that.emergencyHitpoints(structure) &&
                     structure.hits / structure.hitsMax < emergencyHitPercent &&
-                    structure.hits < (fullHealthEquiv * 2) &&
                     structure.structureType != STRUCTURE_CONTROLLER;
         } });
         if(targets.length > 0) {
