@@ -29,6 +29,11 @@ in the room that shall spawn the creeps for that operation.
 
 The color of the **spawnAttack** flag determines how many attackers are spawned (red = 1; white = 10).
 
+### Claiming a room
+
+To claim a room, place a **claim** flag at the position where the first spawn shall be built.
+The room that should spawn the creeps needed for colonization needs a **spawnClaim** flag.
+
 ## TODOs
 
 * Use links to collect energy from remote mines at room border
@@ -39,10 +44,7 @@ The color of the **spawnAttack** flag determines how many attackers are spawned 
     * Better rampart/wall mechanics
         * allow higher repair levels
         * probably different levels for ramparts depending on purpose (e.g. more on Spawner?)
-* Rework room claiming
-    * more independence on "main" room
-    * more accessible way to initiate claiming
-    * automatically start claiming as soon as room is ready
+* Automatically start claiming as soon as room is ready (e.g. if it is currently claimed by another player)
 * Improve base building
     * build storage in a good location
     * build towers

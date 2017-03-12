@@ -1,25 +1,22 @@
-var spawnHelper = require('helper.spawning');
-
 module.exports = {
     name: "claimer",
-    partConfigs: [
-        [CLAIM, MOVE]
-    ],
-    shouldBuild: function(spawn) {
-        return false;
-    },
-    chooseParts: function(room) {
-        return spawnHelper.bestAvailableParts(room, this.partConfigs);
-    },
+    parts: [CLAIM, MOVE],
     run: function(creep) {
-        var targetPos = new RoomPosition(creep.memory.target.x, creep.memory.target.y, creep.memory.target.roomName);
-        if(creep.room.name != targetPos.roomName) {
-            creep.moveTo(targetPos);
+        let flag = Game.flags.claim;
+        if(!flag) return;
+        if(creep.room.name != flag.pos.roomName) {
+            creep.moveTo(flag);
             return;
         }
 
-        if(creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(creep.room.controller);
+        let target = creep.room.controller;
+        let claimResult = creep.claimController(target);
+        if(claimResult == OK) {
+            if(!target.sign || target.sign.username !== "NobodysNightmare") {
+                creep.signController(target, "Owned by Y Pact.");
+            }
+        } else if(claimResult == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target);
         }
     }
 };

@@ -16,7 +16,6 @@ var aspects = [
     require("roomaspect.manualOperations")
 ];
 
-var spawnClaimGroup = require("spawn.claimGroup");
 var structureTower = require("structure.tower");
 var structureTerminal = require("structure.terminal");
 
@@ -33,12 +32,6 @@ module.exports = function(room) {
         run: function() {
             for(var aspect of aspects) {
                 aspect(this).run();
-            }
-            
-            // TODO: convert to aspect
-            var rootSpawn = Game.spawns["Root"];
-            if(rootSpawn) {
-                spawnClaimGroup.perform(rootSpawn);
             }
             
             for(var tower of room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {

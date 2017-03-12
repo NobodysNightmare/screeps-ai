@@ -2,19 +2,19 @@ var spawnHelper = require('helper.spawning');
 
 module.exports = {
     name: "conqueror",
-    partConfigs: [
-        [WORK, MOVE, WORK, MOVE, WORK, MOVE, WORK, MOVE, CARRY, MOVE, CARRY, MOVE]
-    ],
-    shouldBuild: function(spawn) {
-        return false;
-    },
-    chooseParts: function(room) {
-        return spawnHelper.bestAvailableParts(room, this.partConfigs);
+    configs: function() {
+        var configs = [];
+        for(var parts = 10; parts >= 2; parts -= 1) {
+            let config = Array(parts).fill(WORK).concat(Array(parts).fill(CARRY)).concat(Array(parts * 2).fill(MOVE));
+            configs.push(config);
+        }
+
+        return configs;
     },
     run: function(creep) {
-        var targetPos = new RoomPosition(creep.memory.target.x, creep.memory.target.y, creep.memory.target.roomName);
-        if(creep.room.name != targetPos.roomName) {
-            creep.moveTo(targetPos);
+        let flag = Game.flags.claim;
+        if(creep.room.name != flag.pos.roomName) {
+            creep.moveTo(flag.pos);
             return;
         }
 

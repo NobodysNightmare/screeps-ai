@@ -1,6 +1,6 @@
 module.exports = {
     perform: function() {
-        var flag = Game.flags.Claim;
+        var flag = Game.flags.claim;
         if(!flag) return;
         
         var room = Game.rooms[flag.pos.roomName];
@@ -11,9 +11,7 @@ module.exports = {
             structure.destroy();
         }
         
-        if(room.createConstructionSite(flag.pos, STRUCTURE_SPAWN) == OK) {
-            flag.remove();
-        }
+        room.createConstructionSite(flag.pos, STRUCTURE_SPAWN);
     }
 };
 

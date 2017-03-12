@@ -2,6 +2,8 @@ const spawnHelper = require("helper.spawning");
 const attacker = require("role.attacker");
 const healer = require("role.healer");
 const hopper = require("role.hopper");
+const claimer = require("role.claimer");
+const conqueror = require("role.conqueror");
 
 const drainHopperCount = 2;
 
@@ -11,6 +13,7 @@ module.exports = function(roomai) {
         run: function() {
             this.drainRoom();
             this.attackRoom();
+            this.claimRoom();
         },
         drainRoom: function() {
             if(!(Game.flags.spawnDrain && Game.flags.spawnDrain.pos.roomName == room.name)) {
@@ -53,6 +56,29 @@ module.exports = function(roomai) {
             
             if(attackers.length < Game.flags.spawnAttack.color) {
                 roomai.spawn(spawnHelper.bestAvailableParts(room, attacker.meleeConfigs()), { role: attacker.name, flag: "attack" });
+            }
+        },
+        claimRoom: function() {
+            if(!(Game.flags.spawnClaim && Game.flags.spawnClaim.pos.roomName == room.name)) {
+                return;
+            }
+            
+            if(!Game.flags.claim) return;
+            if(!roomai.canSpawn()) return;
+            
+            let targetRoom = Game.flags.claim.room;
+            if(targetRoom && targetRoom.find(FIND_MY_SPAWNS).length > 0) return;
+            
+            let claimers = spawnHelper.globalCreepsWithRole(claimer.name);
+            let conquerors = spawnHelper.globalCreepsWithRole(conqueror.name);
+            let needClaimer = claimers.length == 0 && !(targetRoom && targetRoom.controller.my);
+            
+            if(needClaimer) {
+                roomai.spawn(claimer.parts, { role: claimer.name });
+            }
+            
+            if(conquerors.length < 2) {
+                roomai.spawn(spawnHelper.bestAvailableParts(room, conqueror.configs()), { role: conqueror.name });
             }
         }
     }
