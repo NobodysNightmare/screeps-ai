@@ -43,9 +43,6 @@ The color of the **spawnAttack** flag determines how many attackers are spawned 
     * more independence on "main" room
     * more accessible way to initiate claiming
     * automatically start claiming as soon as room is ready
-* Be more conservative during supply shortage
-    * e.g. only spawn one upgrader
 * Improve base building
     * build storage in a good location
     * build towers
-* Allow to define and recognize allied players (do not harm them)
