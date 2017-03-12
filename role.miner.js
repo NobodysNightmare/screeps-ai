@@ -16,6 +16,11 @@ module.exports = {
     run: function(creep) {
         var target = Game.getObjectById(creep.memory.target);
         if(!target) return;
+        
+        if(Game.time % 10 == 0 && creep.memory.resource == RESOURCE_ENERGY) {
+            this.considerSuicide(creep);
+        }
+        
         var harvestResult = OK;
         if(_.sum(creep.carry) < creep.carryCapacity) {
             harvestResult = creep.harvest(target);
@@ -47,6 +52,18 @@ module.exports = {
         } else {
             creep.pos.createConstructionSite(STRUCTURE_CONTAINER);
         }
+    },
+    considerSuicide: function(creep) {
+        let myWorkParts = this.countWorkParts(creep);
+        if(myWorkParts == 5) return;
+        
+        let betterMiner = creep.pos.findClosestByRange(FIND_MY_CREEPS, { filter: (c) => c.memory.role == this.name && c.memory.target == creep.memory.target && this.countWorkParts(c) > myWorkParts });
+        if(!betterMiner || creep.pos.getRangeTo(betterMiner) > 5) return;
+        
+        creep.suicide();
+    },
+    countWorkParts: function(creep) {
+        return _.filter(creep.body, (p) => p.type == WORK).length;
     }
 };
 

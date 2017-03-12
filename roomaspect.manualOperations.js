@@ -4,6 +4,7 @@ const healer = require("role.healer");
 const hopper = require("role.hopper");
 const claimer = require("role.claimer");
 const conqueror = require("role.conqueror");
+const miner = require("role.miner");
 
 const drainHopperCount = 2;
 
@@ -67,18 +68,31 @@ module.exports = function(roomai) {
             if(!roomai.canSpawn()) return;
             
             let targetRoom = Game.flags.claim.room;
-            if(targetRoom && targetRoom.find(FIND_MY_SPAWNS).length > 0) return;
-            
-            let claimers = spawnHelper.globalCreepsWithRole(claimer.name);
-            let conquerors = spawnHelper.globalCreepsWithRole(conqueror.name);
-            let needClaimer = claimers.length == 0 && !(targetRoom && targetRoom.controller.my);
-            
-            if(needClaimer) {
-                roomai.spawn(claimer.parts, { role: claimer.name });
+            if(targetRoom && targetRoom.find(FIND_MY_SPAWNS).length > 0) {
+                this.kickstartRoom(targetRoom);
+            } else {
+                let claimers = spawnHelper.globalCreepsWithRole(claimer.name);
+                let conquerors = spawnHelper.globalCreepsWithRole(conqueror.name);
+                let needClaimer = claimers.length == 0 && !(targetRoom && targetRoom.controller.my);
+                
+                if(needClaimer) {
+                    roomai.spawn(claimer.parts, { role: claimer.name });
+                }
+                
+                if(conquerors.length < 2) {
+                    roomai.spawn(spawnHelper.bestAvailableParts(room, conqueror.configs()), { role: conqueror.name });
+                }
             }
+        },
+        kickstartRoom: function(remoteRoom) {
+            if(remoteRoom.controller.level >= 4) return;
             
-            if(conquerors.length < 2) {
-                roomai.spawn(spawnHelper.bestAvailableParts(room, conqueror.configs()), { role: conqueror.name });
+            for(let source of remoteRoom.find(FIND_SOURCES)) {
+                // only considering maxed out miners
+                let hasMiner = _.any(spawnHelper.globalCreepsWithRole(miner.name), (c) => c.memory.target == source.id && miner.countWorkParts(c) == 5);
+                if(!hasMiner) {
+                    roomai.spawn(spawnHelper.bestAvailableParts(room, miner.energyConfigs), { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true });
+                }
             }
         }
     }
