@@ -40,7 +40,7 @@ module.exports = {
         return null; // something unexpected happened
     },
     obtainEnergyFromStore: function(creep, store) {
-        if(store && (store.energy > 0 || store.store.energy > 0)) {
+        if(store && (store.energy > 0 || (store.store && store.store.energy > 0))) {
             var result = creep.withdraw(store, RESOURCE_ENERGY);
             if(result == OK) {
                 return this.obtainResults.withdrawn;
