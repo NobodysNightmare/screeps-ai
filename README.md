@@ -44,7 +44,14 @@ The room that should spawn the creeps needed for colonization needs a **spawnCla
     * Better rampart/wall mechanics
         * allow higher repair levels
         * probably different levels for ramparts depending on purpose (e.g. more on Spawner?)
+    * Nuke notifications?
 * Automatically start claiming as soon as room is ready (e.g. if it is currently claimed by another player)
-* Improve base building
-    * build storage in a good location
-    * build towers
+* Flag-based base building
+    * Set tower locations
+    * Set Storage+Link Location
+* Minerals
+    * Process them in Labs
+    * Boost creeps
+* Supply nukes with Ghodium
+* Use observers to obtain vision on a room
+* Automated base-building?
