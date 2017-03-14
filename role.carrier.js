@@ -24,7 +24,7 @@ module.exports = {
         }
 
         if(_.sum(creep.carry) > 0) {
-            if(creep.memory.selfSustaining) {
+            if(creep.memory.selfSustaining && !(creep.room.controller && creep.room.controller.my)) {
                 var road = _.find(creep.pos.lookFor(LOOK_STRUCTURES), (s) => s.structureType == STRUCTURE_ROAD);
                 if(road) {
                     if(road.hits < 3000) {
