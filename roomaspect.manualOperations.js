@@ -85,7 +85,7 @@ module.exports = function(roomai) {
             }
         },
         kickstartRoom: function(remoteRoom) {
-            if(remoteRoom.controller.level >= 4) return;
+            if(remoteRoom.controller.level > 4) return;
             
             for(let source of remoteRoom.find(FIND_SOURCES)) {
                 // only considering maxed out miners
