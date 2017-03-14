@@ -1,4 +1,4 @@
-var roles = [
+const roles = [
     require("role.harvester"),
     require("role.miner"),
     require("role.upgrader"),
@@ -15,9 +15,10 @@ var roles = [
     require("role.observer")
 ];
 
-var constructionClaimSpawn = require("construction.claimSpawn");
+const constructionClaimSpawn = require("construction.claimSpawn");
 
-var roomAi = require('roomai.base');
+const roomAi = require('roomai.base');
+const stats = require("visual.globalStatistics");
 
 const profiler = require('screeps-profiler');
 // profiler.enable();
@@ -46,5 +47,7 @@ module.exports.loop = function() {
                 }
             }
         }
+        
+        stats.run();
     });
 }
