@@ -1,7 +1,6 @@
 var logistic = require("helper.logistic");
 
 const fullHealthEquiv = 50000;
-const defenseMaxHealth = 250000;
 var emergencyHitPercent = 0.3;
 
 module.exports = {
@@ -54,7 +53,6 @@ module.exports = {
     findNormalRepairTarget: function(creep) {
         var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
             return structure.hits < structure.hitsMax &&
-                    structure.hits < defenseMaxHealth &&
                     (structure.structureType != STRUCTURE_ROAD || (structure.hits / structure.hitsMax <= 0.8)) &&
                     structure.structureType != STRUCTURE_CONTROLLER;
         } });
