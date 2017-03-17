@@ -18,10 +18,11 @@ const roles = [
 const constructionClaimSpawn = require("construction.claimSpawn");
 
 const roomAi = require('roomai.base');
-const stats = require("visual.globalStatistics");
+const statsVisual = require("visual.globalStatistics");
+const profitVisual = require("visual.roomProfit");
 
 const profiler = require('screeps-profiler');
-// profiler.enable();
+profiler.enable();
 
 module.exports.loop = function() {
     profiler.wrap(function() {
@@ -48,6 +49,7 @@ module.exports.loop = function() {
             }
         }
         
-        stats.run();
+        statsVisual.run();
+        profitVisual.run();
     });
 }

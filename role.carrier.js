@@ -1,4 +1,5 @@
-var logistic = require('helper.logistic');
+const logistic = require('helper.logistic');
+const profitVisual = require("visual.roomProfit");
 
 module.exports = {
     name: "carrier",
@@ -37,7 +38,11 @@ module.exports = {
             }
 
             var target = logistic.storeFor(this.destination(creep));
-            if(creep.transfer(target, creep.memory.resource) == ERR_NOT_IN_RANGE) {
+            let transferResult = creep.transfer(target, creep.memory.resource);
+            if(transferResult == OK && creep.memory.registerRevenueFor && creep.memory.resource == RESOURCE_ENERGY) {
+                // assuming we always transfer all our energy
+                profitVisual.addRevenue(creep.memory.registerRevenueFor, creep.carry.energy);
+            } else if(transferResult == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
             }
         }

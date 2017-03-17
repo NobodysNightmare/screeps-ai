@@ -20,9 +20,13 @@ module.exports = {
         return this.bestPartsForPrice(partConfigs, energy);
     },
     bestPartsForPrice: function(partConfigs, price) {
+        let spawnHelper = this;
         return _.find(partConfigs, function(config) {
-                    return _.sum(_.map(config, (part) => BODYPART_COST[part])) <= price;
+                    return spawnHelper.costForParts(config) <= price;
                 });
+    },
+    costForParts: function(parts) {
+        return _.sum(_.map(parts, (part) => BODYPART_COST[part]))
     },
     spawnDuration: function(config) {
         if(!config) return 0;

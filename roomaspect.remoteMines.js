@@ -8,6 +8,8 @@ const logistic = require("helper.logistic");
 const spawnHelper = require("helper.spawning");
 const ff = require("helper.friendFoeRecognition");
 
+const profitVisual = require("visual.roomProfit");
+
 module.exports = function(roomai) {
     var room = roomai.room;
     return {
@@ -34,21 +36,21 @@ module.exports = function(roomai) {
 
             var hasDefender = _.any(spawnHelper.globalCreepsWithRole(defender.name), (c) => c.memory.room == remoteRoom.name);
             if(!hasDefender) {
-                roomai.spawn(spawnHelper.bestAvailableParts(room, defender.meeleeConfigs), { role: defender.name, room: remoteRoom.name, originRoom: room.name });
+                this.spawn(spawnHelper.bestAvailableParts(room, defender.meeleeConfigs), { role: defender.name, room: remoteRoom.name, originRoom: room.name }, remoteRoom.name);
             }
         },
         spawnReserver: function(remoteRoom) {
             var needReservation = !remoteRoom.controller.reservation || remoteRoom.controller.reservation.ticksToEnd < 2000;
             var hasReserver = _.any(spawnHelper.globalCreepsWithRole(reserver.name), (c) => c.memory.target == remoteRoom.controller.id);
             if(needReservation && !hasReserver) {
-                roomai.spawn(spawnHelper.bestAvailableParts(room, reserver.partConfigs), { role: reserver.name, target: remoteRoom.controller.id });
+                this.spawn(spawnHelper.bestAvailableParts(room, reserver.partConfigs), { role: reserver.name, target: remoteRoom.controller.id }, remoteRoom.name);
             }
         },
         spawnMiners: function(remoteRoom) {
             for(var source of remoteRoom.find(FIND_SOURCES)) {
                 var hasMiner = _.any(spawnHelper.globalCreepsWithRole(miner.name), (c) => c.memory.target == source.id);
                 if(!hasMiner) {
-                    roomai.spawn(spawnHelper.bestAvailableParts(room, miner.energyConfigs), { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true });
+                    this.spawn(spawnHelper.bestAvailableParts(room, miner.energyConfigs), { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true }, remoteRoom.name);
                 }
             }
         },
@@ -62,15 +64,16 @@ module.exports = function(roomai) {
                         source: source.id,
                         destination: room.storage.id,
                         resource: RESOURCE_ENERGY,
-                        selfSustaining: true
+                        selfSustaining: true,
+                        registerRevenueFor: remoteRoom.name
                     };
-                    roomai.spawn(spawnHelper.bestAvailableParts(room, carrier.configsForCapacity(this.neededCollectorCapacity(source), { workParts: 1 })), memory);
+                    this.spawn(spawnHelper.bestAvailableParts(room, carrier.configsForCapacity(this.neededCollectorCapacity(source), { workParts: 1 })), memory, remoteRoom.name);
                 }
             }
         },
         spawnObserver: function(roomName) {
             if(!_.any(spawnHelper.globalCreepsWithRole(observer.name), (c) => c.memory.target == roomName)) {
-                roomai.spawn(observer.parts, { role: observer.name, target: roomName });
+                this.spawn(observer.parts, { role: observer.name, target: roomName }, roomName);
             }
         },
         neededCollectorCapacity: function(source) {
@@ -78,6 +81,12 @@ module.exports = function(roomai) {
             var needed = logistic.distanceByPath(source, room.storage) * 20;
             // adding at least one extra CARRY to make up for inefficiencies
             return _.min([needed + 60, 2000]);
+        },
+        spawn: function(parts, memory, targetRoom) {
+            let result = roomai.spawn(parts, memory);
+            if(_.isString(result)) {
+                profitVisual.addCost(targetRoom, spawnHelper.costForParts(parts));
+            }
         }
     }
 };

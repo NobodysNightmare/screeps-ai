@@ -6,18 +6,15 @@ module.exports = {
     refresh: function() {
         if(Game.time % 10 !== 0) return;
         
-        let stats = {
-            energy: 0,
-            creeps: Object.keys(Game.creeps).length
-        };
+        let stats = Memory.stats;
         
+        stats.creeps = Object.keys(Game.creeps).length;
+        stats.energy = 0;
         for(let room of _.filter(Game.rooms, (r) => r.controller && r.controller.my)) {
             if(room.storage) {
                 stats.energy += room.storage.store.energy;
             }
         }
-        
-        Memory.stats = stats;
     },
     draw: function() {
         let visual = new RoomVisual();
