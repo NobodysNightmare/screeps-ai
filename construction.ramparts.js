@@ -7,7 +7,9 @@ var protectedStructures = [
     STRUCTURE_POWER_SPAWN,
     STRUCTURE_LAB,
     STRUCTURE_TERMINAL,
-    STRUCTURE_CONTAINER
+    STRUCTURE_CONTAINER,
+    STRUCTURE_NUKER,
+    STRUCTURE_OBSERVER
 ];
 
 module.exports = {
