@@ -43,7 +43,7 @@ module.exports = {
                 // assuming we always transfer all our energy
                 profitVisual.addRevenue(creep.memory.registerRevenueFor, creep.carry.energy);
             } else if(transferResult == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+                creep.travelTo(target);
             }
         }
         else {
@@ -52,7 +52,7 @@ module.exports = {
             var target = logistic.storeFor(this.source(creep));
             var result = creep.withdraw(target, creep.memory.resource);
             if(result == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+                creep.travelTo(target);
             } else if(result == OK) {
                 creep.memory.delivering = true;
             }

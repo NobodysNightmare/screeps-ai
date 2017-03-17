@@ -21,6 +21,8 @@ const roomAi = require('roomai.base');
 const statsVisual = require("visual.globalStatistics");
 const profitVisual = require("visual.roomProfit");
 
+require("traveler");
+
 const profiler = require('screeps-profiler');
 profiler.enable();
 
