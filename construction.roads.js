@@ -1,3 +1,8 @@
+const roadableStructures = [
+    STRUCTURE_RAMPART,
+    STRUCTURE_CONTAINER
+];
+
 module.exports = {
     perform: function(room) {
         if(Game.time % 100 != 0 || room.find(FIND_MY_SPAWNS).length == 0) {
@@ -24,17 +29,21 @@ module.exports = {
     buildRoadFromTo: function(room, start, end) {
         var path = start.pos.findPathTo(end, { ignoreCreeps: true, ignoreRoads: true });
         for(var point of path) {
-            room.createConstructionSite(point.x, point.y, STRUCTURE_ROAD);
+            this.buildRoad(new RoomPosition(point.x, point.y, room.name));
         }
     },
     buildRoadAround: function(room, position) {
         for(var xOff = -1; xOff <= 1; xOff++) {
             for(var yOff = -1; yOff <= 1; yOff++) {
                 if(xOff != 0 || yOff != 0) {
-                    room.createConstructionSite(position.x + xOff, position.y + yOff, STRUCTURE_ROAD);
+                    this.buildRoad(new RoomPosition(position.x + xOff, position.y + yOff, room.name));
                 }
             }
         }
+    },
+    buildRoad: function(position) {
+        if(_.any(position.lookFor(LOOK_STRUCTURES), (s) => !roadableStructures.includes(s.structureType))) return;
+        position.createConstructionSite(STRUCTURE_ROAD);
     }
 };
 
