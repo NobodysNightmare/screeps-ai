@@ -97,7 +97,7 @@ module.exports = {
             // lock onto target as soon as actual work is happening
             creep.memory.lastTarget = target.id;
         } else if(result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.moveTo(target, { range: 3 });
         }
     },
     isConstructionSite: function(target) {
