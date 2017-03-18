@@ -31,7 +31,7 @@ module.exports = class RoomAI {
 
     run() {
         for(let aspect of aspects) {
-            aspect(this).run();
+            new aspect(this).run();
         }
 
         for(let tower of this.room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {

@@ -4,49 +4,56 @@ var container = require("construction.containers");
 var logistic = require('helper.logistic');
 var miner = require("role.miner");
 
-module.exports = function(roomai) {
-    var room = roomai.room;
-    var sources = room.find(FIND_SOURCES);
+module.exports = class SourcesAspect {
+    constructor(roomai) {
+        this.roomai = roomai;
+        this.room = roomai.room;
+        this.sources = this.room.find(FIND_SOURCES);
 
-    // order sources by distance to primary spawn, to ensure that aspects
-    // work on that source first
-    sources = _.sortBy(sources, (s) => s.pos.getRangeTo(roomai.spawns[0]));
-    return {
-        run: function() {
-            this.buildContainers();
-            this.buildMiners();
-        },
-        buildContainers: function() {
-            if(Game.time % 20 != 0) {
-                return;
-            }
+        // order sources by distance to primary spawn, to ensure that aspects
+        // work on that source first
+        this.sources = _.sortBy(this.sources, (s) => s.pos.getRangeTo(roomai.spawns[0]));
+    }
 
-            for(var source of sources) {
-                container.buildNear(source);
-            }
-        },
-        buildMiners: function() {
-            if(!roomai.canSpawn()) {
-                return;
-            }
+    run() {
+        this.buildContainers();
+        this.buildMiners();
+    }
 
-            let parts = spawnHelper.bestAffordableParts(room, miner.energyConfigs, true);
-            let spawnDuration = spawnHelper.spawnDuration(parts);
-            let existingMiners = _.filter(spawnHelper.localCreepsWithRole(roomai, miner.name), (c) => !c.ticksToLive || c.ticksToLive > spawnDuration);
-            for(var source of sources) {
-                if(!_.any(existingMiners, (m) => m.memory.target == source.id) &&
-                    logistic.storeFor(source)) {
+    buildContainers() {
+        if(Game.time % 20 != 0) {
+            return;
+        }
 
-                    var memory = {
-                        role: miner.name,
-                        target: source.id,
-                        resource: RESOURCE_ENERGY
-                    };
-
-                    roomai.spawn(parts, memory);
-                }
-            }
-
+        for(let source of this.sources) {
+            container.buildNear(source);
         }
     }
-};
+
+    buildMiners() {
+        if(!this.roomai.canSpawn()) {
+            return;
+        }
+
+        let parts = spawnHelper.bestAffordableParts(this.room, miner.energyConfigs, true);
+        let spawnDuration = spawnHelper.spawnDuration(parts);
+        let existingMiners = _.filter(spawnHelper.localCreepsWithRole(this.roomai, miner.name), (c) => !c.ticksToLive || c.ticksToLive > spawnDuration);
+        for(var source of this.sources) {
+            if(!_.any(existingMiners, (m) => m.memory.target == source.id) &&
+                logistic.storeFor(source)) {
+
+                var memory = {
+                    role: miner.name,
+                    target: source.id,
+                    resource: RESOURCE_ENERGY
+                };
+
+                this.roomai.spawn(parts, memory);
+            }
+        }
+
+    }
+}
+
+const profiler = require("screeps-profiler");
+profiler.registerClass(module.exports, 'SourcesAspect');
