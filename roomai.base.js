@@ -19,7 +19,7 @@ var aspects = [
 var structureTower = require("structure.tower");
 var structureTerminal = require("structure.terminal");
 
-const linksService = require("roomservice.links");
+const Links = require("roomservice.links");
 
 module.exports = function(room) {
     var spawns = room.find(FIND_MY_SPAWNS);
@@ -28,7 +28,7 @@ module.exports = function(room) {
     return {
         room: room,
         spawns: spawns,
-        links: linksService(room),
+        links: new Links(room),
         run: function() {
             for(var aspect of aspects) {
                 aspect(this).run();
