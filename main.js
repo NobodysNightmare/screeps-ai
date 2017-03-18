@@ -17,7 +17,7 @@ const roles = [
 
 const constructionClaimSpawn = require("construction.claimSpawn");
 
-const roomAi = require('roomai.base');
+const RoomAI = require('roomai.base');
 const statsVisual = require("visual.globalStatistics");
 const profitVisual = require("visual.roomProfit");
 
@@ -38,7 +38,7 @@ module.exports.loop = function() {
         for(var roomName in Game.rooms) {
             var room = Game.rooms[roomName];
             if(room.controller && room.controller.my) {
-                roomAi(room).run();
+                new RoomAI(room).run();
             }
         }
         constructionClaimSpawn.perform();
@@ -50,7 +50,7 @@ module.exports.loop = function() {
                 }
             }
         }
-        
+
         statsVisual.run();
         profitVisual.run();
     });
