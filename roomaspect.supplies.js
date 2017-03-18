@@ -56,7 +56,7 @@ module.exports = class SuppliesAspect {
              parts = spawnHelper.bestAvailableParts(this.room, partConfigs);
         }
 
-        roomai.spawn(parts, { role: harvester.name, source: source.id });
+        this.roomai.spawn(parts, { role: harvester.name, source: source.id });
     }
 
     buildCollectors() {

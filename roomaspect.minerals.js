@@ -39,7 +39,7 @@ module.exports = class MineralsAspect {
             resource: this.mineral.mineralType
         };
 
-        roomai.spawn(parts, memory);
+        this.roomai.spawn(parts, memory);
     }
 
     buildCarrier() {
