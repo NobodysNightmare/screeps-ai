@@ -5,7 +5,7 @@ module.exports = {
     },
     refresh: function() {
         if(Game.time % 30000 == 0) {
-            stats.profits = {};
+            Memory.stats.profits = {};
         }
     },
     draw: function() {
