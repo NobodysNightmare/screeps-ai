@@ -12,7 +12,8 @@ const roles = [
     require("role.attacker"),
     require("role.healer"),
     require("role.hopper"),
-    require("role.observer")
+    require("role.observer"),
+    require("role.scooper")
 ];
 
 const constructionClaimSpawn = require("construction.claimSpawn");
