@@ -53,7 +53,7 @@ module.exports = {
                 if(!target) {
                     target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
                         filter: (structure) => {
-                            return structure.structureType == STRUCTURE_NUKER &&
+                            return (structure.structureType == STRUCTURE_NUKER || structure.structureType == STRUCTURE_POWER_SPAWN) &&
                                 structure.energy < structure.energyCapacity;
                         }
                     });
