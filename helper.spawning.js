@@ -28,6 +28,16 @@ module.exports = {
     costForParts: function(parts) {
         return _.sum(_.map(parts, (part) => BODYPART_COST[part]))
     },
+    makeParts: function() {
+        parts = [];
+        for (i = 0; i < arguments.length; i += 2) {
+            let count = arguments[i];
+            let type = arguments[i + 1];
+            parts = parts.concat(Array(count).fill(type));
+        }
+
+        return parts;
+    },
     spawnDuration: function(config) {
         if(!config) return 0;
         return config.length * CREEP_SPAWN_TIME;
