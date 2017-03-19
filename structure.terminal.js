@@ -1,3 +1,9 @@
+const blacklistedResources = [
+    RESOURCE_ENERGY,
+    RESOURCE_POWER,
+    RESOURCE_GHODIUM // allowing for manual import
+];
+
 module.exports = function(terminal) {
     return {
         run: function() {
@@ -6,7 +12,7 @@ module.exports = function(terminal) {
             }
             
             for(var resource in terminal.store) {
-                if(resource != RESOURCE_ENERGY && terminal.store[resource] > 100) {
+                if(!blacklistedResources.includes(resource) && terminal.store[resource] > 100) {
                     this.trade(resource);
                 }
             }
