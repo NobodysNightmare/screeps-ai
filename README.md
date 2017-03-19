@@ -38,6 +38,7 @@ The room that should spawn the creeps needed for colonization needs a **spawnCla
 
 * Use links to collect energy from remote mines at room border
 * Better defense mechanics
+    * spawn defenders in response to attackers force (no over-delivering)
     * towers should attack target picked by defense aspect
     * defense aspect should actually "think" about which target to pick
     * while defending a reloader should keep towers supplied with energy
