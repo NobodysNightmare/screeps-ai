@@ -2,7 +2,8 @@ var storeStructures = [
     STRUCTURE_CONTAINER,
     STRUCTURE_LINK,
     STRUCTURE_STORAGE,
-    STRUCTURE_TERMINAL
+    STRUCTURE_TERMINAL,
+    STRUCTURE_NUKER
 ];
 
 module.exports = {
