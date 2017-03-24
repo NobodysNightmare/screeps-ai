@@ -4,35 +4,49 @@ This is my personal AI for the computer game [Screeps](https://screeps.com).
 
 ## Manual control
 
-### Build Extension Cluster
+### Constructions
 
 Place a flag called **extensionCluster** inside a claimed room.
 This will mark a permanent area for extensions.
 
 A **clear** flag on the same spot will remove that area again.
 
-### Draining a hostile room
+### Spawning Creeps
 
-To spawn some creeps that drain a hostile room by attracting the towers
-fire, place a **drain** flag in the target room and a **spawnDrain** flag
-in the room that shall spawn the creeps for that operation.
+There are multiple creep spawning operations available. They are all controlled using the same scheme.
+The room that should spawn creeps receives a flag called `spawnNameX`, where `Name` is the name of the
+operation (see below) and `X` is the operation identifier (e.g. `1`). The room targeted by the operation receives
+a flag called `nameX`, where `name` and `X` again refer to the name and identifier of the operation.
 
-The color of the **spawnDrain** flag determines how many hopper/healer
-pairs are spawned (red = 1; white = 10).
+Depending on the operation, the color of the spawn flag might indicate the strength of the operation
+(see below). Having different operation identifiers allows to run multiple operations of the same type
+simultaneously.
 
-### Attacking a hostile room
+#### Draining hostile rooms
 
-**Work in progress**
+* **Operation name:** `drain`
+* **color:** Controls number of hopper/healer pairs being spawned
 
-To spawn some creeps that attack a hostile room, place an **attack** flag in the target room and a **spawnAttack** flag
-in the room that shall spawn the creeps for that operation.
+Spawns some creeps that drain a hostile room by attracting the towers
+fire.
 
-The color of the **spawnAttack** flag determines how many attackers are spawned (red = 1; white = 10).
+#### Attacking hostile rooms
 
-### Claiming a room
+* **Operation name:** `attack`
+* **color:** Controls number of attackers being spawned
 
-To claim a room, place a **claim** flag at the position where the first spawn shall be built.
-The room that should spawn the creeps needed for colonization needs a **spawnClaim** flag.
+Spawns some creeps that attack a hostile room.
+
+#### Claiming a room
+
+* **Operation name:** `claim`
+* **color:** meaningless
+
+Spawns a claimer followed by conquerors to build up the first spawn. The spawn will be built
+at the location of the claim flag in the target room.
+
+After the spawn was built, the source room will continue to support the target room by sending
+fully upgraded miners into it, until the target room can take care of that by itself.
 
 ## TODOs
 
@@ -50,7 +64,6 @@ The room that should spawn the creeps needed for colonization needs a **spawnCla
 * Flag-based interaction
     * Set tower locations
     * Set Storage+Link Location
-    * multiple simultaneous actions (e.g. drain1, drain2)
 * Minerals
     * keep a reserve in storage, only sell excess
     * Process them in Labs

@@ -2,7 +2,7 @@ module.exports = {
     name: "claimer",
     parts: [CLAIM, MOVE],
     run: function(creep) {
-        let flag = Game.flags.claim;
+        let flag = Game.flags[creep.memory.flag];
         if(!flag) return;
         if(creep.room.name != flag.pos.roomName) {
             creep.moveTo(flag);
