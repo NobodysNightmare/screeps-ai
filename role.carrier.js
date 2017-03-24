@@ -25,37 +25,47 @@ module.exports = {
         }
 
         if(_.sum(creep.carry) > 0) {
-            if(creep.memory.selfSustaining && !(creep.room.controller && creep.room.controller.my)) {
-                var road = _.find(creep.pos.lookFor(LOOK_STRUCTURES), (s) => s.structureType == STRUCTURE_ROAD);
-                if(road) {
-                    if(road.hits < 3000) {
-                        creep.repair(road);
-                    }
-                } else if(creep.pos.x > 0 && creep.pos.x < 49 && creep.pos.y > 0 && creep.pos.y < 49) {
-                    this.buildRoad(creep);
-                    return; // stop on pending construction sites
-                }
-            }
-
-            var target = logistic.storeFor(this.destination(creep));
-            let transferResult = creep.transfer(target, creep.memory.resource);
-            if(transferResult == OK && creep.memory.registerRevenueFor && creep.memory.resource == RESOURCE_ENERGY) {
-                // assuming we always transfer all our energy
-                profitVisual.addRevenue(creep.memory.registerRevenueFor, creep.carry.energy);
-            } else if(transferResult == ERR_NOT_IN_RANGE) {
-                creep.travelTo(target);
-            }
+            if(this.deliver(creep)) this.pickup(creep);
         }
         else {
-            // TODO: also collect raw resources lying around the source
-            if(!this.source(creep)) return;
-            var target = logistic.storeFor(this.source(creep));
-            var result = creep.withdraw(target, creep.memory.resource);
-            if(result == ERR_NOT_IN_RANGE) {
-                creep.travelTo(target);
-            } else if(result == OK) {
-                creep.memory.delivering = true;
+            if(this.pickup(creep)) this.deliver(creep);
+        }
+    },
+    deliver: function(creep) {
+        if(creep.memory.selfSustaining && !(creep.room.controller && creep.room.controller.my)) {
+            var road = _.find(creep.pos.lookFor(LOOK_STRUCTURES), (s) => s.structureType == STRUCTURE_ROAD);
+            if(road) {
+                if(road.hits < 3000) {
+                    creep.repair(road);
+                }
+            } else if(creep.pos.x > 0 && creep.pos.x < 49 && creep.pos.y > 0 && creep.pos.y < 49) {
+                this.buildRoad(creep);
+                return false; // stop on pending construction sites
             }
+        }
+
+        var target = logistic.storeFor(this.destination(creep));
+        let transferResult = creep.transfer(target, creep.memory.resource);
+        if(transferResult == OK) {
+            if(creep.memory.registerRevenueFor && creep.memory.resource == RESOURCE_ENERGY) {
+                // assuming we always transfer all our energy
+                profitVisual.addRevenue(creep.memory.registerRevenueFor, creep.carry.energy);
+            }
+
+            return true;
+        } else if(transferResult == ERR_NOT_IN_RANGE) {
+            creep.travelTo(target);
+        }
+    },
+    pickup: function(creep) {
+        // TODO: also collect raw resources lying around the source
+        if(!this.source(creep)) return;
+        var target = logistic.storeFor(this.source(creep));
+        var result = creep.withdraw(target, creep.memory.resource);
+        if(result == ERR_NOT_IN_RANGE) {
+            creep.travelTo(target);
+        } else if(result == OK) {
+            return true;
         }
     },
     buildRoad: function(creep) {
