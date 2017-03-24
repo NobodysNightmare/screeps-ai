@@ -29,7 +29,9 @@ module.exports = {
     recycle: function(creep) {
         var spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
         if(!spawn) {
-            movement.moveToRoom(creep, creep.memory.originRoom);
+            if(creep.memory.originRoom) {
+                movement.moveToRoom(creep, creep.memory.originRoom);
+            }
             return;
         }
 
