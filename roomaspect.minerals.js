@@ -1,5 +1,6 @@
 var container = require("construction.containers");
 var spawnHelper = require("helper.spawning");
+const logistic = require("helper.logistic");
 
 var carrier = require("role.carrier");
 var miner = require("role.miner");
@@ -43,17 +44,25 @@ module.exports = class MineralsAspect {
     }
 
     buildCarrier() {
-        if(!this.masterRoom() ||
-            !this.masterRoom().terminal ||
+        if(logistic.storeFor(this.mineral) === this.room.terminal ||
             _.filter(spawnHelper.globalCreepsWithRole(carrier.name), (creep) => creep.memory.source == this.mineral.id).length > 0) {
             return;
         }
 
-        var parts = spawnHelper.bestAvailableParts(this.room, carrier.partConfigs);
-        var memory = {
+        let destination;
+        if(this.masterRoom() && this.masterRoom().terminal) {
+            destination = this.masterRoom().terminal;
+        } else if(this.room.storage) {
+            destination = this.room.storage;
+        }
+        
+        if(!destination) return;
+        
+        let parts = spawnHelper.bestAvailableParts(this.room, carrier.partConfigs);
+        let memory = {
             role: carrier.name,
             source: this.mineral.id,
-            destination: this.masterRoom().terminal.id,
+            destination: destination.id,
             resource: this.mineral.mineralType
         };
 
