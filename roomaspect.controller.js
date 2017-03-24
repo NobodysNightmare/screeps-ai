@@ -83,7 +83,7 @@ module.exports = class ControllerAspect {
         let energy = 10;
 
         if(this.room.storage) {
-            if(this.room.controller.level == 7 && this.room.storage.store.energy > EXCESSIVE_ENERGY_LIMIT) {
+            if(this.room.storage.store.energy > EXCESSIVE_ENERGY_LIMIT) {
                 energy = 40;
             } else if(this.room.storage.store.energy > HIGH_ENERGY_LIMIT) {
                 energy = 20;
