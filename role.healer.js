@@ -17,6 +17,7 @@ module.exports = {
     run: function(creep) {
         if(creep.hits < creep.hitsMax) {
             this.heal(creep, creep);
+            if(!creep.pos.isNearTo(target)) creep.moveTo(target);
             return;
         }
 
@@ -29,6 +30,7 @@ module.exports = {
     },
     heal: function(creep, target) {
         if(creep.heal(target) == ERR_NOT_IN_RANGE) {
+            creep.rangedHeal(target);
             let friendlyTerritory = !target.room.controller || !target.room.controller.owner || target.room.controller.my;
             if(!creep.memory.avoidHostileRooms || (friendlyTerritory && !movement.isOnExit(target))) {
                 creep.moveTo(target);
