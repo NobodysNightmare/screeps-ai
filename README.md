@@ -47,10 +47,12 @@ The room that should spawn the creeps needed for colonization needs a **spawnCla
         * probably different levels for ramparts depending on purpose (e.g. more on Spawner?)
     * Nuke notifications?
 * Automatically start claiming as soon as room is ready (e.g. if it is currently claimed by another player)
-* Flag-based base building
+* Flag-based interaction
     * Set tower locations
     * Set Storage+Link Location
+    * multiple simultaneous actions (e.g. drain1, drain2)
 * Minerals
+    * keep a reserve in storage, only sell excess
     * Process them in Labs
     * Boost creeps
 * Supply nukes with Ghodium
