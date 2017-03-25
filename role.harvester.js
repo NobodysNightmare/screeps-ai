@@ -25,8 +25,12 @@ module.exports = {
             creep.memory.delivering = true;
         }
 
+        if(creep.carry.energy < creep.carryCapacity && creep.pos.isNearTo(creep.room.storage)) {
+            creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
+        }
+
         if(creep.memory.delivering) {
-            var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            var target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
                             structure.energy < structure.energyCapacity;
@@ -49,7 +53,7 @@ module.exports = {
                         target = terminal;
                     }
                 }
-                
+
                 if(!target) {
                     target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
                         filter: (structure) => {
