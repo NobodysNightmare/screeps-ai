@@ -37,6 +37,13 @@ fire.
 
 Spawns some creeps that attack a hostile room.
 
+#### Farming Power Banks
+
+* **Operation name:** `power`
+* **color:** Controls number of simultaneous farmers.
+
+Will spawn all creeps neccessary to farm the power bank in a given room.
+
 #### Claiming a room
 
 * **Operation name:** `claim`
