@@ -26,7 +26,6 @@ module.exports = class Links {
 
     linkAt(target) {
         let linkId = this.room.memory.links.cache[target.id];
-        if(!linkId) return;
         if(_.isNumber(linkId) && Game.time < linkId) return;
 
         let link = Game.getObjectById(linkId);
