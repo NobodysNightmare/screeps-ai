@@ -44,7 +44,7 @@ module.exports = {
             }
         }
 
-        var target = logistic.storeFor(this.destination(creep));
+        var target = logistic.storeFor(this.destination(creep)) || this.destination(creep);
         let transferResult = creep.transfer(target, creep.memory.resource);
         if(transferResult == OK) {
             if(creep.memory.registerRevenueFor && creep.memory.resource == RESOURCE_ENERGY) {
