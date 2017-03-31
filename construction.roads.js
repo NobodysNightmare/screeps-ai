@@ -5,17 +5,16 @@ const roadableStructures = [
 
 module.exports = {
     perform: function(room) {
-        if(Game.time % 100 != 0 || room.find(FIND_MY_SPAWNS).length == 0) {
+        let spawner = room.find(FIND_MY_SPAWNS)[0];
+        if(Game.time % 100 != 0 || !spawner) {
             return;
         }
         
-        for(var spawner of room.find(FIND_MY_SPAWNS)) {
-            this.buildRoadAround(room, spawner.pos);
-            
-            for(var source of room.find(FIND_SOURCES)) {
-                this.buildRoadAround(room, source.pos);
-                this.buildRoadFromTo(room, spawner, source);
-            }
+        this.buildRoadAround(room, spawner.pos);
+        
+        for(var source of room.find(FIND_SOURCES)) {
+            this.buildRoadAround(room, source.pos);
+            this.buildRoadFromTo(room, spawner, source);
         }
         
         if(room.controller) {
