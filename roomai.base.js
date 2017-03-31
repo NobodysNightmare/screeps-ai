@@ -13,7 +13,8 @@ var aspects = [
     require("roomaspect.builders"),
     require("roomaspect.minerals"),
     require("roomaspect.remoteMines"),
-    require("roomaspect.manualOperations")
+    require("roomaspect.manualOperations"),
+    require("roomaspect.power")
 ];
 
 var structureTower = require("structure.tower");
