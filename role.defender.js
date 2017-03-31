@@ -8,37 +8,19 @@ module.exports = {
         [ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE]
     ],
     run: function(creep) {
-        var room = Game.rooms[creep.memory.room];
-        if(!room) {
+        if(creep.room.name !== creep.memory.room) {
             movement.moveToRoom(creep, creep.memory.room);
             return;
         }
 
-        var target = Game.getObjectById(room.memory.primaryHostile);
+        var target = Game.getObjectById(creep.room.memory.primaryHostile);
         if(target) {
             this.attack(creep, target);
-        } else {
-            this.recycle(creep);
         }
     },
     attack: function(creep, target) {
         if(creep.attack(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
-        }
-    },
-    recycle: function(creep) {
-        var spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
-        if(!spawn) {
-            if(creep.memory.originRoom) {
-                movement.moveToRoom(creep, creep.memory.originRoom);
-            }
-            return;
-        }
-
-        if(creep.pos.isNearTo(spawn)) {
-            spawn.recycleCreep(creep);
-        } else {
-            creep.moveTo(spawn);
+            creep.moveTo(target, { maxRooms: 0 });
         }
     }
 };

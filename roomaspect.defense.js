@@ -33,8 +33,11 @@ module.exports = class DefenseAspect {
             return;
         }
 
-        var parts = spawnHelper.bestAffordableParts(this.room, defender.meeleeConfigs, true);
-        this.roomai.spawn(parts, { role: defender.name, room: this.room.name, originRoom: this.room.name });
+        // TODO: determine number of defenders in a useful way
+        if(_.filter(spawnHelper.globalCreepsWithRole(defender.name), (c) => c.memory.room == this.room.name).length <= 3) {
+            var parts = spawnHelper.bestAffordableParts(this.room, defender.meeleeConfigs, true);
+            this.roomai.spawn(parts, { role: defender.name, room: this.room.name, originRoom: this.room.name });
+        }
     }
 
     engageSafeMode() {
