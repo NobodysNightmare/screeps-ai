@@ -39,8 +39,9 @@ module.exports = {
                     creep.repair(road);
                 }
             } else if(creep.pos.x > 0 && creep.pos.x < 49 && creep.pos.y > 0 && creep.pos.y < 49) {
-                this.buildRoad(creep);
-                return false; // stop on pending construction sites
+                if(this.buildRoad(creep)) {
+                    return false; // stop on pending construction sites
+                };
             }
         }
 
@@ -71,9 +72,10 @@ module.exports = {
     buildRoad: function(creep) {
         var constructionSite = _.find(creep.pos.lookFor(LOOK_CONSTRUCTION_SITES), (cs) => cs.structureType == STRUCTURE_ROAD);
         if(constructionSite) {
-            creep.build(constructionSite);
+            return creep.build(constructionSite) == OK;
         } else {
             creep.pos.createConstructionSite(STRUCTURE_ROAD);
+            return true;
         }
     },
     source: function(creep) {
