@@ -15,6 +15,7 @@ const roles = [
     require("role.observer"),
     require("role.scooper"),
     require("role.powerFarmer"),
+    require("role.mason")
 ];
 
 const constructionClaimSpawn = require("construction.claimSpawn");
