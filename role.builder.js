@@ -13,7 +13,7 @@ module.exports = {
             let config = Array(work).fill(WORK).concat(Array(carry).fill(CARRY)).concat(Array(move).fill(MOVE));
             if(config.length <= 50) configs.push(config);
         }
-        
+
         // TODO: probably more handcrafted configs for low tiers?
         configs.push([WORK, WORK, CARRY, MOVE]); // spawn-only config
 
@@ -115,14 +115,6 @@ module.exports = {
         let result = logistic.obtainEnergy(creep, source, true);
         if(result == logistic.obtainResults.withdrawn) {
             creep.memory.building = true;
-        }
-    },
-    moveAndRepair: function(creep, target) {
-        var result = creep.repair(target);
-        if(result == OK) {
-            creep.memory.lastTarget = target.id;
-        } else if(result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
         }
     }
 };
