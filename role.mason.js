@@ -42,7 +42,7 @@ module.exports = {
             let pos = structure.pos;
             return structure.hits < structure.hitsMax &&
                     (structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_WALL) &&
-                    (pos.x <= creep.memory.x1 || pos.x >= creep.memory.x2 || pos.y <= creep.memory.y1 || pos.y <= creep.memory.y2);
+                    (pos.x <= creep.memory.x1 || pos.x >= creep.memory.x2 || pos.y <= creep.memory.y1 || pos.y >= creep.memory.y2);
         } });
         if(targets.length > 0) {
             return _.sortBy(targets, (t) => t.hits / t.hitsMax)[0];
