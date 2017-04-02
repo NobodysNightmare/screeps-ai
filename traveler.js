@@ -6,7 +6,6 @@
  *
  */
 "use strict";
-const REPORT_CPU_THRESHOLD = 100;
 const DEFAULT_MAXOPS = 20000;
 const DEFAULT_STUCK_VALUE = 5;
 class Traveler {
@@ -200,14 +199,8 @@ class Traveler {
             }
             travelData.dest = destination.pos;
             travelData.prev = undefined;
-            let cpu = Game.cpu.getUsed();
             let ret = this.findTravelPath(creep, destination, options);
-            travelData.cpu += (Game.cpu.getUsed() - cpu);
             travelData.count++;
-            if (travelData.cpu > REPORT_CPU_THRESHOLD) {
-                console.log(`TRAVELER: heavy cpu use: ${creep.name}, cpu: ${_.round(travelData.cpu, 2)},\n` +
-                    `origin: ${creep.pos}, dest: ${destination.pos}`);
-            }
             if (ret.incomplete) {
                 console.log(`TRAVELER: incomplete path for ${creep.name}`);
                 if (ret.ops < 2000 && options.useFindRoute === undefined && travelData.stuck < DEFAULT_STUCK_VALUE) {
