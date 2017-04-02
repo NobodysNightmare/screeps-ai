@@ -1,4 +1,5 @@
-var logistic = require("helper.logistic");
+const logistic = require("helper.logistic");
+const movement = require("helper.movement");
 
 const fullHealthEquiv = 50000;
 var emergencyHitPercent = 0.3;
@@ -20,6 +21,13 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        if(creep.memory.room && creep.room.name !== creep.memory.room) {
+            movement.moveToRoom(creep, creep.memory.room);
+            return;
+        } else if(movement.isOnExit(creep)) {
+            movement.leaveExit(creep);
+        }
+        
         if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
             creep.memory.lastTarget = null;
