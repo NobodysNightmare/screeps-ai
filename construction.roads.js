@@ -10,8 +10,6 @@ module.exports = {
             return;
         }
         
-        this.buildRoadAround(room, spawner.pos);
-        
         for(var source of room.find(FIND_SOURCES)) {
             this.buildRoadAround(room, source.pos);
             this.buildRoadFromTo(room, spawner, source);
