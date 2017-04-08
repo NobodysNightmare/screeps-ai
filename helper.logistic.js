@@ -56,8 +56,10 @@ module.exports = {
         var resources = creep.pos.lookFor(LOOK_ENERGY);
         // TODO: fix to work with any resource (and not pickup resource even if we want energy)
         if(resources.length > 0 && resources[0].resourceType == RESOURCE_ENERGY) {
-            creep.pickup(resources[0]);
+            return creep.pickup(resources[0]) == OK;
         }
+        
+        return false;
     },
     storeFor: function(target, includeConstructions, structureType) {
         if(target && storeStructures.includes(target.structureType) && (!structureType || structureType == target.structureType)) return target;
