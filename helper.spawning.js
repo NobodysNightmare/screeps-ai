@@ -52,7 +52,6 @@ module.exports = {
     },
     globalCreepsWithRole: function(role) {
         let creeps = _.values(Game.creeps);
-        creeps = creeps.concat(_.compact(_.map(Game.spawns, (spawn) => spawn.spawning && Game.creeps[spawn.spawning.name])));
         return _.filter(creeps, (creep) => creep.memory.role == role);
     }
 };
