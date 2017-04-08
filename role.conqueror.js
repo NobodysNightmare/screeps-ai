@@ -1,4 +1,5 @@
 var spawnHelper = require('helper.spawning');
+var logistic = require('helper.logistic');
 
 module.exports = {
     name: "conqueror",
@@ -49,12 +50,8 @@ module.exports = {
         return target;
     },
     harvestEnergy: function(creep) {
-        var source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
-        if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(source);
-        }
-
-        return source;
+        let source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+        logistic.obtainEnergy(creep, source, true);
     }
 };
 
