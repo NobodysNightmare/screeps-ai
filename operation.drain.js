@@ -24,7 +24,7 @@ module.exports = class DrainOperation {
                 } else {
                     healerParts = spawnHelper.bestAffordableParts(this.room, healer.configs({ minHeal: 5, maxHeal: 20, healRatio: 1 }));
                 }
-                this.roomai.spawn(healerParts, { role: healer.name, target: hopperCreep.name, avoidHostileRooms: true });
+                this.roomai.spawn(healerParts, { role: healer.name, target: hopperCreep.name, avoidRooms: [this.targetRoom] });
             }
         }
 
