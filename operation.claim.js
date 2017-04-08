@@ -1,6 +1,7 @@
 const spawnHelper = require("helper.spawning");
 const claimer = require("role.claimer");
 const conqueror = require("role.conqueror");
+const miner = require("role.miner");
 
 module.exports = class ClaimOperation {
     constructor(roomai, targetFlag) {
