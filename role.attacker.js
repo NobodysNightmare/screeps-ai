@@ -50,7 +50,7 @@ module.exports = {
         let rangedResult = creep.rangedAttack(target);
         let meleeResult = creep.attack(target);
         if(rangedResult == ERR_NOT_IN_RANGE || meleeResult == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 0 });
+            creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 1 });
         }
     }
 };

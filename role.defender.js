@@ -20,7 +20,7 @@ module.exports = {
     },
     attack: function(creep, target) {
         if(creep.attack(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, { maxRooms: 0 });
+            creep.moveTo(target, { maxRooms: 1 });
         }
     }
 };
