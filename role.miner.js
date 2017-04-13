@@ -40,7 +40,8 @@ module.exports = {
                 this.buildContainer(creep, target);
             }
         } else if(harvestResult == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            let maxRooms = creep.room == target.room ? 1 : 16;
+            creep.moveTo(target, { maxRooms: maxRooms });
         }
     },
     buildContainer: function(creep, source) {
