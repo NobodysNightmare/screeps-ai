@@ -27,20 +27,32 @@ module.exports = {
         { x: 2, y: 4 },
         { x: 3, y: 4 },
     ],
-    outlineExtensionCluster: function(room, x, y) {
+    outline: function(room, cluster) {
+        let x = cluster.x,
+            y = cluster.y;
+
         room.visual.poly(_.map(this.roadParts.concat(this.roadParts[0]), (p) => [x + p.x, y + p.y]), { stroke: "#77f" });
     },
-    buildExtensionCluster: function(room, x, y) {
+    build: function(room, cluster) {
+        let x = cluster.x,
+            y = cluster.y;
         for(let pos of this.extensionParts) {
             let result = room.createConstructionSite(x + pos.x, y + pos.y, STRUCTURE_EXTENSION);
             if(result == ERR_RCL_NOT_ENOUGH) return;
         }
-        
+
         for(let pos of this.roadParts) {
             room.createConstructionSite(x + pos.x, y + pos.y, STRUCTURE_ROAD);
         }
+    },
+    addBuilding: function(memory, flag) {
+        memory.push({ x: flag.pos.x, y: flag.pos.y });
+    },
+    removeBuilding: function(memory, flag) {
+        let index = _.findIndex(memory, (p) => p.x == flag.pos.x && p.y == flag.pos.y);
+        if(index >= 0) memory.splice(index, 1);
     }
 };
 
 const profiler = require("screeps-profiler");
-profiler.registerObject(module.exports, 'extensions');
+profiler.registerObject(module.exports, 'extensionCluster');

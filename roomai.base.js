@@ -7,12 +7,12 @@ var constructions = [
 var aspects = [
     require("roomaspect.supplies"),
     require("roomaspect.sources"),
-    require("roomaspect.extensions"),
     require("roomaspect.defense"),
     require("roomaspect.controller"),
     require("roomaspect.builders"),
     require("roomaspect.minerals"),
     require("roomaspect.remoteMines"),
+    require("roomaspect.constructions"),
     require("roomaspect.manualOperations"),
     require("roomaspect.power")
 ];

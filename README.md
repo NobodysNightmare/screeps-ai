@@ -6,10 +6,10 @@ This is my personal AI for the computer game [Screeps](https://screeps.com).
 
 ### Constructions
 
-Place a flag called **extensionCluster** inside a claimed room.
+Place a flag called **buildExtensionCluster** inside a claimed room.
 This will mark a permanent area for extensions.
 
-A **clear** flag on the same spot will remove that area again.
+A **removeExtensionCluster** flag on the same spot will remove that area again.
 
 ### Spawning Creeps
 
