@@ -29,19 +29,33 @@ require("traveler");
 const profiler = require('screeps-profiler');
 profiler.enable();
 
+function suppressErrors(callback) {
+    try {
+        callback();
+    } catch(error) {
+        console.log('<span style="color: #faa">' + error.stack + '</span>');
+    }
+}
+
+function runCreeps() {
+    for(var role of roles) {
+        var creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
+        for(var creep of creeps) {
+            suppressErrors(() => role.run(creep));
+        }
+    }
+}
+
+runCreeps = profiler.registerFN(runCreeps, 'Creep Actions');
+
 module.exports.loop = function() {
     profiler.wrap(function() {
-        for(var role of roles) {
-            var creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
-            for(var creep of creeps) {
-                role.run(creep);
-            }
-        }
+        runCreeps();
 
         for(var roomName in Game.rooms) {
             var room = Game.rooms[roomName];
             if(room.controller && room.controller.my) {
-                new RoomAI(room).run();
+                suppressErrors(() => new RoomAI(room).run());
             }
         }
         constructionClaimSpawn.perform();
