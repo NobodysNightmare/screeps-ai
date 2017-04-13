@@ -55,4 +55,4 @@ module.exports = {
 };
 
 const profiler = require("screeps-profiler");
-profiler.registerObject(module.exports, 'extensionCluster');
+profiler.registerObject(module.exports, 'construction.extensionCluster');

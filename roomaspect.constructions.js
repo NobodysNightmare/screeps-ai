@@ -1,5 +1,7 @@
 const constructions = {
-    extensionCluster: require("construction.extensionCluster")
+    extensionCluster: require("construction.extensionCluster"),
+    storage: require("construction.storage"),
+    tower: require("construction.tower")
 }
 
 const buildFlagRegex = /^build([A-Za-z]+)$/;

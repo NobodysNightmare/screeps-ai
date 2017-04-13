@@ -6,10 +6,40 @@ This is my personal AI for the computer game [Screeps](https://screeps.com).
 
 ### Constructions
 
-Place a flag called **buildExtensionCluster** inside a claimed room.
-This will mark a permanent area for extensions.
+Multiple structures and structure groups can be pre-planned.
+The general rule is to place a flag called `buildName`, to plan a structure called
+`Name` (see below for valid values) at the specified position.
+Using a flag called `removeName` you can remove the named structure at that position.
 
-A **removeExtensionCluster** flag on the same spot will remove that area again.
+Depending on the structure, only a limited amount might be planned or the flag color might
+have a meaning.
+
+#### Extension Clusters
+
+* **Building name:** `extensionCluster`
+* **color:** no significance
+
+Marks an area where multiple extensions will be built. The outline exactly fits the
+roads that will be placed around the extensions.
+
+#### Towers
+
+* **Building name:** `tower`
+* **color:** no significance
+
+Plans a tower at the specified location.
+
+#### Storage
+
+* **Building name:** `storage`
+* **color:** Determines direction of attached link. Starting top, clockwise.
+  Only the first 4 colors are valid.
+
+Marks the spot where the storage of the room shall be built. The outlines arrow indicates
+at which location the associated link of the storage will be placed.
+
+Note: Since only one storage can be placed, placing additional storages will clear the old
+storage location.
 
 ### Spawning Creeps
 
