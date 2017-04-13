@@ -21,7 +21,7 @@ module.exports = {
         } else if(movement.isOnExit(creep)) {
             movement.leaveExit(creep);
         }
-        
+
         if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
             creep.memory.lastTarget = null;
@@ -46,11 +46,16 @@ module.exports = {
             }
         }
 
+        let walls = creep.room.memory.constructions && creep.room.memory.constructions.walls[0];
+        if(!walls) {
+            console.log("Perimeter for mason not defined in " + creep.room.name);
+            return null;
+        }
         var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
             let pos = structure.pos;
             return structure.hits < structure.hitsMax &&
                     (structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_WALL) &&
-                    (pos.x <= creep.memory.x1 || pos.x >= creep.memory.x2 || pos.y <= creep.memory.y1 || pos.y >= creep.memory.y2);
+                    (pos.x <= walls.x1 || pos.x >= walls.x2 || pos.y <= walls.y1 || pos.y >= walls.y2);
         } });
         if(targets.length > 0) {
             return _.sortBy(targets, (t) => t.hits / t.hitsMax)[0];

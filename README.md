@@ -41,6 +41,17 @@ at which location the associated link of the storage will be placed.
 Note: Since only one storage can be placed, placing additional storages will clear the old
 storage location.
 
+#### Walls
+
+* **Building name:** `walls`
+* **color:** "Odd" colors (e.g. red) will place the top-right corner, "even" colors the lower left corner.
+
+All tiles on the wall rectangle and outside will be considered to belong to the outside wall,
+while all tiles inside this area will belong to the inner perimeter.
+
+While this will not yet automatically build any walls, masons will respect this outline and only
+reinforce outside walls and ramparts and none in the inner perimeter.
+
 ### Spawning Creeps
 
 There are multiple creep spawning operations available. They are all controlled using the same scheme.
