@@ -104,20 +104,16 @@ fully upgraded miners into it, until the target room can take care of that by it
     * towers should attack target picked by defense aspect
     * defense aspect should actually "think" about which target to pick
     * while defending a reloader should keep towers supplied with energy
-    * Better rampart/wall mechanics
-        * probably prioritize ramparts depending on purpose (e.g. more on Spawner?)
     * Nuke notifications?
 * Automatically start claiming as soon as room is ready (e.g. if it is currently claimed by another player)
 * Flag-based interaction
-    * Set tower locations
-    * Set Storage+Link Location
-    * Manual operation for power spawning
     * Manual operation for supply transports
     * Manual operation for resource stealing
 * Minerals
     * keep a reserve in storage, only sell excess
     * Process them in Labs
+    * Process power
     * Boost creeps
-* Supply nukes with Ghodium
+    * Supply nukes with Ghodium
 * Use observers to obtain vision on a room
 * Automated base-building?
