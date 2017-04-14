@@ -58,7 +58,7 @@ module.exports = {
                     (pos.x <= walls.x1 || pos.x >= walls.x2 || pos.y <= walls.y1 || pos.y >= walls.y2);
         } });
         if(targets.length > 0) {
-            return _.sortBy(targets, (t) => t.hits / t.hitsMax)[0];
+            return _.sortBy(targets, (t) => t.hits)[0];
         }
 
         return null;
