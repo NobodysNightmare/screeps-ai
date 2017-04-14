@@ -15,6 +15,7 @@ const roles = [
     require("role.observer"),
     require("role.scooper"),
     require("role.powerFarmer"),
+    require("role.powerRefiner"),
     require("role.mason")
 ];
 
@@ -58,7 +59,7 @@ module.exports.loop = function() {
                 suppressErrors(() => new RoomAI(room).run());
             }
         }
-        constructionClaimSpawn.perform();
+        constructionClaimSpawn.perform(); // TODO: move into claim operation
 
         if(Game.time % 100 == 50) {
             for(var name in Memory.creeps) {
