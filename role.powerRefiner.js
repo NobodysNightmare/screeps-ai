@@ -31,13 +31,15 @@ module.exports = {
     pickup: function(creep) {
         let spawner = this.spawner(creep);
         let neededPower = (spawner.powerCapacity - spawner.power) - (creep.carry[RESOURCE_POWER] || 0);
+        neededPower = _.min([neededPower, creep.carryCapacity - _.sum(creep.carry)]);
         if(!creep.carry[RESOURCE_POWER] && neededPower > 0) {
-            if(creep.withdraw(creep.room.storage, RESOURCE_POWER, neededPower) == ERR_NOT_IN_RANGE) {
+            let result = creep.withdraw(creep.room.storage, RESOURCE_POWER, neededPower);
+            if(result == ERR_NOT_IN_RANGE) {
                 creep.moveTo(creep.room.storage);
             }
         } else {
             let result = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
-            if(result == OK) {
+            if(result == OK || result == ERR_FULL) {
                 creep.memory.delivering = true;
             } else if(result == ERR_NOT_IN_RANGE) {
                 creep.moveTo(creep.room.storage);
