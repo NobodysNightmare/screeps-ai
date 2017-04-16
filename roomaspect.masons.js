@@ -9,7 +9,7 @@ module.exports = class MasonsAspect {
 
     run() {
         if(!this.room.memory.constructions || !this.room.memory.constructions.walls[0]) return;
-        if(!this.roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(this.roomai, mason.name) >= this.masonCount()) {
+        if(!this.roomai.canSpawn() || _.filter(spawnHelper.globalCreepsWithRole(mason.name), (c) => c.memory.room == this.room.name).length >= this.masonCount()) {
             return;
         }
 
@@ -20,12 +20,10 @@ module.exports = class MasonsAspect {
     masonCount() {
         if(!this.room.storage) return 0;
 
-        if(this.room.storage.store.energy < 210000) {
+        if(this.room.storage.store.energy < 300000) {
             return 0;
-        } else if(this.room.storage.store.energy < 300000) {
-            return 1;
         } else {
-            return 2;
+            return 1;
         }
     }
 }
