@@ -14,12 +14,12 @@ var aspects = [
     require("roomaspect.remoteMines"),
     require("roomaspect.masons"),
     require("roomaspect.constructions"),
+    require("roomaspect.trading"),
     require("roomaspect.manualOperations"),
     require("roomaspect.power")
 ];
 
 var structureTower = require("structure.tower");
-var structureTerminal = require("structure.terminal");
 
 const Links = require("roomservice.links");
 
@@ -38,10 +38,6 @@ module.exports = class RoomAI {
 
         for(let tower of this.room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {
             structureTower.run(tower);
-        }
-
-        if(this.room.terminal) {
-            structureTerminal(this.room.terminal).run();
         }
 
         for(let construction of constructions) {
