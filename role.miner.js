@@ -3,14 +3,16 @@ var logistic = require('helper.logistic');
 module.exports = {
     name: "miner",
     energyConfigs: [
-        [WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE],
-        [WORK, WORK, MOVE, WORK, CARRY, MOVE],
+        [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
+        [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE],
+        [WORK, WORK, WORK, CARRY, MOVE, MOVE],
         [WORK, WORK, CARRY, MOVE]
     ],
     mineralConfigs: [
-        [WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE],
-        [WORK, MOVE, WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE],
-        [WORK, WORK, MOVE, WORK, CARRY, MOVE],
+        [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+        [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE],
+        [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE],
+        [WORK, WORK, WORK, CARRY, MOVE, MOVE],
         [WORK, WORK, CARRY, MOVE]
     ],
     run: function(creep) {
@@ -29,12 +31,15 @@ module.exports = {
         if(harvestResult == OK) {
             var store = logistic.storeFor(target);
             if(store) {
+                let harvestPower = creep.memory.resource === RESOURCE_ENERGY ? HARVEST_POWER : HARVEST_MINERAL_POWER;
                 if(creep.memory.selfSustaining && (store.hits / store.hitsMax) < 0.5) {
                     if(creep.repair(store) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(store);
                     }
-                } else if(creep.transfer(store, creep.memory.resource) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(store);
+                } else if(creep.carry[creep.memory.resource] >=  creep.carryCapacity - (harvestPower * creep.getActiveBodyparts(WORK))) {
+                    if(creep.transfer(store, creep.memory.resource) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(store);
+                    }
                 }
             } else if(creep.memory.selfSustaining && creep.carry.energy >= _.filter(creep.body, (part) => part.type == WORK).length * 5) {
                 this.buildContainer(creep, target);
