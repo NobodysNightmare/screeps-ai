@@ -9,7 +9,7 @@ module.exports = {
             if(!this.carryTo(creep, creep.room.terminal)) {
                 let resource = trading.findImportableResource(creep.room);
                 if(resource) {
-                    let amount = _.min([creep.carryCapacity, trading.baselineAmount - creep.room.storage.store[resource]]);
+                    let amount = _.min([creep.carryCapacity, creep.room.terminal.store[resource], trading.baselineAmount - creep.room.storage.store[resource]]);
                     creep.withdraw(creep.room.terminal, resource, amount);
                 }
                 creep.memory.exporting = false;
