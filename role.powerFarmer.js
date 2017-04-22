@@ -7,6 +7,7 @@ module.exports = {
     run: function(creep) {
         if(creep.room.name !== creep.memory.target) {
             movement.moveToRoom(creep, creep.memory.target);
+            return;
         }
 
         let target = creep.pos.findClosestByRange(FIND_STRUCTURES,
