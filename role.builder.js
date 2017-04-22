@@ -66,8 +66,10 @@ module.exports = {
         return creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType == STRUCTURE_ROAD || cs.structureType == STRUCTURE_RAMPART });
     },
     findNormalRepairTarget: function(creep) {
+        let supplyNominal = creep.room.storage && creep.room.storage.store.energy >= 10000;
         var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
             return structure.hits < structure.hitsMax &&
+                    (supplyNominal || structure.hits < fullHealthEquiv) &&
                     (structure.structureType != STRUCTURE_ROAD || (structure.hits / structure.hitsMax <= 0.8)) &&
                     structure.structureType != STRUCTURE_CONTROLLER;
         } });

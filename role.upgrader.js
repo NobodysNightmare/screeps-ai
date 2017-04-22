@@ -18,7 +18,11 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
-        var controller = creep.room.controller;
+        let controller = creep.room.controller;
+        if(creep.room.storage && creep.room.storage.store.energy < 10000 && controller.ticksToDowngrade > 5000) {
+            return; // strictly conserve energy when supply is very low
+        }
+        
         var container = logistic.storeFor(controller);
         if(container && ((container.store && container.store.energy > 0) || container.energy > 0 || creep.carry.energy > 0)) {
             var withdrawResult = OK;

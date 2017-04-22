@@ -43,6 +43,10 @@ module.exports = class ControllerAspect {
         if(!this.roomai.canSpawn() || existingUpgraders.length >= this.upgraderCount()) {
             return;
         }
+        
+        if(this.room.storage && this.room.storage.store.energy < 10000 && this.controller.ticksToDowngrade > 5000) {
+            return; // strictly conserve energy when supply is very low
+        }
 
         this.roomai.spawn(parts, { role: upgrader.name });
     }
