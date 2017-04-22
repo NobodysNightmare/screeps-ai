@@ -40,7 +40,7 @@ module.exports = class SuppliesAspect {
     buildHarvesters(source) {
         var partConfigs = harvester.carryConfigs;
         var neededHarvesters = 1;
-        if(!logistic.storeFor(source) && !(room.storage && room.storage.store.energy)) {
+        if(!logistic.storeFor(source) && !(this.room.storage && this.room.storage.store.energy)) {
             partConfigs = harvester.miningConfigs;
             neededHarvesters = 2;
         }
