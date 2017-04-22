@@ -1,4 +1,5 @@
 const ff = require("helper.friendFoeRecognition");
+const movement = require("helper.movement");
 
 module.exports = {
     name: "attacker",
@@ -17,7 +18,7 @@ module.exports = {
         if(creep.pos.roomName == flag.pos.roomName) {
             this.attackRoom(creep);
         } else {
-            creep.moveTo(flag);
+            movement.moveToRoom(creep, flag.pos.roomName);
         }
     },
     attackRoom: function(creep) {

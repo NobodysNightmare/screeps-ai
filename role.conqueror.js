@@ -1,5 +1,6 @@
-var spawnHelper = require('helper.spawning');
-var logistic = require('helper.logistic');
+const spawnHelper = require('helper.spawning');
+const logistic = require('helper.logistic');
+const movement = require("helper.movement");
 
 module.exports = {
     name: "conqueror",
@@ -14,8 +15,8 @@ module.exports = {
     },
     run: function(creep) {
         let flag = Game.flags[creep.memory.flag];
-        if(creep.room.name != flag.pos.roomName) {
-            creep.moveTo(flag.pos);
+        if(creep.room.name !== flag.pos.roomName) {
+            movement.moveToRoom(creep, flag.pos.roomName);
             return;
         }
 

@@ -1,3 +1,5 @@
+const movement = require("helper.movement");
+
 module.exports = {
     name: "claimer",
     parts: [CLAIM, MOVE],
@@ -5,7 +7,7 @@ module.exports = {
         let flag = Game.flags[creep.memory.flag];
         if(!flag) return;
         if(creep.room.name != flag.pos.roomName) {
-            creep.moveTo(flag);
+            movement.moveToRoom(creep, flag.pos.roomName);
             return;
         }
 
