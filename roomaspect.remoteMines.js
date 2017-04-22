@@ -25,8 +25,10 @@ module.exports = class RemoteMinesAspect {
             if(remoteRoom) {
                 this.spawnDefender(remoteRoom);
                 this.spawnReserver(remoteRoom);
-                this.spawnMiners(remoteRoom);
-                this.spawnCarriers(remoteRoom);
+                for(let source of remoteRoom.find(FIND_SOURCES)) {
+                    this.spawnMiner(source);
+                    this.spawnCarrier(source);
+                }
             } else {
                 this.spawnObserver(roomName);
             }
@@ -38,6 +40,7 @@ module.exports = class RemoteMinesAspect {
         remoteRoom.memory.primaryHostile = hostile && hostile.id;
         if(!hostile) return;
 
+        if(!this.roomai.canSpawn()) return;
         var hasDefender = _.any(spawnHelper.globalCreepsWithRole(defender.name), (c) => c.memory.room == remoteRoom.name);
         if(!hasDefender) {
             this.spawn(spawnHelper.bestAvailableParts(this.room, defender.meeleeConfigs), { role: defender.name, room: remoteRoom.name, originRoom: this.room.name }, remoteRoom.name);
@@ -45,6 +48,8 @@ module.exports = class RemoteMinesAspect {
     }
 
     spawnReserver(remoteRoom) {
+        if(!this.roomai.canSpawn()) return;
+        
         var needReservation = !remoteRoom.controller.reservation || remoteRoom.controller.reservation.ticksToEnd < 2000;
         var hasReserver = _.any(spawnHelper.globalCreepsWithRole(reserver.name), (c) => c.memory.target == remoteRoom.controller.id);
         if(needReservation && !hasReserver) {
@@ -52,30 +57,30 @@ module.exports = class RemoteMinesAspect {
         }
     }
 
-    spawnMiners(remoteRoom) {
-        for(var source of remoteRoom.find(FIND_SOURCES)) {
-            var hasMiner = _.any(spawnHelper.globalCreepsWithRole(miner.name), (c) => c.memory.target == source.id);
-            if(!hasMiner) {
-                this.spawn(spawnHelper.bestAvailableParts(this.room, miner.energyConfigs), { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true }, remoteRoom.name);
-            }
+    spawnMiner(source) {
+        if(!this.roomai.canSpawn()) return;
+        
+        var hasMiner = _.any(spawnHelper.globalCreepsWithRole(miner.name), (c) => c.memory.target == source.id);
+        if(!hasMiner) {
+            this.spawn(spawnHelper.bestAvailableParts(this.room, miner.energyConfigs), { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true }, source.room.name);
         }
     }
 
-    spawnCarriers(remoteRoom) {
-        for(var source of remoteRoom.find(FIND_SOURCES)) {
-            var hasStore = logistic.storeFor(source);
-            var hasCarrier = _.any(spawnHelper.globalCreepsWithRole(carrier.name), (c) => c.memory.source == source.id);
-            if(hasStore && !hasCarrier) {
-                let memory = {
-                    role: carrier.name,
-                    source: source.id,
-                    destination: this.room.storage.id,
-                    resource: RESOURCE_ENERGY,
-                    selfSustaining: true,
-                    registerRevenueFor: remoteRoom.name
-                };
-                this.spawn(spawnHelper.bestAvailableParts(this.room, carrier.configsForCapacity(this.neededCollectorCapacity(source), { workParts: 1 })), memory, remoteRoom.name);
-            }
+    spawnCarrier(source) {
+        if(!this.roomai.canSpawn()) return;
+        
+        var hasStore = logistic.storeFor(source);
+        var hasCarrier = _.any(spawnHelper.globalCreepsWithRole(carrier.name), (c) => c.memory.source == source.id);
+        if(hasStore && !hasCarrier) {
+            let memory = {
+                role: carrier.name,
+                source: source.id,
+                destination: this.room.storage.id,
+                resource: RESOURCE_ENERGY,
+                selfSustaining: true,
+                registerRevenueFor: source.room.name
+            };
+            this.spawn(spawnHelper.bestAvailableParts(this.room, carrier.configsForCapacity(this.neededCollectorCapacity(source), { workParts: 1 })), memory, source.room.name);
         }
     }
 
