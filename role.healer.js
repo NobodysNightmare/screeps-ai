@@ -29,7 +29,11 @@ module.exports = {
         }
     },
     heal: function(creep, target) {
-        if(creep.heal(target) == ERR_NOT_IN_RANGE) {
+        let healResult = creep.heal(target);
+        if(healResult === OK) {
+            // keeping up even with moving targets
+            creep.move(creep.pos.getDirectionTo(target));
+        } else if(healResult == ERR_NOT_IN_RANGE) {
             creep.rangedHeal(target);
             let friendlyTerritory = !target.room.controller || !target.room.controller.owner || target.room.controller.my;
             if(!creep.memory.avoidRooms || !creep.memory.avoidRooms.includes(target.room.name)) {
