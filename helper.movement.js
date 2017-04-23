@@ -33,16 +33,9 @@ module.exports = {
             }
         }
 
-        let route = creep.memory._route.route;
-        if(route[creep.room.name]) {
-            // TODO: calculate complete path using findPath and this macro route
-            creep.moveTo(creep.pos.findClosestByRange(route[creep.room.name]));
-        } else {
-            if(creep.room.name !== roomName) {
-                console.log(creep.name + ": Not on route! " + creep.room.name + " => " + roomName);
-            }
-            creep.moveTo(new RoomPosition(25, 25, roomName));
-        }
+        // TODO: use calculated route in pathfinder to block rooms
+        // using the route without pathfinder is too buggy (e.g. navigating to the wrong exit tile)
+        creep.moveTo(new RoomPosition(25, 25, roomName));
     },
     calculateRoute: function(startRoom, endRoom) {
         let route = Game.map.findRoute(startRoom, endRoom, { routeCallback: routeCallback });
@@ -71,7 +64,7 @@ module.exports = {
     getExitRoom: function(creep) {
         let direction = this.getExitDirection(creep);
         if(!direction) return null;
-        
+
         return Game.map.describeExits(creep.room.name)[direction];
     },
     getExitDirection: function(creep) {
