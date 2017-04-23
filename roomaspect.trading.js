@@ -22,13 +22,13 @@ module.exports = class TradingAspect {
             let amountInTerminal = this.terminal.store[resource];
             let amountInStorage = this.storage.store[resource] || 0;
             if(!trading.blacklistedResources.includes(resource)) {
-                let excessAmount = amountInTerminal + amountInStorage - trading.baselineAmount;
+                let excessAmount = amountInTerminal + amountInStorage - trading.baselineAmount; // TODO: move to trading helper
                 let sendableAmount = _.min([amountInTerminal, excessAmount]);
                 if(sendableAmount >= 100) {
                     if(this.balanceToEmpire(resource, sendableAmount)) {
                         return;
                     } else {
-                        if(Game.time % 200 === 50) return this.sell(resource, sendableAmount);
+                        if(Game.time % 200 === 50 && !trading.sellingBlacklist.includes(resource)) return this.sell(resource, sendableAmount);
                     }
                 }
             }
