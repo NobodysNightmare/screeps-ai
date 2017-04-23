@@ -15,6 +15,7 @@ var aspects = [
     require("roomaspect.masons"),
     require("roomaspect.constructions"),
     require("roomaspect.trading"),
+    require("roomaspect.labs"),
     require("roomaspect.manualOperations"),
     require("roomaspect.power")
 ];
