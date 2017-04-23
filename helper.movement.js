@@ -4,6 +4,16 @@ ROUTE_HOSTILE_ROOM_COST = 4;
 ROUTE_HIGHWAY_ROOM_COST = 1.5;
 
 const roomNameRegex = /^[EW]([0-9]+)[NS]([0-9]+)$/;
+const inverseDirections = {
+    "1": BOTTOM,
+    "2": BOTTOM_LEFT,
+    "3": LEFT,
+    "4": TOP_LEFT,
+    "5": TOP,
+    "6": TOP_RIGHT,
+    "7": RIGHT,
+    "8": BOTTOM_RIGHT
+};
 
 function routeCallback(roomName, fromRoomName) {
     let room = Game.rooms[roomName];
@@ -57,6 +67,22 @@ module.exports = {
     },
     isOnExit: function(creep) {
         return creep.pos.x == 0 || creep.pos.y == 0 || creep.pos.x == 49 || creep.pos.y == 49;
+    },
+    getExitRoom: function(creep) {
+        let direction = this.getExitDirection(creep);
+        if(!direction) return null;
+        
+        return Game.map.describeExits(creep.room.name)[direction];
+    },
+    getExitDirection: function(creep) {
+        if(creep.pos.x == 0) return LEFT;
+        if(creep.pos.x == 49) return RIGHT;
+        if(creep.pos.y == 0) return TOP;
+        if(creep.pos.y == 49) return BOTTOM;
+        return null;
+    },
+    inverseDirection: function(direction) {
+        return inverseDirections[direction];
     }
 };
 

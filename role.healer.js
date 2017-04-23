@@ -31,11 +31,18 @@ module.exports = {
     heal: function(creep, target) {
         let healResult = creep.heal(target);
         if(healResult === OK) {
-            // keeping up even with moving targets
-            creep.move(creep.pos.getDirectionTo(target));
+            let exitDir = movement.getExitDirection(target);
+            if(exitDir) {
+                // successful healing on the exit tile can only happen when
+                // the target arrived in this room, when we were already there.
+                // Clear the exit to avoid us blocking movement off the exit.
+                creep.move(movement.inverseDirection(exitDir));
+            } else {
+                // instantly follow to keep up with target
+                creep.move(creep.pos.getDirectionTo(target));
+            }
         } else if(healResult == ERR_NOT_IN_RANGE) {
             creep.rangedHeal(target);
-            let friendlyTerritory = !target.room.controller || !target.room.controller.owner || target.room.controller.my;
             if(!creep.memory.avoidRooms || !creep.memory.avoidRooms.includes(target.room.name)) {
                 creep.moveTo(target);
             }
