@@ -22,10 +22,10 @@ const roles = [
 
 const constructionClaimSpawn = require("construction.claimSpawn");
 
-const RoomAI = require('roomai.base');
 const statsVisual = require("visual.globalStatistics");
 const profitVisual = require("visual.roomProfit");
 
+require("patch.room");
 require("traveler");
 
 const profiler = require('screeps-profiler');
@@ -56,8 +56,8 @@ module.exports.loop = function() {
 
         for(var roomName in Game.rooms) {
             var room = Game.rooms[roomName];
-            if(room.controller && room.controller.my) {
-                suppressErrors(() => new RoomAI(room).run());
+            if(room.ai()) {
+                suppressErrors(() => room.ai().run());
             }
         }
         constructionClaimSpawn.perform(); // TODO: move into claim operation
