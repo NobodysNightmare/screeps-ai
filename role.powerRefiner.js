@@ -47,7 +47,7 @@ module.exports = {
         }
     },
     spawner: function(creep) {
-        return creep.room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_POWER_SPAWN })[0];
+        return creep.room.powerSpawn();
     }
 };
 

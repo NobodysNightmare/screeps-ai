@@ -8,6 +8,18 @@ Room.prototype.ai = function() {
             this._ai = null;
         }
     }
-    
+
     return this._ai;
+}
+
+Room.prototype.powerSpawn = function() {
+    if(this._powerSpawn === undefined) {
+        if(this.controller && this.controller.my && this.controller.level >= 8) {
+            this._powerSpawn = this.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_POWER_SPAWN })[0];
+        } else {
+            this._powerSpawn = null;
+        }
+    }
+
+    return this._powerSpawn;
 }
