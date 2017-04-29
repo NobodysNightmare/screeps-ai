@@ -23,12 +23,13 @@ module.exports = class LabsAspect {
     constructor(roomai) {
         this.roomai = roomai;
         this.room = roomai.room;
-        this.labs = this.room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_LAB });
+        this.labs = roomai.labs.all;
         
         if(!this.room.memory.labs) {
             this.room.memory.labs = {
                 currentReactionCompound: null,
-                currentReactionAmount: 0
+                currentReactionAmount: 0,
+                reactors: []
             };
         }
         this.memory = this.room.memory.labs;

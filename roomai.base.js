@@ -22,6 +22,7 @@ var aspects = [
 
 var structureTower = require("structure.tower");
 
+const Labs = require("roomservice.labs");
 const Links = require("roomservice.links");
 
 module.exports = class RoomAI {
@@ -30,6 +31,7 @@ module.exports = class RoomAI {
         this.spawns = room.find(FIND_MY_SPAWNS);
         this.availableSpawns = _.filter(this.spawns, (s) => !s.spawning);
         this.links = new Links(room);
+        this.labs = new Labs(room);
     }
 
     run() {
@@ -79,6 +81,10 @@ module.exports = class RoomAI {
             spawn.room.visual.circle(spawn.pos, {fill: '#000000', radius: 0.5, opacity: 0.8 });
             spawn.room.visual.text(remaining, spawn.pos.x - 0.0, spawn.pos.y + 0.2, { align: "center", size: 0.6 })
         }
+    }
+    
+    toString() {
+        return "[RoomAI " + this.room.name + "]";
     }
 }
 
