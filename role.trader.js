@@ -1,24 +1,24 @@
 const spawnHelper = require("helper.spawning");
-const trading = require("helper.trading");
 
 module.exports = {
     name: "trader",
     parts: spawnHelper.makeParts(10, CARRY, 5, MOVE),
     run: function(creep) {
+        let trading = creep.room.ai().trading;
         if(creep.memory.exporting) {
             if(!this.carryTo(creep, creep.room.terminal)) {
-                let resource = trading.findImportableResource(creep.room);
+                let resource = trading.resourcesImportableToStorage[0];
                 if(resource) {
-                    let amount = Math.min(creep.carryCapacity, creep.room.terminal.store[resource], trading.neededImportAmount(creep.room, resource));
+                    let amount = Math.min(creep.carryCapacity, creep.room.terminal.store[resource], trading.neededImportToStorage(resource));
                     creep.withdraw(creep.room.terminal, resource, amount);
                 }
                 creep.memory.exporting = false;
             }
         } else {
             if(!this.carryTo(creep, creep.room.storage)) {
-                let resource = trading.findExportableResource(creep.room);
+                let resource = trading.resourcesExportableFromStorage[0];
                 if(resource) {
-                    let amount = Math.min(creep.carryCapacity, trading.possibleExportAmount(creep.room, resource));
+                    let amount = Math.min(creep.carryCapacity, trading.possibleExportFromStorage(resource));
                     creep.withdraw(creep.room.storage, resource, amount);
                 }
                 creep.memory.exporting = true;

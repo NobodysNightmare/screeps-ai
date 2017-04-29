@@ -24,6 +24,7 @@ var structureTower = require("structure.tower");
 
 const Labs = require("roomservice.labs");
 const Links = require("roomservice.links");
+const Trading = require("roomservice.trading");
 
 module.exports = class RoomAI {
     constructor(room) {
@@ -32,6 +33,7 @@ module.exports = class RoomAI {
         this.availableSpawns = _.filter(this.spawns, (s) => !s.spawning);
         this.links = new Links(room);
         this.labs = new Labs(room);
+        this.trading = new Trading(room);
     }
 
     run() {
@@ -82,7 +84,7 @@ module.exports = class RoomAI {
             spawn.room.visual.text(remaining, spawn.pos.x - 0.0, spawn.pos.y + 0.2, { align: "center", size: 0.6 })
         }
     }
-    
+
     toString() {
         return "[RoomAI " + this.room.name + "]";
     }

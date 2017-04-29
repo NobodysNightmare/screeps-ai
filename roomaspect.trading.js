@@ -1,34 +1,31 @@
 const spawnHelper = require("helper.spawning");
 const trader = require("role.trader");
 
-const trading = require("helper.trading");
-
 module.exports = class TradingAspect {
     constructor(roomai) {
         this.roomai = roomai;
         this.room = roomai.room;
         this.storage = this.room.storage;
         this.terminal = this.room.terminal;
+        this.trading = roomai.trading;
     }
 
     run() {
-        if(!this.storage || !this.terminal) return;
+        if(!this.trading.isTradingPossible()) return;
         this.transferExcessResource();
         this.buildTrader();
     }
 
     transferExcessResource() {
         for(var resource in this.terminal.store) {
-            let amountInTerminal = this.terminal.store[resource];
-            let amountInStorage = this.storage.store[resource] || 0;
-            if(!trading.blacklistedResources.includes(resource)) {
-                let excessAmount = amountInTerminal + amountInStorage - trading.baselineAmount; // TODO: move to trading helper
-                let sendableAmount = _.min([amountInTerminal, excessAmount]);
-                if(sendableAmount >= 100) {
-                    if(this.balanceToEmpire(resource, sendableAmount)) {
-                        return;
-                    } else {
-                        if(Game.time % 200 === 50 && !trading.sellingBlacklist.includes(resource)) return this.sell(resource, sendableAmount);
+            let exportable = this.trading.possibleExportFromRoom(resource);
+            if(exportable >= 100) {
+                if(this.balanceToEmpire(resource, exportable)) {
+                    return;
+                } else if(Game.time % 200 === 50) {
+                    let sellable = this.trading.sellableAmount(resource);
+                    if(sellable >= 100) {
+                        return this.sell(resource, sendableAmount);
                     }
                 }
             }
@@ -36,7 +33,7 @@ module.exports = class TradingAspect {
     }
 
     balanceToEmpire(resource, amount) {
-        let targets = _.map(_.filter(Game.rooms, (r) => r.controller && r.controller.my && r.terminal && r.storage), (r) => ({ room: r, miss: trading.baselineAmount - ((r.terminal.store[resource] || 0) + (r.storage.store[resource] || 0)) }));
+        let targets = _.map(_.filter(Game.rooms, (r) => r.ai() && r.ai().trading.isTradingPossible()), (r) => ({ room: r, miss: r.ai().trading.neededImportToRoom(resource) }));
         let choice = _.sortBy(_.filter(targets, (t) => t.miss > 0), (t) => -t.miss)[0];
         if(choice) {
             this.terminal.send(resource, _.min([amount, _.max([100, choice.miss])]), choice.room.name, "empire balancing");
@@ -80,7 +77,7 @@ module.exports = class TradingAspect {
 
     buildTrader() {
         if(!this.roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(this.roomai, trader.name) >= 1) return;
-        if(trading.findExportableResource(this.room) || trading.findImportableResource(this.room)) {
+        if(this.trading.resourcesExportableFromStorage.length > 0 || this.trading.resourcesImportableToStorage.length > 0) {
             this.roomai.spawn(trader.parts, { role: trader.name });
         }
     }
