@@ -25,7 +25,7 @@ module.exports = class TradingAspect {
                 } else if(Game.time % 200 === 50) {
                     let sellable = this.trading.sellableAmount(resource);
                     if(sellable >= 100) {
-                        return this.sell(resource, sendableAmount);
+                        return this.sell(resource, sellable);
                     }
                 }
             }
