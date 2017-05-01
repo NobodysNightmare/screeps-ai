@@ -1,4 +1,3 @@
-const movement = require("helper.movement");
 const spawnHelper = require("helper.spawning");
 
 module.exports = {
