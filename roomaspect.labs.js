@@ -13,6 +13,7 @@ module.exports = class LabsAspect {
 
         // TODO: allow multiple reactors?
         this.reactor = roomai.labs.reactors[0];
+        this.scientists = this.room.find(FIND_MY_CREEPS, { filter: (c) => c.memory.role == scientist.name });
     }
 
     run() {
@@ -64,9 +65,9 @@ module.exports = class LabsAspect {
         if(!resource) return 0;
         let storageAmount = this.room.storage.store[resource] || 0;
         let labAmount = _.sum(_.filter(this.labs, (l) => l.mineralType == resource), (l) => l.mineralAmount);
+        let scientistAmount = _.sum(this.scientists, (c) => c.carry[resource] || 0);
 
-        // TODO: amount on scientists?
-        return storageAmount + labAmount;
+        return storageAmount + labAmount + scientistAmount;
     }
 
     buildScientists() {
