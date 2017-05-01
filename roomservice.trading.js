@@ -15,7 +15,8 @@ module.exports = class Trading {
 
     get sellingBlacklist() {
         return [
-            RESOURCE_POWER
+            RESOURCE_POWER,
+            RESOURCE_OXYGEN
         ];
     }
 
@@ -64,7 +65,7 @@ module.exports = class Trading {
             if(this.room.powerSpawn()) return 15000;
             return 0;
         }
-        
+
         return 10000;
     }
 }
