@@ -1,18 +1,5 @@
-const DECOMPOSITIONS = {
-    G: ["ZK", "UL"],
-
-    ZK: ["Z", "K"],
-    UL: ["U", "L"],
-    OH: ["H", "O"],
-    LH: ["L", "H"],
-    GH: ["G", "H"],
-
-    LH2O: ["LH", "OH"],
-    GH2O: ["GH", "OH"],
-
-    XLH2O: ["X", "LH2O"],
-    XGH2O: ["X", "GH2O"]
-}
+const spawnHelper = require("helper.spawning");
+const scientist = require("role.scientist");
 
 const targetCompounds = ["G", "XLH2O", "XGH2O"];
 const reactionCycleAmount = 2500;
@@ -22,38 +9,38 @@ module.exports = class LabsAspect {
         this.roomai = roomai;
         this.room = roomai.room;
         this.labs = roomai.labs.all;
+        this.decompose = roomai.labs.decompose;
 
-        if(!this.room.memory.labs) {
-            this.room.memory.labs = {
-                currentReactionCompound: null,
-                currentReactionAmount: 0,
-                reactors: []
-            };
-        }
-        this.memory = this.room.memory.labs;
+        // TODO: allow multiple reactors?
+        this.reactor = roomai.labs.reactors[0];
     }
 
     run() {
-        if(!this.room.storage || this.labs.length === 0) return;
+        if(!this.room.storage || !this.reactor || !this.reactor.isValid()) return;
+        if(Game.cpu.bucket < 5000) {
+            console.log(this.room.name + ": Not running labs, low bucket.");
+            return;
+        }
 
         this.setCurrentReaction();
         this.buildScientists();
+        this.reactor.react();
+        this.reactor.renderVisuals();
     }
 
     setCurrentReaction() {
         if(!this.isCurrentReactionFinished()) return;
 
         let nextReaction = this.findNextReaction();
-        this.memory.currentReactionCompound = nextReaction;
-        this.memory.currentReactionAmount = this.amount(nextReaction) + reactionCycleAmount;
+        this.reactor.setupReaction(nextReaction, this.amount(nextReaction) + reactionCycleAmount);
     }
 
     isCurrentReactionFinished() {
-        let currentReaction = this.memory.currentReactionCompound;
+        let currentReaction = this.reactor.compound;
         if(!currentReaction) return true;
-        if(_.any(DECOMPOSITIONS[currentReaction], (r) => this.amount(r) == 0)) return true;
+        if(_.any(this.decompose(currentReaction), (r) => this.amount(r) == 0)) return true;
 
-        return this.amount(currentReaction) >= this.memory.currentReactionAmount;
+        return this.amount(currentReaction) >= this.reactor.targetAmount;
     }
 
     findNextReaction() {
@@ -62,11 +49,11 @@ module.exports = class LabsAspect {
             let missing = [target];
             while(missing.length > 0) {
                 let nextReaction = missing[0];
-                missing = _.filter(DECOMPOSITIONS[nextReaction], (r) => this.amount(r) === 0);
+                missing = _.filter(this.decompose(nextReaction), (r) => this.amount(r) === 0);
                 if(missing.length === 0) return nextReaction;
 
                 // filter uncookable resources (e.g. H). Can't get those using reactions.
-                missing = _.filter(missing, (r) => DECOMPOSITIONS[r]);
+                missing = _.filter(missing, (r) => this.decompose(r));
             }
         }
 
@@ -83,7 +70,10 @@ module.exports = class LabsAspect {
     }
 
     buildScientists() {
-        // TODO: build creeps that will take care of lab duties
+        if(!this.reactor.compound || !this.roomai.canSpawn()) return;
+        if(spawnHelper.numberOfLocalCreeps(this.roomai, scientist.name) >= 1) return;
+
+        this.roomai.spawn(scientist.parts, { role: scientist.name });
     }
 }
 
