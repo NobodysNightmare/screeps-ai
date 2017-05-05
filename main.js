@@ -21,8 +21,6 @@ const roles = [
     require("role.scientist")
 ];
 
-const constructionClaimSpawn = require("construction.claimSpawn");
-
 const statsVisual = require("visual.globalStatistics");
 const profitVisual = require("visual.roomProfit");
 
@@ -61,7 +59,6 @@ module.exports.loop = function() {
                 suppressErrors(() => room.ai().run());
             }
         }
-        constructionClaimSpawn.perform(); // TODO: move into claim operation
 
         if(Game.time % 100 == 50) {
             for(var name in Memory.creeps) {

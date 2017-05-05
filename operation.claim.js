@@ -19,7 +19,8 @@ module.exports = class ClaimOperation {
         } else {
             let claimers = _.filter(spawnHelper.globalCreepsWithRole(claimer.name), (c) => c.memory.flag == this.targetFlag.name);
             let conquerors = _.filter(spawnHelper.globalCreepsWithRole(conqueror.name), (c) => c.memory.flag == this.targetFlag.name);
-            let needClaimer = claimers.length == 0 && !(targetRoom && targetRoom.controller.my);
+            let myRoom = targetRoom && targetRoom.controller.my;
+            let needClaimer = claimers.length == 0 && !myRoom;
 
             if(needClaimer) {
                 this.roomai.spawn(claimer.parts, { role: claimer.name, flag: this.targetFlag.name });
@@ -27,6 +28,10 @@ module.exports = class ClaimOperation {
 
             if(conquerors.length < 2) {
                 this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, conqueror.configs()), { role: conqueror.name, flag: this.targetFlag.name });
+            }
+            
+            if(myRoom) {
+                targetRoom.createConstructionSite(this.targetFlag.pos, STRUCTURE_SPAWN);
             }
         }
     }
