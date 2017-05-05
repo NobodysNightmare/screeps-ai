@@ -6,7 +6,7 @@ module.exports = {
     run: function(creep) {
         let reactor = creep.room.ai().labs.reactors[0]; // TODO: support multiple?
         if(creep.memory.state === "deliver") {
-            this.deliver(creep, reactor);
+            this.deliverToReactor(creep, reactor);
         } else if(creep.memory.state === "pickAtReactor") {
             this.pickAtReactor(creep, reactor);
         } else if(creep.memory.state === "store") {
@@ -18,7 +18,7 @@ module.exports = {
             this.store(creep, reactor);
         }
     },
-    deliver: function(creep, reactor) {
+    deliverToReactor: function(creep, reactor) {
         let target = null;
         let resource = Object.keys(creep.carry)[1];
         if(resource == reactor.baseMinerals[0]) target = reactor.inputs[0];
@@ -36,6 +36,7 @@ module.exports = {
         if(creep.pos.isNearTo(target)) {
             creep.transfer(target, resource);
             creep.memory.state = "pickAtReactor";
+            this.pickAtReactor(creep, reactor);
         } else {
             creep.moveTo(target);
         }
@@ -45,10 +46,11 @@ module.exports = {
         if(!reactor.inputSatisfied(0)) target = reactor.inputs[0];
         if(!reactor.inputSatisfied(1)) target = reactor.inputs[1];
 
-        if(creep.withdraw(target, target.mineralType) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
-        } else {
+        if(target.mineralAmount === 0 || _.sum(creep.carry) === creep.carryCapacity) {
             creep.memory.state = "store";
+            this.store(creep, reactor);
+        } else if(creep.withdraw(target, target.mineralType) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(target);
         }
     },
     store: function(creep, reactor) {
@@ -59,6 +61,7 @@ module.exports = {
         if(creep.pos.isNearTo(target)) {
             creep.transfer(target, resource);
             creep.memory.state = "pickAtStorage";
+            this.pickAtStorage(creep, reactor);
         } else {
             creep.moveTo(target);
         }
