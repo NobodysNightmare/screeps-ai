@@ -36,7 +36,8 @@ module.exports = class RemoteMinesAspect {
     }
 
     spawnDefender(remoteRoom) {
-        var hostile = ff.findHostiles(remoteRoom)[0];
+        let remoteOwner = remoteRoom.controller.owner && remoteRoom.controller.owner.username;
+        var hostile = ff.findHostiles(remoteRoom, { filter: (c) => c.owner.username !== remoteOwner })[0];
         remoteRoom.memory.primaryHostile = hostile && hostile.id;
         if(!hostile) return;
 
@@ -50,7 +51,7 @@ module.exports = class RemoteMinesAspect {
     spawnReserver(remoteRoom) {
         if(!this.roomai.canSpawn()) return;
         
-        var needReservation = !remoteRoom.controller.reservation || remoteRoom.controller.reservation.ticksToEnd < 2000;
+        var needReservation = !remoteRoom.controller.owner && (!remoteRoom.controller.reservation || remoteRoom.controller.reservation.ticksToEnd < 2000);
         var hasReserver = _.any(spawnHelper.globalCreepsWithRole(reserver.name), (c) => c.memory.target == remoteRoom.controller.id);
         if(needReservation && !hasReserver) {
             this.spawn(spawnHelper.bestAvailableParts(this.room, reserver.partConfigs), { role: reserver.name, target: remoteRoom.controller.id }, remoteRoom.name);

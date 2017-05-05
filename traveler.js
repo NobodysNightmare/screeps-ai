@@ -97,7 +97,8 @@ class Traveler {
                     return false;
                 }
             }
-            else if (this.memory.hostileRooms[roomName] && !options.allowHostile) {
+            else if (this.memory.hostileRooms[roomName] && !options.allowHostile &&
+                roomName !== origin.pos.roomName && roomName !== destination.pos.roomName) {
                 return false;
             }
             let room = Game.rooms[roomName];
