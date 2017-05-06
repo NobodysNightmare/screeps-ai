@@ -61,7 +61,7 @@ module.exports = {
     pickup: function(creep) {
         // TODO: also collect raw resources lying around the source
         if(!this.source(creep)) return;
-        var target = logistic.storeFor(this.source(creep));
+        var target = logistic.storeFor(this.source(creep)) || this.source(creep);
         var result = creep.withdraw(target, creep.memory.resource);
         if(result == ERR_NOT_IN_RANGE) {
             creep.travelTo(target);
