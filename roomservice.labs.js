@@ -27,7 +27,7 @@ class Reactor {
     }
 
     isValid() {
-        return this.output && this.inputs.length === 2;
+        return this.outputs.length > 0 && this.inputs.length === 2;
     }
 
     reactionPossible() {
@@ -41,22 +41,27 @@ class Reactor {
     }
 
     inputSatisfied(index) {
+        if(!this.inputs[index]) return false;
         return this.inputs[index].mineralType === null || this.inputs[index].mineralType === this.baseMinerals[index];
     }
 
-    get output() {
-        if(this._output === undefined) this._output = Game.getObjectById(this.memory.output);
+    get rallyPos() {
+        if(!this.memory.rally) return null;
+        return this.labs.room.getPositionAt(this.memory.rally[0], this.memory.rally[1]);
+    }
 
-        return this._output;
+    get outputs() {
+        if(!this._outputs) {
+            this._outputs = _.compact(_.map(this.memory.outputs, (id) => Game.getObjectById(id)));
+            // TODO: find missing outputs
+        }
+
+        return this._outputs;
     }
 
     get inputs() {
         if(!this._inputs) {
             this._inputs = _.compact(_.map(this.memory.inputs, (id) => Game.getObjectById(id)));
-            if(this._inputs.length < 2) {
-                this._inputs = this.findInputs();
-                this.memory.inputs = _.map(this._inputs, (lab) => lab.id);
-            }
         }
 
         return this._inputs;
@@ -72,6 +77,7 @@ class Reactor {
     }
 
     get baseMinerals() {
+        if(!this.compound) return [];
         return decompose(this.compound);
     }
 
@@ -83,7 +89,9 @@ class Reactor {
         if(!this.isValid()) return false;
         if(!this.reactionPossible()) return false;
 
-        this.output.runReaction(...this.inputs);
+        for(let output of this.outputs) {
+            output.runReaction(...this.inputs);
+        }
         return true;
     }
 
@@ -91,15 +99,12 @@ class Reactor {
         if(!this.isValid()) return;
         if(!this.compound) return;
 
-        this.renderMineral(this.output, this.compound, true);
+        for(let output of this.outputs) {
+            this.renderMineral(output, this.compound, true);
+        }
+
         this.renderMineral(this.inputs[0], this.baseMinerals[0]);
         this.renderMineral(this.inputs[1], this.baseMinerals[1]);
-    }
-
-    findInputs() {
-        if(!this.output) return [];
-
-        return _.take(_.filter(this.labs.all, (lab) => lab !== this.output && lab.pos.getRangeTo(this.output) <= 2), 2);
     }
 
     renderMineral(lab, resource, emptyIsGood) {
@@ -112,13 +117,62 @@ class Reactor {
             font: 0.5
         });
     }
+
+    findLabs(entranceDirection) {
+        this.memory.outputs = [];
+        this.memory.inputs = [];
+        this._outputs = undefined;
+        this._inputs = undefined;
+
+        let relevantLabs = _.filter(this.labs.all, (l) => l.pos.getRangeTo(this.rallyPos) <= 1);
+        for(let lab of relevantLabs) {
+            let relativeX = lab.pos.x - this.rallyPos.x,
+                relativeY = lab.pos.y - this.rallyPos.y;
+            if((relativeX == entranceDirection.x && relativeY == 0) ||
+                (relativeY == entranceDirection.y && relativeX == 0)) {
+                this.memory.inputs.push(lab.id);
+            } else {
+                this.memory.outputs.push(lab.id);
+            }
+        }
+    }
+}
+
+class Booster {
+    constructor(memory, labs) {
+        this.memory = memory;
+        this.labs = labs;
+    }
+
+    isReady() {
+        if(!this.lab) return false;
+        if(!this.resource) return false;
+        if(this.lab.mineralType !== this.resource) return false;
+
+        return this.lab.energyAmount >= LAB_BOOST_ENERGY && this.lab.mineralAmount >= LAB_BOOST_MINERAL;
+    }
+
+    get resource() {
+        return this.memory.res;
+    }
+
+    set resource(value) {
+        this.memory.res = value;
+    }
+
+    get lab() {
+        if(this._lab === undefined) this._lab = Game.getObjectById(this.memory.lab);
+
+        return this._lab;
+    }
 }
 
 module.exports = class Labs {
     constructor(room) {
         if(!room.memory.labs) {
             room.memory.labs = {
-                reactors: []
+                reactor: null,
+                boosters: []
             };
         }
         this.room = room;
@@ -127,20 +181,47 @@ module.exports = class Labs {
         this.decompose = decompose;
     }
 
-    get reactors() {
-        if(!this._reactors) {
-            this._reactors = _.map(this.memory.reactors, (mem) => new Reactor(mem, this));
+    get reactor() {
+        if(this._reactor === undefined) {
+            if(this.memory.reactor) {
+                this._reactor = new Reactor(this.memory.reactor, this);
+            } else {
+                this._reactor = null;
+            }
         }
 
-        return this._reactors;
+        return this._reactor;
     }
 
-    addReactor(outputLab) {
-        let memory = { output: outputLab.id, inputs: [] };
-        this.memory.reactors.push(memory);
+    get boosters() {
+        if(!this._boosters) {
+            this._boosters = _.map(this.memory.boosters, (mem) => new Booster(mem, this));
+        }
+
+        return this._boosters;
+    }
+
+    updateReactor(rally, entranceDirection) {
+        if(!this.reactor || !this.reactor.rallyPos || this.reactor.rallyPos.x !== rally.x || this.reactor.rallyPos.y !== rally.y) {
+            console.log("Creating new reactor");
+            this.memory.reactor = {
+                outputs: [],
+                inputs: [],
+                rally: [rally.x, rally.y]
+            };
+            this._reactor = undefined;
+        }
+
+        this.reactor.findLabs(entranceDirection);
+    }
+
+    addBooster(lab) {
+        let memory = { lab: lab.id };
+        this.memory.boosters.push(memory);
     }
 }
 
 const profiler = require("screeps-profiler");
 profiler.registerClass(Reactor, 'Labs.Reactor');
+profiler.registerClass(Booster, 'Labs.Booster');
 profiler.registerClass(module.exports, 'Labs');

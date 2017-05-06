@@ -41,6 +41,15 @@ at which location the associated link of the storage will be placed.
 Note: Since only one storage can be placed, placing additional storages will clear the old
 storage location.
 
+#### Reactor
+
+* **Building name:** `reactor`
+* **color:** Determines direction of entrance into reactor. Starting top left, clockwise.
+  Only the first 4 colors are valid.
+
+Around that spot labs will be built that will then process minerals to
+compounds.
+
 #### Walls
 
 * **Building name:** `walls`
@@ -110,9 +119,6 @@ fully upgraded miners into it, until the target room can take care of that by it
     * Manual operation for supply transports
     * Manual operation for resource stealing
 * Minerals
-    * keep a reserve in storage, only sell excess
-    * Process them in Labs
-    * Process power
     * Boost creeps
     * Supply nukes with Ghodium
 * Use observers to obtain vision on a room

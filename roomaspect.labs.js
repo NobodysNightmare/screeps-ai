@@ -11,8 +11,7 @@ module.exports = class LabsAspect {
         this.labs = roomai.labs.all;
         this.decompose = roomai.labs.decompose;
 
-        // TODO: allow multiple reactors?
-        this.reactor = roomai.labs.reactors[0];
+        this.reactor = roomai.labs.reactor;
         this.scientists = this.room.find(FIND_MY_CREEPS, { filter: (c) => c.memory.role == scientist.name });
     }
 

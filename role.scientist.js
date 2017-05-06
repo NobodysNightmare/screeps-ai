@@ -4,7 +4,7 @@ module.exports = {
     name: "scientist",
     parts: spawnHelper.makeParts(10, CARRY, 5, MOVE),
     run: function(creep) {
-        let reactor = creep.room.ai().labs.reactors[0]; // TODO: support multiple?
+        let reactor = creep.room.ai().labs.reactor;
         if(creep.memory.state === "deliver") {
             this.deliverToReactor(creep, reactor);
         } else if(creep.memory.state === "pickAtReactor") {
@@ -29,7 +29,8 @@ module.exports = {
                 creep.memory.state = "store";
                 return;
             } else {
-                target = reactor.output;
+                // TODO: move to reactor rally point
+                target = reactor.outputs[0];
             }
         }
 
@@ -42,11 +43,11 @@ module.exports = {
         }
     },
     pickAtReactor: function(creep, reactor) {
-        let target = reactor.output;
+        let target = _.find(reactor.outputs, (l) => l.mineralAmount > 0);
         if(!reactor.inputSatisfied(0)) target = reactor.inputs[0];
         if(!reactor.inputSatisfied(1)) target = reactor.inputs[1];
 
-        if(target.mineralAmount === 0 || _.sum(creep.carry) === creep.carryCapacity) {
+        if(!target || target.mineralAmount === 0 || _.sum(creep.carry) === creep.carryCapacity) {
             creep.memory.state = "store";
             this.store(creep, reactor);
         } else if(creep.withdraw(target, target.mineralType) === ERR_NOT_IN_RANGE) {
@@ -78,7 +79,7 @@ module.exports = {
         resources = _.sortBy(_.filter(resources, (r) => creep.room.storage.store[r.type]), (r) => r.amount);
         let resource = resources[0];
         if(resource) {
-            let actualAmount = (creep.room.storage.store[reactor.compound] || 0) + reactor.output.mineralAmount;
+            let actualAmount = (creep.room.storage.store[reactor.compound] || 0) + _.sum(reactor.outputs, (l) => l.mineralAmount);
             let neededProduce = reactor.targetAmount - actualAmount;
             let missingInput = Math.max(0, neededProduce - resource.amount);
             if(missingInput > 0) {
