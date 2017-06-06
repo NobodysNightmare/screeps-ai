@@ -203,7 +203,6 @@ module.exports = class Labs {
 
     updateReactor(rally, entranceDirection) {
         if(!this.reactor || !this.reactor.rallyPos || this.reactor.rallyPos.x !== rally.x || this.reactor.rallyPos.y !== rally.y) {
-            console.log("Creating new reactor");
             this.memory.reactor = {
                 outputs: [],
                 inputs: [],
