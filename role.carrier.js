@@ -32,7 +32,7 @@ module.exports = {
         }
     },
     deliver: function(creep) {
-        if(creep.memory.selfSustaining && !(creep.room.controller && creep.room.controller.my)) {
+        if(creep.memory.selfSustaining && !(creep.room.controller && creep.room.controller.owner)) {
             var road = _.find(creep.pos.lookFor(LOOK_STRUCTURES), (s) => s.structureType == STRUCTURE_ROAD);
             if(road) {
                 if(road.hits / road.hitsMax <= 0.6) {
