@@ -17,6 +17,7 @@ module.exports = class TradingAspect {
     }
 
     transferExcessResource() {
+        if(this.terminal.cooldown) return;
         for(var resource in this.terminal.store) {
             let exportable = this.trading.possibleExportFromRoom(resource);
             if(exportable >= 100) {
