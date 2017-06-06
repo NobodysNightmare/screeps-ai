@@ -34,6 +34,7 @@ module.exports = class RoomAI {
         this.links = new Links(room);
         this.labs = new Labs(room);
         this.trading = new Trading(room);
+        this.mode = this.room.memory.mode || "normal";
     }
 
     run() {
@@ -52,6 +53,8 @@ module.exports = class RoomAI {
         for(let spawn of this.spawns) {
             this.renderSpawnOverlay(spawn);
         }
+        
+        this.renderModeOverlay();
     }
 
     spawn(parts, memory) {
@@ -83,6 +86,10 @@ module.exports = class RoomAI {
             spawn.room.visual.circle(spawn.pos, {fill: '#000000', radius: 0.5, opacity: 0.8 });
             spawn.room.visual.text(remaining, spawn.pos.x - 0.0, spawn.pos.y + 0.2, { align: "center", size: 0.6 })
         }
+    }
+    
+    renderModeOverlay() {
+        this.room.visual.text("Mode: " + this.mode, 0, 0, { align: "left", color: "#fff", stroke: "#000" });
     }
 
     toString() {

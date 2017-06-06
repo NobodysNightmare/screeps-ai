@@ -20,10 +20,12 @@ module.exports = class MasonsAspect {
     masonCount() {
         if(!this.room.storage) return 0;
 
-        if(this.room.storage.store.energy < 300000) {
+        if(this.room.storage.store.energy < 200000) {
             return 0;
+        } else if(this.room.storage.store.energy < 300000) {
+            return this.roomai.mode == "walls" ? 1 : 0;
         } else {
-            return 1;
+            return this.roomai.mode == "walls" ? 2 : 1;
         }
     }
 }

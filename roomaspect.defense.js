@@ -73,7 +73,7 @@ module.exports = class DefenseAspect {
     
     displayAttackTime() {
         if(this.attackTime == 0) return;
-        this.room.visual.text("Attack time: " + this.attackTime, 0, 0, { align: "left", color: "#faa", stroke: "#000" });
+        this.room.visual.text("Attack time: " + this.attackTime, 0, 1, { align: "left", color: "#faa", stroke: "#000" });
     }
     
     get hostiles() {

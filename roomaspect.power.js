@@ -1,6 +1,8 @@
 const spawnHelper = require("helper.spawning");
 const refiner = require("role.powerRefiner");
 
+const powerModes = ["normal", "power"];
+
 module.exports = class PowerAspect {
     constructor(roomai) {
         this.roomai = roomai;
@@ -10,6 +12,7 @@ module.exports = class PowerAspect {
 
     run() {
         if(!this.powerSpawn) return;
+        if(!powerModes.includes(this.roomai.mode)) return;
         this.powerSpawn.processPower();
 
         if(!this.room.storage || this.room.storage.store.energy < 275000 || !this.room.storage.store[RESOURCE_POWER]) return;
