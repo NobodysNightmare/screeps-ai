@@ -1,7 +1,7 @@
 const spawnHelper = require("helper.spawning");
 const scientist = require("role.scientist");
 
-const targetCompounds = ["XLH2O", "XGH2O", "XLHO2", "G"];
+const targetCompounds = ["XLH2O", "XGH2O", "XLHO2", "XGHO2", "G"];
 const reactionCycleAmount = 2500;
 
 module.exports = class LabsAspect {
