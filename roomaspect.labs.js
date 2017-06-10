@@ -42,7 +42,7 @@ module.exports = class LabsAspect {
     isCurrentReactionFinished() {
         let currentReaction = this.reactor.compound;
         if(!currentReaction) return true;
-        if(_.any(this.decompose(currentReaction), (r) => this.amount(r) == 0)) return true;
+        if(_.any(this.decompose(currentReaction), (r) => this.amount(r) < LAB_REACTION_AMOUNT)) return true;
 
         return this.amount(currentReaction) >= this.reactor.targetAmount;
     }
