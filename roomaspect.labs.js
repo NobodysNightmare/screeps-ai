@@ -12,6 +12,7 @@ module.exports = class LabsAspect {
         this.decompose = roomai.labs.decompose;
 
         this.reactor = roomai.labs.reactor;
+        this.boosters = roomai.labs.boosters;
         this.scientists = this.room.find(FIND_MY_CREEPS, { filter: (c) => c.memory.role == scientist.name });
     }
 
@@ -26,6 +27,9 @@ module.exports = class LabsAspect {
         this.buildScientists();
         this.reactor.react();
         this.reactor.renderVisuals();
+        for(let booster of this.boosters) {
+            booster.renderVisuals();
+        }
     }
 
     setCurrentReaction() {

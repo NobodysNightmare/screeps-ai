@@ -23,6 +23,17 @@ function decompose(compound) {
     return DECOMPOSITIONS[compound];
 }
 
+function renderMineral(lab, resource, emptyIsGood) {
+    let color = "#f00";
+    if(resource === lab.mineralType || (lab.mineralType === null && emptyIsGood)) color = "#0f0";
+    lab.room.visual.text(resource, lab.pos.x, lab.pos.y + 0.2, {
+        color: color,
+        stroke: "#000",
+        align: "center",
+        font: 0.5
+    });
+}
+
 class Reactor {
     constructor(memory, labs) {
         this.memory = memory;
@@ -103,22 +114,11 @@ class Reactor {
         if(!this.compound) return;
 
         for(let output of this.outputs) {
-            this.renderMineral(output, this.compound, true);
+            renderMineral(output, this.compound, true);
         }
 
-        this.renderMineral(this.inputs[0], this.baseMinerals[0]);
-        this.renderMineral(this.inputs[1], this.baseMinerals[1]);
-    }
-
-    renderMineral(lab, resource, emptyIsGood) {
-        let color = "#f00";
-        if(resource === lab.mineralType || (lab.mineralType === null && emptyIsGood)) color = "#0f0";
-        lab.room.visual.text(resource, lab.pos.x, lab.pos.y + 0.2, {
-            color: color,
-            stroke: "#000",
-            align: "center",
-            font: 0.5
-        });
+        renderMineral(this.inputs[0], this.baseMinerals[0]);
+        renderMineral(this.inputs[1], this.baseMinerals[1]);
     }
 
     findLabs(entranceDirection) {
@@ -168,6 +168,13 @@ class Booster {
 
         return this._lab;
     }
+
+    renderVisuals() {
+        if(!this.lab) return;
+        if(!this.resource) return;
+
+        renderMineral(this.lab, this.resource);
+    }
 }
 
 module.exports = class Labs {
@@ -178,6 +185,7 @@ module.exports = class Labs {
                 boosters: []
             };
         }
+
         this.room = room;
         this.memory = room.memory.labs;
         this.all = room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_LAB });
@@ -217,7 +225,9 @@ module.exports = class Labs {
         this.reactor.findLabs(entranceDirection);
     }
 
-    addBooster(lab) {
+    setBooster(lab) {
+        if(_.find(this.memory.boosters, (b) => b.lab == lab.id)) return;
+
         let memory = { lab: lab.id };
         this.memory.boosters.push(memory);
     }
