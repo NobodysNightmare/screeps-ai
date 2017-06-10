@@ -74,6 +74,7 @@ module.exports = class LabsAspect {
     }
 
     buildScientists() {
+        // TODO: also build scientist for filling boosts
         if(!this.reactor.compound || !this.roomai.canSpawn()) return;
         if(spawnHelper.numberOfLocalCreeps(this.roomai, scientist.name) >= 1) return;
 

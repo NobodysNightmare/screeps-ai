@@ -7,12 +7,16 @@ module.exports = {
         let reactor = creep.room.ai().labs.reactor;
         if(creep.memory.state === "deliver") {
             this.deliverToReactor(creep, reactor);
+        } else if(creep.memory.state === "deliverBoost") {
+            this.deliverBoost(creep, reactor);
         } else if(creep.memory.state === "pickAtReactor") {
             this.pickAtReactor(creep, reactor);
         } else if(creep.memory.state === "store") {
             this.store(creep, reactor);
         } else if(creep.memory.state === "pickAtStorage") {
             this.pickAtStorage(creep, reactor);
+        } else if(creep.memory.state === "pickAtBooster") {
+            this.pickAtBooster(creep, reactor);
         } else {
             // by default move to store
             this.store(creep, reactor);
@@ -86,10 +90,69 @@ module.exports = {
                 missingInput = Math.max(5, missingInput);
                 let inStore = creep.room.storage.store[resource.type] || 0;
                 creep.withdraw(creep.room.storage, resource.type, Math.min(creep.carryCapacity, missingInput, inStore));
+            } else {
+                if(this.pickupBoost(creep)) {
+                    creep.memory.state = "deliverBoost";
+                    return;
+                }
             }
         }
 
         creep.memory.state = "deliver";
+    },
+    pickupBoost: function(creep) {
+        let target = _.sortBy(_.filter(creep.room.ai().labs.boosters, (b) => b.lab.energy < b.lab.energyCapacity), (b) => b.lab.energy)[0];
+        if(target) {
+            creep.withdraw(creep.room.storage, RESOURCE_ENERGY, Math.min(target.lab.energyCapacity - target.lab.energy, creep.carryCapacity));
+            return true;
+        } else {
+            target = _.sortBy(_.filter(creep.room.ai().labs.boosters, (b) => b.resource && creep.room.storage.store[b.resource] && (!b.lab.mineralType || b.resource === b.lab.mineralType) && b.lab.mineralAmount < b.lab.mineralCapacity), (b) => b.lab.mineralAmount)[0];
+            if(target) {
+                let amount = Math.min(target.lab.mineralCapacity - target.lab.mineralAmount, creep.carryCapacity, creep.room.storage.store[target.resource]);
+                creep.withdraw(creep.room.storage, target.resource, amount);
+                return true;
+            } else if(_.find(creep.room.ai().labs.boosters, (b) => b.resource && b.resource !== b.lab.mineralType)) {
+                // clean booster with wrong resource
+                return true;
+            }
+        }
+
+        return false;
+    },
+    deliverBoost: function(creep) {
+        let creepMineral = Object.keys(creep.carry)[1];
+        let target = null;
+        if(_.sum(creep.carry) > 0) {
+            if(creepMineral) {
+                target = _.find(creep.room.ai().labs.boosters, (b) => b.resource === creepMineral);
+            } else {
+                target = _.sortBy(creep.room.ai().labs.boosters, (b) => b.lab.energy)[0];
+            }
+        } else {
+            target = _.find(creep.room.ai().labs.boosters, (b) => b.resource && b.resource !== b.lab.mineralType);
+        }
+
+        if(!target) {
+            creep.memory.state = "store";
+        } else {
+            let transferResult = creep.transfer(target.lab, creepMineral || RESOURCE_ENERGY);
+            if(transferResult === ERR_NOT_IN_RANGE) {
+                creep.moveTo(target.lab);
+            } else {
+                creep.memory.state = "pickAtBooster";
+            }
+        }
+    },
+    pickAtBooster: function(creep, reactor) {
+        // we might be close to multiple boosters
+        let boosters = _.filter(creep.room.ai().labs.boosters, (b) => b.lab.mineralType !== b.resource && creep.pos.isNearTo(b.lab));
+        if(boosters.length > 0) {
+            let booster = boosters[0];
+            creep.withdraw(booster.lab, booster.lab.mineralType);
+        }
+
+        creep.memory.state = "store";
+        this.store(creep, reactor);
     }
 };
 
