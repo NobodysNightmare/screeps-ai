@@ -18,7 +18,8 @@ const roles = [
     require("role.powerFarmer"),
     require("role.powerRefiner"),
     require("role.mason"),
-    require("role.scientist")
+    require("role.scientist"),
+    require("role.nukeOperator")
 ];
 
 const statsVisual = require("visual.globalStatistics");

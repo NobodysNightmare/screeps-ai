@@ -17,7 +17,8 @@ var aspects = [
     require("roomaspect.trading"),
     require("roomaspect.labs"),
     require("roomaspect.manualOperations"),
-    require("roomaspect.power")
+    require("roomaspect.power"),
+    require("roomaspect.nuker")
 ];
 
 var structureTower = require("structure.tower");
