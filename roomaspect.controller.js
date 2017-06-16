@@ -37,7 +37,7 @@ module.exports = class ControllerAspect {
     }
 
     buildUpgraders() {
-        let parts = spawnHelper.bestAvailableParts(this.room, upgrader.configsForEnergyPerTick(this.energyPerTick() / this.upgraderCount()));
+        let parts = spawnHelper.bestAvailableParts(this.room, upgrader.configsForEnergyPerTick(Math.floor(this.energyPerTick() / this.upgraderCount())));
         let spawnDuration = spawnHelper.spawnDuration(parts);
         let existingUpgraders = _.filter(spawnHelper.localCreepsWithRole(this.roomai, upgrader.name), (c) => !c.ticksToLive || c.ticksToLive > spawnDuration);
         if(!this.roomai.canSpawn() || existingUpgraders.length >= this.upgraderCount()) {
@@ -97,7 +97,10 @@ module.exports = class ControllerAspect {
         }
 
         if(this.room.controller.level == 8) {
-            return _.min([15, energy]);
+            let maxOutput = 15;
+            // TODO: provide different prebuilt configurations depending on mode
+            if(this.roomai.mode !== "normal") maxOutput = 4;
+            return _.min([maxOutput, energy]);
         } else {
             return energy;
         }
