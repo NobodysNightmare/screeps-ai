@@ -20,9 +20,9 @@ module.exports = class DrainOperation {
             if(!_.any(healers, (c) => c.memory.target == hopperCreep.name)) {
                 let healerParts;
                 if(hopperCreep.spawning) {
-                    healerParts = spawnHelper.bestAvailableParts(this.room, healer.configs({ minHeal: 5, maxHeal: 20, healRatio: 1 }));
+                    healerParts = spawnHelper.bestAvailableParts(this.room, healer.configs({ minHeal: 5, maxHeal: 25, healRatio: 1 }));
                 } else {
-                    healerParts = spawnHelper.bestAffordableParts(this.room, healer.configs({ minHeal: 5, maxHeal: 20, healRatio: 1 }));
+                    healerParts = spawnHelper.bestAffordableParts(this.room, healer.configs({ minHeal: 5, maxHeal: 25, healRatio: 1 }));
                 }
                 this.roomai.spawn(healerParts, { role: healer.name, target: hopperCreep.name, avoidRooms: [this.targetRoom] });
             }
