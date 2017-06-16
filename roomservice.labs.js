@@ -155,7 +155,7 @@ class Booster {
         if(!this.resource) return false;
         if(this.lab.mineralType !== this.resource) return false;
 
-        return this.lab.energyAmount >= LAB_BOOST_ENERGY && this.lab.mineralAmount >= LAB_BOOST_MINERAL;
+        return this.lab.energy >= LAB_BOOST_ENERGY && this.lab.mineralAmount >= LAB_BOOST_MINERAL;
     }
 
     get resource() {
