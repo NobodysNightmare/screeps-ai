@@ -38,7 +38,7 @@ module.exports = class SourcesAspect {
         let parts = spawnHelper.bestAffordableParts(this.room, miner.energyConfigs, true);
         let spawnDuration = spawnHelper.spawnDuration(parts);
         let existingMiners = _.filter(spawnHelper.localCreepsWithRole(this.roomai, miner.name), (c) => !c.ticksToLive || c.ticksToLive > spawnDuration);
-        for(var source of this.sources) {
+        for(let source of this.sources) {
             if(!_.any(existingMiners, (m) => m.memory.target == source.id) &&
                 logistic.storeFor(source)) {
 

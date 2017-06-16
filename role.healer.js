@@ -2,9 +2,6 @@ const movement = require("helper.movement");
 
 module.exports = {
     name: "healer",
-    configs: [
-        [HEAL, HEAL, HEAL, HEAL, HEAL, HEAL, MOVE, MOVE, MOVE]
-    ],
     configs: function(options) {
         var configs = [];
         for(var heal = (options.maxHeal || 25); heal >= (options.minHeal || 1); heal -= 1) {

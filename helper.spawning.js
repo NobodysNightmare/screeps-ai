@@ -29,8 +29,8 @@ module.exports = {
         return _.sum(_.map(parts, (part) => BODYPART_COST[part]))
     },
     makeParts: function() {
-        parts = [];
-        for (i = 0; i < arguments.length; i += 2) {
+        let parts = [];
+        for (let i = 0; i < arguments.length; i += 2) {
             let count = arguments[i];
             let type = arguments[i + 1];
             parts = parts.concat(Array(count).fill(type));

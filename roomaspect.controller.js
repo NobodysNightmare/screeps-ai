@@ -54,13 +54,13 @@ module.exports = class ControllerAspect {
     buildCarriers() {
         if(!this.roomai.canSpawn()) return;
 
-        var existingCarriers = spawnHelper.localCreepsWithRole(this.roomai, carrier.name);
+        let existingCarriers = spawnHelper.localCreepsWithRole(this.roomai, carrier.name);
         existingCarriers = _.filter(existingCarriers, (c) => c.memory.destination == this.controller.id);
         if(this.room.storage) {
             if(existingCarriers.length > 0) return;
             this.spawnCarrier(this.room.storage);
         } else {
-            for(var source of this.room.find(FIND_SOURCES)) {
+            for(let source of this.room.find(FIND_SOURCES)) {
                 if(!_.any(existingCarriers, (m) => m.memory.source == source.id) &&
                     logistic.storeFor(source)) {
                     this.spawnCarrier(source, 300);

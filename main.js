@@ -40,9 +40,9 @@ function suppressErrors(callback) {
 }
 
 function runCreeps() {
-    for(var role of roles) {
-        var creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name && creep.ticksToLive !== undefined);
-        for(var creep of creeps) {
+    for(let role of roles) {
+        let creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name && creep.ticksToLive !== undefined);
+        for(let creep of creeps) {
             suppressErrors(() => role.run(creep));
         }
     }
@@ -54,15 +54,15 @@ module.exports.loop = function() {
     profiler.wrap(function() {
         runCreeps();
 
-        for(var roomName in Game.rooms) {
-            var room = Game.rooms[roomName];
+        for(let roomName in Game.rooms) {
+            let room = Game.rooms[roomName];
             if(room.ai()) {
                 suppressErrors(() => room.ai().run());
             }
         }
 
         if(Game.time % 100 == 50) {
-            for(var name in Memory.creeps) {
+            for(let name in Memory.creeps) {
                 if(!Game.creeps[name]) {
                     delete Memory.creeps[name];
                 }

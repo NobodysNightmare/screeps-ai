@@ -69,14 +69,14 @@ module.exports = class SuppliesAspect {
         let roomai = this.roomai;
         sources = _.sortBy(sources, (s) => s.pos.getRangeTo(roomai.spawns[0]));
 
-        var existingCollectors = spawnHelper.localCreepsWithRole(this.roomai, carrier.name);
-        var existingMiners = spawnHelper.localCreepsWithRole(this.roomai, miner.name);
-        for(var source of sources) {
+        let existingCollectors = spawnHelper.localCreepsWithRole(this.roomai, carrier.name);
+        let existingMiners = spawnHelper.localCreepsWithRole(this.roomai, miner.name);
+        for(let source of sources) {
             if(this.roomai.canSpawn() &&
                 !_.any(existingCollectors, (m) => m.memory.source == source.id && m.memory.destination == storage.id) &&
                 (!this.linksEnabled || !this.roomai.links.linkAt(source)) &&
                 _.any(existingMiners, (m) => m.memory.target == source.id)) {
-                var parts = spawnHelper.bestAffordableParts(this.room, carrier.configsForCapacity(this.neededCollectorCapacity(source)), true);
+                let parts = spawnHelper.bestAffordableParts(this.room, carrier.configsForCapacity(this.neededCollectorCapacity(source)), true);
                 this.roomai.spawn(parts, { role: carrier.name, source: source.id, destination: storage.id, resource: RESOURCE_ENERGY });
             }
         }
