@@ -45,6 +45,8 @@ module.exports = {
 
         if(target) {
             this.attack(creep, target);
+        } else {
+            this.aggressiveMove(creep, Game.flags[creep.memory.flag]);
         }
     },
     attack: function(creep, target) {
