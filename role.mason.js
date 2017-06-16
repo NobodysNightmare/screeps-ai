@@ -1,3 +1,4 @@
+const boosting = require("helper.boosting");
 const logistic = require("helper.logistic");
 const movement = require("helper.movement");
 
@@ -15,6 +16,10 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        if(boosting.accept(creep, "XLH2O")) {
+            return;
+        }
+        
         if(creep.memory.room && creep.room.name !== creep.memory.room) {
             movement.moveToRoom(creep, creep.memory.room);
             return;

@@ -1,3 +1,4 @@
+const boosting = require("helper.boosting");
 const spawnHelper = require("helper.spawning");
 const observer = require("role.observer");
 const healer = require("role.healer");
@@ -29,7 +30,7 @@ module.exports = class FarmPowerOperation {
         for(let farmerCreep of farmers) {
             if(!_.any(healers, (c) => c.memory.target == farmerCreep.name)) {
                 let healerParts = spawnHelper.makeParts(25, MOVE, 25, HEAL);
-                this.roomai.spawn(healerParts, { role: healer.name, target: farmerCreep.name });
+                this.roomai.spawn(healerParts, boosting.disable({ role: healer.name, target: farmerCreep.name }));
             }
         }
 
