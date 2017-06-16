@@ -7,16 +7,15 @@ module.exports = class Trading {
         this.terminal = this.room.terminal;
     }
 
-    get blacklistedResources() {
-        return [
-            RESOURCE_ENERGY
-        ];
-    }
-
     get sellingBlacklist() {
         return [
+            RESOURCE_ENERGY,
             RESOURCE_POWER
         ];
+    }
+    
+    get terminalEnergyBuffer() {
+        return 110000;
     }
 
     isTradingPossible() {
@@ -24,15 +23,17 @@ module.exports = class Trading {
     }
 
     get resourcesImportableToStorage() {
-        return _.filter(_.keys(this.terminal.store), (res) => !this.blacklistedResources.includes(res) && this.neededImportToStorage(res) > 0);
+        return _.filter(_.keys(this.terminal.store), (res) => this.neededImportToStorage(res) > 0);
     }
 
     neededImportToStorage(resource) {
+        if(resource === RESOURCE_ENERGY && this.terminal.store[resource] <= this.terminalEnergyBuffer) return 0;
+        
         return Math.max(0, this.baselineAmount(resource) - (this.storage.store[resource] || 0));
     }
 
     get resourcesExportableFromStorage() {
-        return _.filter(_.keys(this.storage.store), (res) => !this.blacklistedResources.includes(res) && this.possibleExportFromStorage(res) > 0);
+        return _.filter(_.keys(this.storage.store), (res) => this.possibleExportFromStorage(res) > 0);
     }
 
     possibleExportFromStorage(resource) {
@@ -40,7 +41,6 @@ module.exports = class Trading {
     }
 
     possibleExportFromRoom(resource) {
-        if(this.blacklistedResources.includes(resource)) return 0;
         let amountInTerminal = this.terminal.store[resource] || 0;
         let amountInStorage = this.storage.store[resource] || 0;
         let excessAmount = amountInTerminal + amountInStorage - this.baselineAmount(resource);
@@ -48,7 +48,6 @@ module.exports = class Trading {
     }
 
     neededImportToRoom(resource) {
-        if(this.blacklistedResources.includes(resource)) return 0;
         let amountInTerminal = this.terminal.store[resource] || 0;
         let amountInStorage = this.storage.store[resource] || 0;
         return Math.max(0, this.baselineAmount(resource) - (amountInTerminal + amountInStorage));
@@ -60,6 +59,14 @@ module.exports = class Trading {
     }
 
     baselineAmount(resource) {
+        if(this.room.ai().mode == "unclaim") {
+            if(resource == RESOURCE_ENERGY) return 30000;
+            
+            return 0;
+        }
+        
+        if(resource == RESOURCE_ENERGY) return 600000;
+        
         if(resource == RESOURCE_POWER) {
             if(this.room.powerSpawn()) return 15000;
             return 0;
