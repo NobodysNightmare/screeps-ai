@@ -23,3 +23,15 @@ Room.prototype.powerSpawn = function() {
 
     return this._powerSpawn;
 }
+
+Room.prototype.nuker = function() {
+    if(this._nuker === undefined) {
+        if(this.controller && this.controller.my && this.controller.level >= 8) {
+            this._nuker = this.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_NUKER })[0];
+        } else {
+            this._nuker = null;
+        }
+    }
+
+    return this._nuker;
+}
