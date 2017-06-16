@@ -11,8 +11,6 @@ module.exports = class ClaimOperation {
     }
 
     run() {
-        if(!this.roomai.canSpawn()) return;
-
         let targetRoom = this.targetFlag.room;
         if(targetRoom && targetRoom.find(FIND_MY_SPAWNS).length > 0) {
             this.kickstartRoom(targetRoom);
@@ -38,6 +36,7 @@ module.exports = class ClaimOperation {
 
     kickstartRoom(remoteRoom) {
         if(remoteRoom.controller.level > 4) return;
+        if(!this.roomai.canSpawn()) return;
 
         for(let source of remoteRoom.find(FIND_SOURCES)) {
             // only considering maxed out miners
