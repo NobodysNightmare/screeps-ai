@@ -41,7 +41,7 @@ function suppressErrors(callback) {
 
 function runCreeps() {
     for(var role of roles) {
-        var creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
+        var creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name && creep.ticksToLive !== undefined);
         for(var creep of creeps) {
             suppressErrors(() => role.run(creep));
         }
