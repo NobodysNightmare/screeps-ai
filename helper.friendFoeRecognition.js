@@ -25,6 +25,10 @@ module.exports = {
         let filter = (c) => true;
         if(options && options.filter) filter = options.filter;
         return room.find(FIND_HOSTILE_CREEPS, { filter: (c) => friends.includes(c.owner.username) && filter(c) });
+    },
+    isHostile: function(ownedThing) {
+        if(!ownedThing.owner) return false;
+        return !ownedThing.my && !friends.includes(ownedThing.owner.username);
     }
 };
 

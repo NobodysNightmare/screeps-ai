@@ -51,7 +51,22 @@ module.exports = {
         let rangedResult = creep.rangedAttack(target);
         let meleeResult = creep.attack(target);
         if(rangedResult == ERR_NOT_IN_RANGE || meleeResult == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 1 });
+            this.aggressiveMove(creep, target);
+        }
+    },
+    aggressiveMove: function(creep, target) {
+        creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 1 });
+        if(creep.memory._move.path) {
+            let nextStep = Room.deserializePath(creep.memory._move.path)[0];
+            let moveTarget = _.find(creep.room.lookForAt(LOOK_STRUCTURES, creep.room.getPositionAt(nextStep.x, nextStep.y)), (s) => s.structureType == STRUCTURE_WALL || ff.isHostile(s));
+            if(!moveTarget) {
+                moveTarget = _.find(creep.room.lookForAt(LOOK_CREEPS, creep.room.getPositionAt(nextStep.x, nextStep.y)), (c) => ff.isHostile(c));
+            }
+            
+            if(moveTarget) {
+                creep.rangedAttack(moveTarget);
+                creep.attack(moveTarget);
+            }
         }
     }
 };
