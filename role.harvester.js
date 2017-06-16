@@ -77,7 +77,7 @@ module.exports = {
                 }
             }
 
-            if(targets.length == 0) {
+            if(targets.length == 0 && creep.room.ai().mode !== "unclaim") {
                 targets = creep.room.find(FIND_MY_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_NUKER || structure.structureType == STRUCTURE_POWER_SPAWN) &&
