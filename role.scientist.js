@@ -87,14 +87,19 @@ module.exports = {
             let neededProduce = reactor.targetAmount - actualAmount;
             let missingInput = Math.max(0, neededProduce - resource.amount);
             if(missingInput > 0) {
-                missingInput = Math.max(5, missingInput);
                 let inStore = creep.room.storage.store[resource.type] || 0;
+                missingInput = Math.max(5, missingInput);
                 creep.withdraw(creep.room.storage, resource.type, Math.min(creep.carryCapacity, missingInput, inStore));
             } else {
                 if(this.pickupBoost(creep)) {
                     creep.memory.state = "deliverBoost";
                     return;
                 }
+            }
+        } else {
+            if(this.pickupBoost(creep)) {
+                creep.memory.state = "deliverBoost";
+                return;
             }
         }
 
