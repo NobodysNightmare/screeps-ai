@@ -52,20 +52,26 @@ runCreeps = profiler.registerFN(runCreeps, 'Creep Actions');
 
 module.exports.loop = function() {
     profiler.wrap(function() {
-        runCreeps();
-
-        for(let roomName in Game.rooms) {
-            let room = Game.rooms[roomName];
-            if(room.ai()) {
-                suppressErrors(() => room.ai().run());
-            }
+        if(Game.time % 10 === 0 && Game.cpu.bucket < 5000) {
+            console.log("Bucket at " + Game.cpu.bucket);
         }
-
+        
         if(Game.time % 100 == 50) {
             for(let name in Memory.creeps) {
                 if(!Game.creeps[name]) {
                     delete Memory.creeps[name];
                 }
+            }
+        }
+        
+        runCreeps();
+        
+        if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
+
+        for(let roomName in Game.rooms) {
+            let room = Game.rooms[roomName];
+            if(room.ai()) {
+                suppressErrors(() => room.ai().run());
             }
         }
 

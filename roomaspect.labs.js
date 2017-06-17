@@ -19,7 +19,6 @@ module.exports = class LabsAspect {
     run() {
         if(!this.room.storage || !this.reactor || !this.reactor.isValid()) return;
         if(Game.cpu.bucket < 5000) {
-            console.log(this.room.name + ": Not running labs, low bucket.");
             return;
         }
 
