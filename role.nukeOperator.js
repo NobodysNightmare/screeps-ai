@@ -33,8 +33,7 @@ module.exports = {
                 let amount = Math.min(creep.carryCapacity, creep.room.storage.store[resource], resource === RESOURCE_GHODIUM ? missingGhodium : missingEnergy);
                 creep.withdraw(creep.room.storage, resource, amount);
             } else {
-                console.log("Time to go for me")
-                //creep.suicide();
+                creep.suicide();
             }
         } else {
             creep.moveTo(creep.room.storage);
