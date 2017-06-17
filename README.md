@@ -50,6 +50,13 @@ storage location.
 Around that spot labs will be built that will then process minerals to
 compounds.
 
+#### Booster
+
+* **Building name:** `booster`
+* **color:** no effect
+
+Build a lab that will be used to boost creeps.
+
 #### Walls
 
 * **Building name:** `walls`

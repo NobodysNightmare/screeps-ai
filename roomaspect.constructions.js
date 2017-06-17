@@ -1,4 +1,5 @@
 const constructions = {
+    booster: require("construction.booster"),
     extensionCluster: require("construction.extensionCluster"),
     reactor: require("construction.reactor"),
     storage: require("construction.storage"),
