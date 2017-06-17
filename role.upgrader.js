@@ -1,4 +1,5 @@
 var spawnHelper = require('helper.spawning');
+const boosting = require("helper.boosting");
 var logistic = require('helper.logistic');
 
 module.exports = {
@@ -22,6 +23,8 @@ module.exports = {
         if(creep.room.storage && creep.room.storage.store.energy < 10000 && controller.ticksToDowngrade > 5000) {
             return; // strictly conserve energy when supply is very low
         }
+        
+        if(boosting.accept(creep, "XGH2O")) return;
         
         var container = logistic.storeFor(controller);
         if(container && ((container.store && container.store.energy > 0) || container.energy > 0 || creep.carry.energy > 0)) {
