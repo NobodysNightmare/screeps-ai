@@ -87,6 +87,13 @@ fire.
 
 Spawns some creeps that attack a hostile room.
 
+#### Attacking a controller
+
+* **Operation name:** `downgrade`
+* **color:** No effect
+
+Spawns a creep to attack a controller.
+
 #### Farming Power Banks
 
 * **Operation name:** `power`

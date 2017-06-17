@@ -2,6 +2,7 @@ const spawnFlagRegex = /^spawn([A-Za-z]+)([0-9]+)$/;
 const operations = {
   attack: require("operation.attack"),
   claim: require("operation.claim"),
+  downgrade: require("operation.downgrade"),
   drain: require("operation.drain"),
   power: require("operation.farmPower")
 };
