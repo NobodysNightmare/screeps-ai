@@ -24,8 +24,10 @@ module.exports = class MasonsAspect {
             return 0;
         } else if(this.room.storage.store.energy < 300000) {
             return this.roomai.mode == "walls" ? 1 : 0;
-        } else {
+        } else if(this.room.storage.store.energy < 400000) {
             return this.roomai.mode == "walls" ? 2 : 1;
+        } else {
+            return this.roomai.mode == "walls" ? 3 : 2;
         }
     }
 }
