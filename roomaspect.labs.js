@@ -52,7 +52,7 @@ module.exports = class LabsAspect {
             let missing = [target];
             while(missing.length > 0) {
                 let nextReaction = missing[0];
-                missing = _.filter(this.decompose(nextReaction), (r) => this.amount(r) === 0);
+                missing = _.filter(this.decompose(nextReaction), (r) => this.amount(r) < LAB_REACTION_AMOUNT);
                 if(missing.length === 0) return nextReaction;
 
                 // filter uncookable resources (e.g. H). Can't get those using reactions.
