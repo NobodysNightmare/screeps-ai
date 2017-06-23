@@ -57,7 +57,7 @@ module.exports = class DefenseAspect {
 
     engageSafeMode() {
         let controller = this.room.controller;
-        if(controller.safeMode || controller.upgradeBlocked || controller.level < 5) return;
+        if(controller.safeMode || controller.upgradeBlocked || controller.level < 6) return;
         if(this.room.find(FIND_MY_STRUCTURES, { filter: (s) => keyStructures.includes(s.structureType) && (s.hits / s.hitsMax) < 0.95 }).length == 0) return;
         if(_.filter(this.hostiles, (c) => c.owner.username !== "Invader").length == 0) return;
 
