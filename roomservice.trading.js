@@ -1,5 +1,11 @@
 const logistic = require("helper.logistic");
 
+const baseMinerals = [
+                        RESOURCE_OXYGEN, RESOURCE_HYDROGEN,
+                        RESOURCE_LEMERGIUM, RESOURCE_UTRIUM,
+                        RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM
+                    ];
+
 module.exports = class Trading {
     constructor(room) {
         this.room = room;
@@ -71,6 +77,8 @@ module.exports = class Trading {
             if(this.room.powerSpawn()) return 15000;
             return 0;
         }
+        
+        if(baseMinerals.includes(resource)) return 20000;
 
         return 10000;
     }
