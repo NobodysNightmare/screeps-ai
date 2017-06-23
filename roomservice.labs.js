@@ -157,6 +157,20 @@ class Booster {
 
         return this.lab.energy >= LAB_BOOST_ENERGY && this.lab.mineralAmount >= LAB_BOOST_MINERAL;
     }
+    
+    needEnergy() {
+        if(!this.lab) return false;
+        
+        return this.lab.energy < this.lab.energyCapacity;
+    }
+    
+    needMineral() {
+        if(!this.lab) return false;
+        if(!this.resource) return false;
+        if(this.lab.mineralType !== this.resource) return true;
+        
+        return this.lab.mineralAmount < this.lab.mineralCapacity;
+    }
 
     get resource() {
         return this.memory.res;

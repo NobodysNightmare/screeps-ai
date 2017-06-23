@@ -73,11 +73,15 @@ module.exports = class LabsAspect {
     }
 
     buildScientists() {
-        // TODO: also build scientist for filling boosts
-        if(!this.reactor.compound || !this.roomai.canSpawn()) return;
-        if(spawnHelper.numberOfLocalCreeps(this.roomai, scientist.name) >= 1) return;
+        if(!this.roomai.canSpawn()) return;
+        
+        let needToReact = this.reactor.compound;
+        let needToBoost = _.some(this.boosters, (b) => b.needEnergy() || (b.needMineral() && this.room.storage.store[b.resource]));
+        if(needToReact || needToBoost) {
+            if(spawnHelper.numberOfLocalCreeps(this.roomai, scientist.name) >= 1) return;
 
-        this.roomai.spawn(scientist.parts, { role: scientist.name });
+            this.roomai.spawn(scientist.parts, { role: scientist.name });
+        }
     }
 }
 
