@@ -1,5 +1,6 @@
 module.exports = {
     accept: function(creep) {
+        if(!creep.room.ai()) return false;
         if(creep.memory.boosts === undefined) creep.memory.boosts = [];
         if(!creep.memory.boosts) return false;
         
