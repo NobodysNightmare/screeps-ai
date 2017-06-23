@@ -44,7 +44,7 @@ module.exports = class RemoteMinesAspect {
         if(!this.roomai.canSpawn()) return;
         var hasDefender = _.any(spawnHelper.globalCreepsWithRole(defender.name), (c) => c.memory.room == remoteRoom.name);
         if(!hasDefender) {
-            this.spawn(spawnHelper.bestAvailableParts(this.room, defender.meeleeConfigs), { role: defender.name, room: remoteRoom.name, originRoom: this.room.name }, remoteRoom.name);
+            this.spawn(spawnHelper.bestAvailableParts(this.room, defender.meeleeConfigs()), { role: defender.name, room: remoteRoom.name, originRoom: this.room.name }, remoteRoom.name);
         }
     }
 

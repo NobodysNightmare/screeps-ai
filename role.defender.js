@@ -1,14 +1,21 @@
+const boosting = require("helper.boosting");
 const movement = require("helper.movement");
+const spawnHelper = require("helper.spawning");
 
 module.exports = {
     name: "defender",
-    meeleeConfigs: [
-        [ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-        [ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-        [ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE, MOVE]
-    ],
+    meeleeConfigs: function() {
+        let configs = [];
+        for(let parts = 25; parts >= 4; parts -= 1) {
+            configs.push(spawnHelper.makeParts(parts, ATTACK, parts, MOVE));
+        }
+        
+        return configs;
+    },
     run: function(creep) {
-        if(creep.room.name !== creep.memory.room) {
+        if(creep.room.name === creep.memory.room) {
+            if(boosting.accept(creep, "XUH2O")) return;
+        } else {
             movement.moveToRoom(creep, creep.memory.room);
             return;
         }
