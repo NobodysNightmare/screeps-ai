@@ -24,6 +24,7 @@ module.exports = class DefenseAspect {
 
     run() {
         this.engageSafeMode();
+        this.checkNukes();
         this.updateAttackTimes();
         this.displayAttackTime();
         var primaryHostile = Game.getObjectById(this.room.memory.primaryHostile);
@@ -62,6 +63,13 @@ module.exports = class DefenseAspect {
 
         controller.activateSafeMode();
         Game.notify("Safe mode engaged in room " + this.room.name + " (RCL " + controller.level +")");
+    }
+    
+    checkNukes() {
+        let nukes = this.room.find(FIND_NUKES, { filter: (n) => n.timeToLand > NUKE_LAND_TIME - 5})
+        for(let nuke of nukes) {
+            Game.notify("Nuke incoming at " + this.room.name + " (Origin: " + nuke.launchRoomName + ")");
+        }
     }
     
     updateAttackTimes() {
