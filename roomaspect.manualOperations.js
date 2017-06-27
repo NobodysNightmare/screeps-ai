@@ -4,7 +4,8 @@ const operations = {
   claim: require("operation.claim"),
   downgrade: require("operation.downgrade"),
   drain: require("operation.drain"),
-  power: require("operation.farmPower")
+  power: require("operation.farmPower"),
+  scoop: require("operation.scoop")
 };
 
 module.exports = class ManualOperationsAspect {

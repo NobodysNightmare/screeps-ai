@@ -94,6 +94,14 @@ fire.
 
 Spawns some creeps that attack a hostile room.
 
+#### Stealing resources
+
+* **Operation name:** `scoop`
+* **color:** Controls number of scoopers being spawned
+
+Spawns creeps to scoop resources from a room.
+They will pickup resources on the ground and in containers.
+
 #### Attacking a controller
 
 * **Operation name:** `downgrade`
