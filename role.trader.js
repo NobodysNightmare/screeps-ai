@@ -7,7 +7,7 @@ module.exports = {
         let trading = creep.room.ai().trading;
         if(creep.memory.exporting) {
             if(!this.carryTo(creep, creep.room.terminal)) {
-                let resource = trading.resourcesImportableToStorage[0];
+                let resource = _.last(trading.resourcesImportableToStorage);
                 if(resource) {
                     let amount = Math.min(creep.carryCapacity, creep.room.terminal.store[resource], trading.neededImportToStorage(resource));
                     creep.withdraw(creep.room.terminal, resource, amount);
@@ -16,7 +16,7 @@ module.exports = {
             }
         } else {
             if(!this.carryTo(creep, creep.room.storage)) {
-                let resource = trading.resourcesExportableFromStorage[0];
+                let resource = _.last(trading.resourcesExportableFromStorage);
                 if(resource) {
                     let amount = Math.min(creep.carryCapacity, trading.possibleExportFromStorage(resource));
                     creep.withdraw(creep.room.storage, resource, amount);
