@@ -1,6 +1,8 @@
 const spawnHelper = require("helper.spawning");
 const trader = require("role.trader");
 
+MAX_TRANSFER = 20000;
+
 module.exports = class TradingAspect {
     constructor(roomai) {
         this.roomai = roomai;
@@ -23,6 +25,8 @@ module.exports = class TradingAspect {
             if(exportable >= 100) {
                 if(this.balanceToEmpire(resource, exportable)) {
                     return;
+                } else if(this.provideSupport(resource, exportable)) {
+                    return;
                 } else if(Game.time % 200 === 50) {
                     let sellable = this.trading.sellableAmount(resource);
                     if(sellable >= 100) {
@@ -37,11 +41,22 @@ module.exports = class TradingAspect {
         let targets = _.map(_.filter(Game.rooms, (r) => r.ai() && r.ai().trading.isTradingPossible()), (r) => ({ room: r, miss: r.ai().trading.neededImportToRoom(resource) }));
         let choice = _.sortBy(_.filter(targets, (t) => t.miss > 0), (t) => -t.miss)[0];
         if(choice) {
-            this.terminal.send(resource, _.min([amount, _.max([100, choice.miss])]), choice.room.name, "empire balancing");
+            this.terminal.send(resource, Math.min(amount, MAX_TRANSFER, Math.max(100, choice.miss)), choice.room.name, "empire balancing");
             return true;
         }
 
         return false;
+    }
+    
+    provideSupport(resource, amount) {
+        if(!Memory.resourceSupport || !Memory.resourceSupport[resource]) return false;
+        
+        let target = Memory.resourceSupport[resource].shift();
+        if(!target) return false;
+        Memory.resourceSupport[resource].push(target);
+        
+        this.terminal.send(resource, Math.min(amount, MAX_TRANSFER), target, "Supporting allied forces");
+        return true;
     }
 
     sell(resource, amount) {

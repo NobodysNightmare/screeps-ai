@@ -127,6 +127,23 @@ at the location of the claim flag in the target room.
 After the spawn was built, the source room will continue to support the target room by sending
 fully upgraded miners into it, until the target room can take care of that by itself.
 
+### Misc
+
+#### Supporting other players with excess resources
+
+Using `Memory.resourceSupport` foreign rooms can be setup for support with overflowing resources:
+
+````json
+{
+    "resourceSupport": {
+        "energy": ["W0S0", "W1S1"],
+        "X": ["W0S0"]
+    }
+}
+````
+
+Multiple rooms in a resource array will be supported round robin.
+
 ## TODOs
 
 * Use links to collect energy from remote mines at room border

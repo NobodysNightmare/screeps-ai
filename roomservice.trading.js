@@ -65,13 +65,17 @@ module.exports = class Trading {
     }
 
     baselineAmount(resource) {
-        if(this.room.ai().mode == "unclaim") {
+        if(this.room.ai().mode === "unclaim") {
             if(resource == RESOURCE_ENERGY) return 30000;
             
             return 0;
         }
         
-        if(resource == RESOURCE_ENERGY) return 600000;
+        if(resource == RESOURCE_ENERGY) {
+            if(this.room.ai().mode === "support") return 350000;
+            
+            return 600000;
+        }
         
         if(resource == RESOURCE_POWER) {
             if(this.room.powerSpawn()) return 15000;
