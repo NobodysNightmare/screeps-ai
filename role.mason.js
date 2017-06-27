@@ -50,6 +50,15 @@ module.exports = {
                 return lastTarget;
             }
         }
+        
+        let nukes = creep.room.find(FIND_NUKES);
+        for(let nuke of nukes) {
+            let x = nuke.pos.x;
+            let y = nuke.pos.y;
+            let ramparts = _.filter(_.map(creep.room.lookForAtArea(LOOK_STRUCTURES, y - 2, x - 2, y + 2, x + 2, true), (r) => r.structure), (s) => s.structureType === STRUCTURE_RAMPART);
+            ramparts = _.sortBy(_.filter(ramparts, (r) => (r.pos.x === x && r.pos.y === y && r.hits < 11000000) || r.hits < 6000000), (r) => r.pos.getRangeTo(nuke));
+            if(ramparts[0]) return ramparts[0];
+        }
 
         let walls = creep.room.memory.constructions && creep.room.memory.constructions.walls[0];
         if(!walls) {
