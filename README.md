@@ -151,14 +151,8 @@ Multiple rooms in a resource array will be supported round robin.
     * spawn defenders in response to attackers force (no over-delivering)
     * towers should attack target picked by defense aspect
     * defense aspect should actually "think" about which target to pick
-    * while defending a reloader should keep towers supplied with energy
-    * Nuke notifications?
 * Automatically start claiming as soon as room is ready (e.g. if it is currently claimed by another player)
 * Flag-based interaction
     * Manual operation for supply transports
-    * Manual operation for resource stealing
-* Minerals
-    * Boost creeps
-    * Supply nukes with Ghodium
 * Use observers to obtain vision on a room
 * Automated base-building?
