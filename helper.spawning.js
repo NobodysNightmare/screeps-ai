@@ -51,8 +51,12 @@ module.exports = {
         return this.localCreepsWithRole(roomai, role).length;
     },
     globalCreepsWithRole: function(role) {
-        let creeps = _.values(Game.creeps);
-        return _.filter(creeps, (creep) => creep.memory.role == role);
+        if(!this._globalCreepCache || this._globalCreepCacheTime !== Game.time) {
+            this._globalCreepCacheTime = Game.time;
+            this._globalCreepCache = _.groupBy(Game.creeps, (c) => c.memory.role);
+        }
+        
+        return this._globalCreepCache[role] || [];
     }
 };
 
