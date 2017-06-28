@@ -2,6 +2,8 @@ const boosting = require("helper.boosting");
 const logistic = require("helper.logistic");
 const movement = require("helper.movement");
 
+const NUKE_MARGIN = 1000000;
+
 module.exports = {
     name: "mason",
     configs: function(workParts) {
@@ -52,12 +54,21 @@ module.exports = {
         }
         
         let nukes = creep.room.find(FIND_NUKES);
-        for(let nuke of nukes) {
+        for(let nuke of _.sortBy(nukes, (n) => n.timeToLand)) {
             let x = nuke.pos.x;
             let y = nuke.pos.y;
-            let ramparts = _.filter(_.map(creep.room.lookForAtArea(LOOK_STRUCTURES, y - 2, x - 2, y + 2, x + 2, true), (r) => r.structure), (s) => s.structureType === STRUCTURE_RAMPART);
-            ramparts = _.sortBy(_.filter(ramparts, (r) => (r.pos.x === x && r.pos.y === y && r.hits < 11000000) || r.hits < 6000000), (r) => r.pos.getRangeTo(nuke));
-            if(ramparts[0]) return ramparts[0];
+            let targets = _.filter(_.map(creep.room.lookForAtArea(LOOK_STRUCTURES, y - 2, x - 2, y + 2, x + 2, true), (r) => r.structure), (s) => s.structureType === STRUCTURE_RAMPART || s.structureType == STRUCTURE_WALL);
+            targets = _.filter(targets, (r) => {
+                let neededHits = _.sum(nukes, (n) => {
+                    let range = r.pos.getRangeTo(n);
+                    return range <= 2 ? (range === 0 ? 10000000 : 5000000) : 0;
+                })
+                
+                return r.hits < Math.min(neededHits + NUKE_MARGIN, r.hitsMax);
+            });
+            
+            targets = _.sortBy(targets, (r) => r.pos.getRangeTo(nuke));
+            if(targets[0]) return targets[0];
         }
 
         let walls = creep.room.memory.constructions && creep.room.memory.constructions.walls[0];
@@ -65,7 +76,7 @@ module.exports = {
             console.log("Perimeter for mason not defined in " + creep.room.name);
             return null;
         }
-        var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
+        let targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
             let pos = structure.pos;
             return structure.hits < structure.hitsMax &&
                     (structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_WALL) &&
