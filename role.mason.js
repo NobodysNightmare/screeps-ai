@@ -71,17 +71,7 @@ module.exports = {
             if(targets[0]) return targets[0];
         }
 
-        let walls = creep.room.memory.constructions && creep.room.memory.constructions.walls[0];
-        if(!walls) {
-            console.log("Perimeter for mason not defined in " + creep.room.name);
-            return null;
-        }
-        let targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
-            let pos = structure.pos;
-            return structure.hits < structure.hitsMax &&
-                    (structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_WALL) &&
-                    (pos.x <= walls.x1 || pos.x >= walls.x2 || pos.y <= walls.y1 || pos.y >= walls.y2);
-        } });
+        let targets = _.filter(creep.room.ai().defense.borderStructures, (s) => s.hits < s.hitsMax);
         if(targets.length > 0) {
             return _.sortBy(targets, (t) => t.hits)[0];
         }

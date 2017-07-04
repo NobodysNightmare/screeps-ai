@@ -8,7 +8,6 @@ module.exports = class MasonsAspect {
     }
 
     run() {
-        if(!this.room.memory.constructions || !this.room.memory.constructions.walls[0]) return;
         if(!this.roomai.canSpawn() || _.filter(spawnHelper.globalCreepsWithRole(mason.name), (c) => c.memory.room == this.room.name).length >= this.masonCount()) {
             return;
         }

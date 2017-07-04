@@ -23,6 +23,7 @@ var aspects = [
 
 var structureTower = require("structure.tower");
 
+const Defense = require("roomservice.defense");
 const Labs = require("roomservice.labs");
 const Links = require("roomservice.links");
 const Trading = require("roomservice.trading");
@@ -32,6 +33,7 @@ module.exports = class RoomAI {
         this.room = room;
         this.spawns = room.find(FIND_MY_SPAWNS);
         this.availableSpawns = _.filter(this.spawns, (s) => !s.spawning);
+        this.defense = new Defense(room);
         this.links = new Links(room);
         this.labs = new Labs(room);
         this.trading = new Trading(room);
