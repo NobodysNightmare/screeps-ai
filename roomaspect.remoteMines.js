@@ -23,7 +23,7 @@ module.exports = class RemoteMinesAspect {
         for(var roomName of this.room.memory.remoteMines) {
             var remoteRoom = Game.rooms[roomName];
             if(remoteRoom) {
-                this.spawnDefender(remoteRoom);
+                if(this.spawnDefender(remoteRoom)) continue;
                 this.spawnReserver(remoteRoom);
                 for(let source of remoteRoom.find(FIND_SOURCES)) {
                     this.spawnMiner(source);
@@ -39,13 +39,15 @@ module.exports = class RemoteMinesAspect {
         let remoteOwner = remoteRoom.controller.owner && remoteRoom.controller.owner.username;
         var hostile = ff.findHostiles(remoteRoom, { filter: (c) => c.owner.username !== remoteOwner })[0];
         remoteRoom.memory.primaryHostile = hostile && hostile.id;
-        if(!hostile) return;
+        if(!hostile) return false;
 
-        if(!this.roomai.canSpawn()) return;
+        if(!this.roomai.canSpawn()) return true;
         var hasDefender = _.any(spawnHelper.globalCreepsWithRole(defender.name), (c) => c.memory.room == remoteRoom.name);
         if(!hasDefender) {
             this.spawn(spawnHelper.bestAvailableParts(this.room, defender.meeleeConfigs()), { role: defender.name, room: remoteRoom.name, originRoom: this.room.name }, remoteRoom.name);
         }
+        
+        return true;
     }
 
     spawnReserver(remoteRoom) {
