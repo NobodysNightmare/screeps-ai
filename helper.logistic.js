@@ -62,7 +62,8 @@ module.exports = {
         return false;
     },
     storeFor: function(target, includeConstructions, structureType) {
-        if(target && storeStructures.includes(target.structureType) && (!structureType || structureType == target.structureType)) return target;
+        if(!target) return null;
+        if(storeStructures.includes(target.structureType) && (!structureType || structureType == target.structureType)) return target;
 
         if(!includeConstructions && !structureType) {
             var stores = target.room.memory.stores;
@@ -99,6 +100,30 @@ module.exports = {
         Memory.distances[source.id] = Memory.distances[source.id] || {};
         Memory.distances[source.id][destination.id] = path.length;
         return path.length;
+    },
+    cleanupCaches: function() {
+        for(let sourceId in Memory.distances) {
+            if(Game.getObjectById(sourceId)) {
+                let current = Memory.distances[sourceId];
+                for(let destinationId in current) {
+                    if(!Game.getObjectById(destinationId)) {
+                        delete current[destinationId];
+                    }
+                }
+            } else {
+                delete Memory.distances[sourceId]
+            }
+        }
+        
+        for(let roomMemory of _.values(Memory.rooms)) {
+            if(!roomMemory.stores) continue;
+            
+            for(let storeId in roomMemory.stores) {
+                if(!Game.getObjectById(storeId)) {
+                    delete roomMemory.stores[storeId];
+                }
+            }
+        }
     }
 };
 

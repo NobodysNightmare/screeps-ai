@@ -24,6 +24,8 @@ const roles = [
     require("role.downgrader"),
 ];
 
+const logistic = require("helper.logistic");
+
 const statsVisual = require("visual.globalStatistics");
 const profitVisual = require("visual.roomProfit");
 
@@ -64,6 +66,10 @@ module.exports.loop = function() {
                     delete Memory.creeps[name];
                 }
             }
+        }
+        
+        if(Game.time % 10000 === 0) {
+            logistic.cleanupCaches();
         }
         
         runCreeps();
