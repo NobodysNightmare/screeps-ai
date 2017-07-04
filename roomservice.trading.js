@@ -3,7 +3,8 @@ const logistic = require("helper.logistic");
 const baseMinerals = [
                         RESOURCE_OXYGEN, RESOURCE_HYDROGEN,
                         RESOURCE_LEMERGIUM, RESOURCE_UTRIUM,
-                        RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM
+                        RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM,
+                        RESOURCE_CATALYST
                     ];
 
 module.exports = class Trading {
