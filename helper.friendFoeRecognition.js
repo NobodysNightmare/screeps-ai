@@ -1,13 +1,16 @@
 const friends = [
     "Baj",
     "cazantyl",
+    "daboross",
     "DoctorPC",
     "Lolzor",
+    "likeafox",
     "Parthon",
     "poppahorse",
     "Vlahn",
     "Zeekner",
-    "Regnare"
+    "Regnare",
+    "Zyzyzyryxy"
 ];
 
 module.exports = {
