@@ -1,7 +1,8 @@
 const spawnHelper = require("helper.spawning");
 const trader = require("role.trader");
 
-MAX_TRANSFER = 20000;
+const MAX_TRANSFER = 20000;
+const TERMINAL_MAX_FILL = 270000;
 
 module.exports = class TradingAspect {
     constructor(roomai) {
@@ -38,7 +39,7 @@ module.exports = class TradingAspect {
     }
 
     balanceToEmpire(resource, amount) {
-        let targets = _.map(_.filter(Game.rooms, (r) => r.ai() && r.ai().trading.isTradingPossible()), (r) => ({ room: r, miss: r.ai().trading.neededImportToRoom(resource) }));
+        let targets = _.map(_.filter(Game.rooms, (r) => r.ai() && r.ai().trading.isTradingPossible() && _.sum(r.terminal.store) < TERMINAL_MAX_FILL), (r) => ({ room: r, miss: r.ai().trading.neededImportToRoom(resource) }));
         let choice = _.sortBy(_.filter(targets, (t) => t.miss > 0), (t) => -t.miss)[0];
         if(choice) {
             this.terminal.send(resource, Math.min(amount, MAX_TRANSFER, Math.max(100, choice.miss)), choice.room.name, "empire balancing");
