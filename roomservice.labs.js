@@ -26,9 +26,9 @@ function decompose(compound) {
     return DECOMPOSITIONS[compound];
 }
 
-function renderMineral(lab, resource, emptyIsGood) {
+function renderMineral(lab, resource, minAmount) {
     let color = "#f00";
-    if(resource === lab.mineralType || (lab.mineralType === null && emptyIsGood)) color = "#0f0";
+    if((resource === lab.mineralType && lab.mineralAmount >= minAmount) || (lab.mineralType === null && minAmount === 0)) color = "#0f0";
     lab.room.visual.text(resource, lab.pos.x, lab.pos.y + 0.2, {
         color: color,
         stroke: "#000",
@@ -117,11 +117,11 @@ class Reactor {
         if(!this.compound) return;
 
         for(let output of this.outputs) {
-            renderMineral(output, this.compound, true);
+            renderMineral(output, this.compound, 0);
         }
 
-        renderMineral(this.inputs[0], this.baseMinerals[0]);
-        renderMineral(this.inputs[1], this.baseMinerals[1]);
+        renderMineral(this.inputs[0], this.baseMinerals[0], LAB_REACTION_AMOUNT);
+        renderMineral(this.inputs[1], this.baseMinerals[1], LAB_REACTION_AMOUNT);
     }
 
     findLabs(entranceDirection) {
@@ -190,7 +190,7 @@ class Booster {
         if(!this.lab) return;
         if(!this.resource) return;
 
-        renderMineral(this.lab, this.resource);
+        renderMineral(this.lab, this.resource, LAB_BOOST_MINERAL);
     }
 }
 
