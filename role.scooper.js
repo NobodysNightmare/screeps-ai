@@ -18,7 +18,7 @@ module.exports = {
             this.returnHome(creep);
         } else {
             if(creep.room.name !== creep.memory.target) {
-                movement.moveToRoom(creep, creep.memory.target);
+                creep.goTo(new RoomPosition(25, 25, creep.memory.target), { avoidHostiles: true });
             } else {
                 this.scoopRoom(creep);
             }
@@ -36,7 +36,7 @@ module.exports = {
                 creep.memory.returningHome = false;
             }
         } else {
-            creep.moveTo(target, { ignoreRoads: true });
+            creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
         }
     },
     scoopRoom: function(creep) {
@@ -47,7 +47,7 @@ module.exports = {
 
         let target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
         if(!target && (!creep.room.controller || (creep.room.controller && !creep.room.controller.my))) {
-            target = creep.pos.findClosestByRange(FIND_STRUCTURE, { filter: (s) => parkStructures.includes(s.structureType) });
+            target = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (s) => parkStructures.includes(s.structureType) });
         }
 
         if(!target) {
@@ -58,14 +58,14 @@ module.exports = {
                 target = creep.pos.findClosestByRange(FIND_STRUCTURES,
                     { filter: (s) => parkStructures.includes(s.structureType) });
                 if(!target) target = creep.room.getPositionAt(25, 25);
-                creep.moveTo(target, { range: 5, ignoreRoads: true });
+                creep.goTo(target, { range: 5, ignoreRoads: true, avoidHostiles: true });
             }
 
             return;
         }
 
         if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, { ignoreRoads: true });
+            creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
         }
     }
 };
