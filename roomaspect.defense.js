@@ -1,6 +1,6 @@
 const ff = require("helper.friendFoeRecognition");
 var spawnHelper = require("helper.spawning");
-var defender = require("role.defender");
+var guard = require("role.guard");
 var reloader = require("role.reloader");
 
 const keyStructures = [
@@ -46,12 +46,13 @@ module.exports = class DefenseAspect {
             this.roomai.spawn(reloader.parts, { role: reloader.name });
         }
         
+        // TODO: new condition?
         if(this.attackTime <= 50) return;
 
         // TODO: determine number of defenders in a useful way
-        if(_.filter(spawnHelper.globalCreepsWithRole(defender.name), (c) => c.memory.room == this.room.name).length <= 3) {
-            var parts = spawnHelper.bestAffordableParts(this.room, defender.meeleeConfigs(), true);
-            this.roomai.spawn(parts, { role: defender.name, room: this.room.name, originRoom: this.room.name });
+        if(spawnHelper.localCreepsWithRole(this.roomai, guard.name).length < 2) {
+            var parts = spawnHelper.bestAffordableParts(this.room, guard.configs(), true);
+            this.roomai.spawn(parts, { role: guard.name });
         }
     }
 
