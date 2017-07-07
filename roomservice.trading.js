@@ -17,7 +17,13 @@ module.exports = class Trading {
     get sellingBlacklist() {
         return [
             RESOURCE_ENERGY,
-            RESOURCE_POWER
+            RESOURCE_POWER,
+            "XLH2O",
+            "XGH2O",
+            "XUH2O",
+            "XLHO2",
+            "XGHO2",
+            "G"
         ];
     }
     
