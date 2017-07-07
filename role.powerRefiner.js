@@ -30,7 +30,7 @@ module.exports = {
     pickup: function(creep) {
         let spawner = this.spawner(creep);
         let neededPower = (spawner.powerCapacity - spawner.power) - (creep.carry[RESOURCE_POWER] || 0);
-        neededPower = _.min([neededPower, creep.carryCapacity - _.sum(creep.carry)]);
+        neededPower = Math.min(neededPower, creep.carryCapacity - _.sum(creep.carry), creep.room.storage.store.power || 0);
         if(!creep.carry[RESOURCE_POWER] && neededPower > 0) {
             let result = creep.withdraw(creep.room.storage, RESOURCE_POWER, neededPower);
             if(result == ERR_NOT_IN_RANGE) {
