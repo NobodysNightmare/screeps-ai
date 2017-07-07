@@ -61,13 +61,16 @@ module.exports = {
     pickup: function(creep) {
         // TODO: also collect raw resources lying around the source
         if(!this.source(creep)) return;
-        var target = logistic.storeFor(this.source(creep)) || this.source(creep);
-        var result = creep.withdraw(target, creep.memory.resource);
-        if(result == ERR_NOT_IN_RANGE) {
+        let target = logistic.storeFor(this.source(creep)) || this.source(creep);
+        
+        if(creep.pos.isNearTo(target)) {
+            let result = creep.withdraw(target, creep.memory.resource);
+            if(result == OK) {
+                return true;
+            }
+        } else {
             creep.travelTo(target);
-        } else if(result == OK) {
-            return true;
-        }
+        } 
     },
     buildRoad: function(creep) {
         var constructionSite = _.find(creep.pos.lookFor(LOOK_CONSTRUCTION_SITES), (cs) => cs.structureType == STRUCTURE_ROAD);
