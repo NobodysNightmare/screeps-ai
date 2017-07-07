@@ -4,6 +4,11 @@ module.exports = {
     name: "scientist",
     parts: spawnHelper.makeParts(10, CARRY, 5, MOVE),
     run: function(creep) {
+        if(!creep.room.ai()) {
+            console.log("Scientist is in AI-less room " + creep.room.name);
+            return;
+        }
+        
         let reactor = creep.room.ai().labs.reactor;
         if(creep.memory.state === "deliver") {
             this.deliverToReactor(creep, reactor);
