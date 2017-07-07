@@ -1,7 +1,7 @@
 const spawnHelper = require("helper.spawning");
 const scientist = require("role.scientist");
 
-const targetCompounds = ["XLH2O", "XGH2O", "XLHO2", "XGHO2", "G"];
+const targetCompounds = ["XLH2O", "XGH2O", "XUH2O", "XLHO2", "XGHO2", "G"];
 const reactionCycleAmount = 2500;
 
 module.exports = class LabsAspect {
@@ -13,6 +13,7 @@ module.exports = class LabsAspect {
 
         this.reactor = roomai.labs.reactor;
         this.boosters = roomai.labs.boosters;
+        this.deficits = roomai.labs.deficits;
         this.scientists = this.room.find(FIND_MY_CREEPS, { filter: (c) => c.memory.role == scientist.name });
     }
 
@@ -22,12 +23,19 @@ module.exports = class LabsAspect {
             return;
         }
 
+        this.updateDeficits();
         this.setCurrentReaction();
         this.buildScientists();
         this.reactor.react();
         this.reactor.renderVisuals();
         for(let booster of this.boosters) {
             booster.renderVisuals();
+        }
+    }
+
+    updateDeficits() {
+        for(let compound of targetCompounds) {
+            this.deficits[compound] = Math.max(0, this.roomai.trading.baselineAmount(compound) - this.amount(compound));
         }
     }
 
@@ -47,7 +55,7 @@ module.exports = class LabsAspect {
     }
 
     findNextReaction() {
-        let targets = _.sortBy(_.filter(targetCompounds, (r) => this.amount(r) < this.roomai.trading.baselineAmount(r)), (r) => this.amount(r));
+        let targets = _.sortBy(_.filter(targetCompounds, (r) => this.deficits[r] > 0), (r) => -this.deficits[r]);
         for(let target of targets) {
             let missing = [target];
             while(missing.length > 0) {

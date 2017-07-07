@@ -10,16 +10,19 @@ const DECOMPOSITIONS = {
     LO: ["L", "O"],
     GH: ["G", "H"],
     GO: ["G", "O"],
+    UH: ["U", "H"],
 
     LH2O: ["LH", "OH"],
     LHO2: ["LO", "OH"],
     GH2O: ["GH", "OH"],
     GHO2: ["GO", "OH"],
+    UH2O: ["UH", "OH"],
 
     XLH2O: ["X", "LH2O"],
     XLHO2: ["X", "LHO2"],
     XGH2O: ["X", "GH2O"],
-    XGHO2: ["X", "GHO2"]
+    XGHO2: ["X", "GHO2"],
+    XUH2O: ["X", "UH2O"]
 }
 
 function decompose(compound) {
@@ -199,7 +202,8 @@ module.exports = class Labs {
         if(!room.memory.labs) {
             room.memory.labs = {
                 reactor: null,
-                boosters: []
+                boosters: [],
+                deficits: {}
             };
         }
 
@@ -227,6 +231,10 @@ module.exports = class Labs {
         }
 
         return this._boosters;
+    }
+    
+    get deficits() {
+        return this.memory.deficits;
     }
 
     updateReactor(rally, entranceDirection) {
