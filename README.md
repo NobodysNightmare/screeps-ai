@@ -91,6 +91,7 @@ fire.
 
 * **Operation name:** `attack`
 * **color:** Controls number of attackers being spawned
+* **secondary color:** Also spawn a healer per attacker if color greater than 1 (Red) is chosen.
 
 Spawns some creeps that attack a hostile room.
 

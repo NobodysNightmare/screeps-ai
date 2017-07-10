@@ -22,7 +22,7 @@ module.exports = class ManualOperationsAspect {
             let targetFlag = Game.flags[opName + opId];
             let operation = operations[opName];
             if(operation && targetFlag) {
-                new operation(this.roomai, targetFlag, result.flag.color).run();
+                new operation(this.roomai, targetFlag, result.flag.color, result.flag.secondaryColor).run();
             }
         }
     }

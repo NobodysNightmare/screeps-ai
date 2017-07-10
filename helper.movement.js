@@ -76,6 +76,10 @@ module.exports = {
     },
     inverseDirection: function(direction) {
         return inverseDirections[direction];
+    },
+    isWithin: function(creep, left, top, right, bottom) {
+        let pos = creep.pos;
+        return pos.x >= left && pos.x <= right && pos.y >= top && pos.y <= bottom;
     }
 };
 
