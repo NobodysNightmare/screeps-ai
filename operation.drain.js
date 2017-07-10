@@ -1,4 +1,6 @@
+const boosting = require("helper.boosting");
 const spawnHelper = require("helper.spawning");
+
 const healer = require("role.healer");
 const hopper = require("role.hopper");
 
@@ -24,7 +26,7 @@ module.exports = class DrainOperation {
                 } else {
                     healerParts = spawnHelper.bestAffordableParts(this.room, healer.configs({ minHeal: 5, maxHeal: 25, healRatio: 1 }));
                 }
-                this.roomai.spawn(healerParts, { role: healer.name, target: hopperCreep.name, avoidRooms: [this.targetRoom] });
+                this.roomai.spawn(healerParts, boosting.disable({ role: healer.name, target: hopperCreep.name, avoidRooms: [this.targetRoom] }));
             }
         }
 

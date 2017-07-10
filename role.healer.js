@@ -1,3 +1,4 @@
+const boosting = require("helper.boosting");
 const movement = require("helper.movement");
 
 module.exports = {
@@ -12,6 +13,8 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        if(boosting.accept(creep, "XLHO2")) return;
+
         if(creep.hits < creep.hitsMax) {
             this.heal(creep, creep);
             if(!creep.pos.isNearTo(target)) creep.moveTo(target);
