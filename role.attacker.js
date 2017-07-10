@@ -79,6 +79,11 @@ module.exports = {
                 moveTarget = _.find(creep.room.lookForAt(LOOK_CREEPS, creep.room.getPositionAt(nextStep.x, nextStep.y)), (c) => ff.isHostile(c));
             }
 
+            if(!moveTarget) {
+                let closeHostiles = _.filter(ff.findHostiles(creep.room), (c) => c.pos.isNearTo(creep));
+                moveTarget = closeHostiles[0];
+            }
+
             if(moveTarget) {
                 creep.attack(moveTarget);
             }
