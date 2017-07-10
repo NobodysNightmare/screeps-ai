@@ -17,7 +17,13 @@ module.exports = {
 
         if(creep.hits < creep.hitsMax) {
             this.heal(creep, creep);
-            if(!creep.pos.isNearTo(target)) creep.moveTo(target);
+            if(creep.pos.isNearTo(target)) {
+                this.moveWhileNearTarget(creep, target);
+            } else {
+                if(!creep.memory.avoidRooms || !creep.memory.avoidRooms.includes(target.room.name)) {
+                    creep.moveTo(target);
+                }
+            }
             return;
         }
 
@@ -31,16 +37,7 @@ module.exports = {
     heal: function(creep, target) {
         let healResult = creep.heal(target);
         if(healResult === OK) {
-            let exitDir = movement.getExitDirection(target);
-            if(exitDir) {
-                // successful healing on the exit tile can only happen when
-                // the target arrived in this room, when we were already there.
-                // Clear the exit to avoid us blocking movement off the exit.
-                creep.move(movement.inverseDirection(exitDir));
-            } else {
-                // instantly follow to keep up with target
-                creep.move(creep.pos.getDirectionTo(target));
-            }
+            this.moveWhileNearTarget(creep, target);
         } else if(healResult == ERR_NOT_IN_RANGE) {
             creep.rangedHeal(target);
             if(!creep.memory.avoidRooms || !creep.memory.avoidRooms.includes(target.room.name)) {
@@ -53,6 +50,18 @@ module.exports = {
         if(!newTarget) return;
 
         creep.memory.target = newTarget.name;
+    },
+    moveWhileNearTarget: function(creep, target) {
+        let exitDir = movement.getExitDirection(target);
+        if(exitDir) {
+            // Being near, when target is on the exit tile can only happen when
+            // the target arrived in this room, when we were already there.
+            // Clear the exit to avoid us blocking targets movement off the exit.
+            creep.move(movement.inverseDirection(exitDir));
+        } else {
+            // instantly follow to keep up with target
+            creep.move(creep.pos.getDirectionTo(target));
+        }
     }
 };
 
