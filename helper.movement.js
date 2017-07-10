@@ -33,8 +33,8 @@ module.exports = {
             }
         }
 
-        // TODO: use calculated route in pathfinder to block rooms
-        // using the route without pathfinder is too buggy (e.g. navigating to the wrong exit tile)
+        // use route in pathfinder to block rooms
+        // too buggy without pathfinder
         creep.moveTo(new RoomPosition(25, 25, roomName));
     },
     calculateRoute: function(startRoom, endRoom) {
