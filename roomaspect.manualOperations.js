@@ -5,6 +5,7 @@ const operations = {
   downgrade: require("operation.downgrade"),
   drain: require("operation.drain"),
   power: require("operation.farmPower"),
+  ranger: require("operation.ranger"),
   scoop: require("operation.scoop")
 };
 

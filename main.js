@@ -9,6 +9,7 @@ const roles = [
     require("role.carrier"),
     require("role.guard"),
     require("role.defender"),
+    require("role.ranger"),
     require("role.reloader"),
     require("role.flagHunter"),
     require("role.attacker"),
