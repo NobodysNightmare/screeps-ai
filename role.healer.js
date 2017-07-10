@@ -15,6 +15,7 @@ module.exports = {
     run: function(creep) {
         if(boosting.accept(creep, "XLHO2")) return;
 
+        let target = Game.creeps[creep.memory.target];
         if(creep.hits < creep.hitsMax) {
             this.heal(creep, creep);
             if(creep.pos.isNearTo(target)) {
@@ -27,7 +28,6 @@ module.exports = {
             return;
         }
 
-        var target = Game.creeps[creep.memory.target];
         if(target) {
             this.heal(creep, target);
         } else {
