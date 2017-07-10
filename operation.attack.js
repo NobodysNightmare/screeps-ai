@@ -20,7 +20,7 @@ module.exports = class AttackOperation {
 
         if(attackers.length < this.attackerCount) {
             let memory = { role: attacker.name, flag: this.targetFlag.name };
-            if(this.useHeal) memory[waitFor] = true;
+            if(this.useHeal) memory["waitFor"] = true;
             this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, attacker.meleeConfigs()), memory);
         }
     }
