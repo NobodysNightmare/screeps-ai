@@ -119,9 +119,12 @@ module.exports = {
             target = _.sortBy(_.filter(creep.room.ai().labs.boosters, (b) => b.resource && creep.room.storage.store[b.resource] && (!b.lab.mineralType || b.resource === b.lab.mineralType) && b.lab.mineralAmount < b.lab.mineralCapacity), (b) => b.lab.mineralAmount)[0];
             if(target) {
                 let amount = Math.min(target.lab.mineralCapacity - target.lab.mineralAmount, creep.carryCapacity, creep.room.storage.store[target.resource]);
-                creep.withdraw(creep.room.storage, target.resource, amount);
-                return true;
-            } else if(_.find(creep.room.ai().labs.boosters, (b) => b.resource && b.resource !== b.lab.mineralType)) {
+                if(amount > 0) {
+                    creep.withdraw(creep.room.storage, target.resource, amount);
+                    return true;
+                }
+                // TODO: also clear booster in this case
+            } else if(_.find(creep.room.ai().labs.boosters, (b) => b.resource && b.lab.mineralAmount > 0 && b.resource !== b.lab.mineralType)) {
                 // clean booster with wrong resource
                 return true;
             }
