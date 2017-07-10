@@ -1,7 +1,7 @@
 const spawnHelper = require("helper.spawning");
 const scientist = require("role.scientist");
 
-const targetCompounds = ["XLH2O", "XGH2O", "XUH2O", "XLHO2", "XGHO2", "G"];
+const targetCompounds = ["XUH2O", "XLH2O", "XLHO2", "XGHO2", "XGH2O", "G"];
 const reactionCycleAmount = 2500;
 
 module.exports = class LabsAspect {
@@ -82,7 +82,7 @@ module.exports = class LabsAspect {
 
     buildScientists() {
         if(!this.roomai.canSpawn()) return;
-        
+
         let needToReact = this.reactor.compound;
         let needToBoost = _.some(this.boosters, (b) => b.needEnergy() || (b.needMineral() && this.room.storage.store[b.resource]));
         if(needToReact || needToBoost) {
