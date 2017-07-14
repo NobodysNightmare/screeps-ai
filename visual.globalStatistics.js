@@ -62,6 +62,9 @@ module.exports = {
                     power: room.storage.store.power || 0
                 };
             }
+            if(room.terminal) {
+                result[room.name].terminalSpace = room.terminal.storeCapacity - _.sum(room.terminal.store);
+            }
         }
         return result;
     },
