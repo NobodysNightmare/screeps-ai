@@ -12,10 +12,12 @@ module.exports = class RangerOperation {
     run() {
         if(!this.roomai.canSpawn()) return;
 
-        let rangers = _.filter(spawnHelper.globalCreepsWithRole(ranger.name), (c) => c.memory.flag == this.targetFlag.name);
+        let parts = spawnHelper.bestAvailableParts(this.room, ranger.configs());
+        let leadTime = spawnHelper.spawnDuration(parts) + 50; // 50 ticks to be able to move at least one room
+        let rangers = _.filter(spawnHelper.globalCreepsWithRole(ranger.name), (c) => c.memory.flag == this.targetFlag.name && (!c.ticksToLive || c.ticksToLive > leadTime));
 
         if(rangers.length < this.rangerCount) {
-            this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, ranger.configs()), { role: ranger.name, flag: this.targetFlag.name });
+            this.roomai.spawn(parts, { role: ranger.name, flag: this.targetFlag.name });
         }
     }
 }
