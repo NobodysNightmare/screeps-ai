@@ -8,7 +8,7 @@ module.exports = {
             console.log("Scientist is in AI-less room " + creep.room.name);
             return;
         }
-        
+
         let reactor = creep.room.ai().labs.reactor;
         if(creep.memory.state === "deliver") {
             this.deliverToReactor(creep, reactor);
@@ -71,7 +71,6 @@ module.exports = {
         if(creep.pos.isNearTo(target)) {
             creep.transfer(target, resource);
             creep.memory.state = "pickAtStorage";
-            this.pickAtStorage(creep, reactor);
         } else {
             creep.moveTo(target);
         }
@@ -91,8 +90,8 @@ module.exports = {
             let actualAmount = (creep.room.storage.store[reactor.compound] || 0) + _.sum(reactor.outputs, (l) => l.mineralAmount);
             let neededProduce = reactor.targetAmount - actualAmount;
             let missingInput = Math.max(0, neededProduce - resource.amount);
-            if(missingInput > 0) {
-                let inStore = creep.room.storage.store[resource.type] || 0;
+            let inStore = creep.room.storage.store[resource.type] || 0;
+            if(missingInput > 0 && inStore > 0) {
                 missingInput = Math.max(5, missingInput);
                 creep.withdraw(creep.room.storage, resource.type, Math.min(creep.carryCapacity, missingInput, inStore));
             } else {
@@ -123,7 +122,11 @@ module.exports = {
                     creep.withdraw(creep.room.storage, target.resource, amount);
                     return true;
                 }
-                // TODO: also clear booster in this case
+
+                // Can' fill other boosters, but still has booster with wrong resource loaded
+                if(_.find(creep.room.ai().labs.boosters, (b) => b.resource && b.lab.mineralType && b.lab.mineralType !== lab.resource)) {
+                    return true;
+                }
             } else if(_.find(creep.room.ai().labs.boosters, (b) => b.resource && b.lab.mineralAmount > 0 && b.resource !== b.lab.mineralType)) {
                 // clean booster with wrong resource
                 return true;
