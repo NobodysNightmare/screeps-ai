@@ -11,18 +11,24 @@ const DECOMPOSITIONS = {
     GH: ["G", "H"],
     GO: ["G", "O"],
     UH: ["U", "H"],
+    ZH: ["Z", "H"],
+    ZO: ["Z", "O"],
 
     LH2O: ["LH", "OH"],
     LHO2: ["LO", "OH"],
     GH2O: ["GH", "OH"],
     GHO2: ["GO", "OH"],
     UH2O: ["UH", "OH"],
+    ZH2O: ["ZH", "OH"],
+    ZHO2: ["ZO", "OH"],
 
     XLH2O: ["X", "LH2O"],
     XLHO2: ["X", "LHO2"],
     XGH2O: ["X", "GH2O"],
     XGHO2: ["X", "GHO2"],
-    XUH2O: ["X", "UH2O"]
+    XUH2O: ["X", "UH2O"],
+    XZH2O: ["X", "ZH2O"],
+    XZHO2: ["X", "ZHO2"]
 }
 
 function decompose(compound) {

@@ -18,11 +18,16 @@ module.exports = class Trading {
         return [
             RESOURCE_ENERGY,
             RESOURCE_POWER,
-            "XLH2O",
-            "XGH2O",
-            "XUH2O",
-            "XLHO2",
             "XGHO2",
+            "XGH2O",
+            "XKHO2",
+            "XKH2O",
+            "XLHO2",
+            "XLH2O",
+            "XUHO2",
+            "XUH2O",
+            "XZHO2",
+            "XZH2O",
             "G"
         ];
     }
