@@ -46,10 +46,10 @@ module.exports = {
         let closeHostiles = _.filter(ff.findHostiles(creep.room), (c) => c.pos.getRangeTo(creep) <= 3);
         let dangerousHostiles = _.filter(closeHostiles, (c) => c.pos.getRangeTo(creep) <= 2 && c.canAttack());
         if(targetRange <= 3) {
-            creep.rangedAttack(target);
+            this.shoot(creep, target);
         } else {
             if(dangerousHostiles.length > 0 || closeHostiles.length > 0) {
-                creep.rangedAttack(dangerousHostiles[0] || closeHostiles[0]);
+                this.shoot(creep, dangerousHostiles[0] || closeHostiles[0]);
             }
         }
         
@@ -59,6 +59,13 @@ module.exports = {
             if((target.canAttack() && targetRange > 3) || targetRange > 2) {
                 creep.moveTo(target, { maxRooms: 1 });
             }
+        }
+    },
+    shoot: function(creep, target) {
+        if(creep.pos.getRangeTo(target) == 1) {
+            creep.rangedMassAttack();
+        } else {
+            creep.rangedAttack(target);
         }
     }
 };
