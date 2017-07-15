@@ -1,5 +1,6 @@
 const boosting = require("helper.boosting");
 const movement = require("helper.movement");
+const spawnHelper = require("helper.spawning");
 
 module.exports = {
     name: "healer",
@@ -12,8 +13,15 @@ module.exports = {
 
         return configs;
     },
+    toughConfig: function(toughness) {
+      return spawnHelper.makeParts(toughness, TOUGH, 40 - toughness, HEAL, 10, MOVE);
+    },
     run: function(creep) {
-        if(boosting.accept(creep, "XLHO2")) return;
+        if(creep.body[0].type === TOUGH) {
+            if(boosting.accept(creep, "XZHO2", "XLHO2", "XGHO2")) return;
+        } else {
+            if(boosting.accept(creep, "XLHO2")) return;
+        }
 
         let target = Game.creeps[creep.memory.target];
         if(creep.hits < creep.hitsMax && creep.hits < target.hits) {

@@ -1,6 +1,7 @@
 const boosting = require("helper.boosting");
 const ff = require("helper.friendFoeRecognition");
 const movement = require("helper.movement");
+const spawnHelper = require("helper.spawning");
 
 module.exports = {
     name: "dismantler",
@@ -14,8 +15,15 @@ module.exports = {
 
         return configs;
     },
+    toughConfig: function(toughness) {
+      return spawnHelper.makeParts(toughness, TOUGH, 40 - toughness, WORK, 10, MOVE);
+    },
     run: function(creep) {
-        if(boosting.accept(creep, "XZH2O")) return;
+        if(creep.body[0].type === TOUGH) {
+            if(boosting.accept(creep, "XZHO2", "XZH2O", "XGHO2")) return;
+        } else {
+            if(boosting.accept(creep, "XZH2O")) return;
+        }
 
         var flag = Game.flags[creep.memory.flag];
         if(creep.pos.roomName == flag.pos.roomName) {
@@ -43,7 +51,7 @@ module.exports = {
         if(!target) {
             target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType != STRUCTURE_CONTROLLER });
         }
-        
+
         if(!target) {
             target = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (s) => s.structureType != STRUCTURE_CONTROLLER });
         }
