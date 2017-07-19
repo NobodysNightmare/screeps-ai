@@ -45,6 +45,14 @@ module.exports = {
             room.createConstructionSite(x + pos.x, y + pos.y, STRUCTURE_ROAD);
         }
     },
+    updateCostMatrix: function(matrix, cluster) {
+        let x = cluster.x,
+            y = cluster.y;
+
+        for(let pos of this.extensionParts) {
+            matrix.set(x + pos.x, y + pos.y, 255);
+        }
+    },
     addBuilding: function(memory, flag) {
         memory.push({ x: flag.pos.x, y: flag.pos.y });
     },

@@ -50,6 +50,17 @@ module.exports = {
         room.createConstructionSite(reactor.x, reactor.y, STRUCTURE_ROAD);
         room.ai().labs.updateReactor(reactor, dir);
     },
+    updateCostMatrix: function(matrix, reactor) {
+        let dir = this.directions[reactor.dir];
+        for(let x = -1; x <= 1; x += 1) {
+            for(let y = -1; y <= 1; y += 1) {
+                if(x == dir.x && y == dir.y) continue;
+                if(x == 0 && y == 0) continue;
+
+                matrix.set(reactor.x + x, reactor.y + y, 255);
+            }
+        }
+    },
     addBuilding: function(memory, flag) {
         let size = memory.push({ x: flag.pos.x, y: flag.pos.y, dir: flag.color });
         if(size > 1) memory.shift();

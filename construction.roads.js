@@ -5,26 +5,32 @@ const roadableStructures = [
 
 module.exports = {
     perform: function(room) {
-        let spawner = room.find(FIND_MY_SPAWNS)[0];
-        if(Game.time % 100 != 0 || !spawner) {
+        let storagePos = room.storagePos();
+        if(Game.time % 100 != 0 || !storagePos) {
             return;
         }
-        
-        for(var source of room.find(FIND_SOURCES)) {
+
+        for(let source of room.find(FIND_SOURCES)) {
             this.buildRoadAround(room, source.pos);
-            this.buildRoadFromTo(room, spawner, source);
+            this.buildRoadFromTo(room, storagePos, source.pos);
         }
-        
-        if(room.controller) {
-            this.buildRoadAround(room, room.controller.pos);
-            var target = room.controller.pos.findClosestByRange(FIND_SOURCES);
-            if(target) {
-                this.buildRoadFromTo(room, room.controller, target);
+
+        this.buildRoadAround(room, room.controller.pos);
+        this.buildRoadFromTo(room, storagePos, room.controller.pos);
+
+        if(room.controller.level >= 6) {
+            for(let mineral of room.find(FIND_MINERALS)) {
+                this.buildRoadFromTo(room, storagePos, mineral.pos);
             }
         }
     },
     buildRoadFromTo: function(room, start, end) {
-        var path = start.pos.findPathTo(end, { ignoreCreeps: true, ignoreRoads: true });
+        let buildings = room.ai().constructions.buildings;
+        var path = start.findPathTo(end, { ignoreCreeps: true, ignoreRoads: true, costCallback: function(roomName, matrix) {
+            for(let building of buildings) {
+                building.updateCostMatrix(matrix);
+            }
+        } });
         for(var point of path) {
             this.buildRoad(new RoomPosition(point.x, point.y, room.name));
         }

@@ -15,6 +15,9 @@ module.exports = {
     build: function(room, tower) {
         room.createConstructionSite(tower.x, tower.y, STRUCTURE_TOWER);
     },
+    updateCostMatrix: function(matrix, tower) {
+        matrix.set(tower.x, tower.y, 255);
+    },
     addBuilding: function(memory, flag) {
         memory.push({ x: flag.pos.x, y: flag.pos.y });
     },

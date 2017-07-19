@@ -10,6 +10,9 @@ module.exports = {
         let lab = _.find(room.ai().labs.all, (l) => l.pos.x === booster.x && l.pos.y === booster.y);
         if(lab) room.ai().labs.setBooster(lab);
     },
+    updateCostMatrix: function(matrix, booster) {
+        matrix.set(booster.x, booster.y, 255);
+    },
     addBuilding: function(memory, flag) {
         memory.push({ x: flag.pos.x, y: flag.pos.y });
     },

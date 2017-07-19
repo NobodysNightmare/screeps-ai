@@ -35,3 +35,14 @@ Room.prototype.nuker = function() {
 
     return this._nuker;
 }
+
+Room.prototype.storagePos = function() {
+    if(this.storage) return this.storage.pos;
+
+    let constructions = this.memory.constructions;
+    if(!constructions) return null;
+    let storageBuilding = constructions.storage[0];
+    if(!storageBuilding) return null;
+
+    return new RoomPosition(storageBuilding.x, storageBuilding.y, this.name);
+}
