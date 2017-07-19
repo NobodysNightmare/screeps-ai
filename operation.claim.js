@@ -21,6 +21,11 @@ module.exports = class ClaimOperation {
             let needClaimer = claimers.length == 0 && !myRoom;
 
             if(needClaimer) {
+                let roomCount = _.filter(Game.rooms, (r) => r.controller && r.controller.my).length;
+                if(roomCount >= Game.gcl.level) {
+                    // do not spawn anything if we don't own the room and can't claim it yet
+                    return;
+                }
                 this.roomai.spawn(claimer.parts, { role: claimer.name, flag: this.targetFlag.name });
             }
 
