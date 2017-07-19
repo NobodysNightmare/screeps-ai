@@ -4,9 +4,7 @@ module.exports = {
         this.draw();
     },
     refresh: function() {
-        if(Game.time % 30000 == 0) {
-            Memory.stats.profits = {};
-        }
+        // not resetting anymore
     },
     draw: function() {
         for(let roomName in Memory.stats.profits) {
