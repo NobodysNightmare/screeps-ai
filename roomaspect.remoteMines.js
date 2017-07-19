@@ -10,6 +10,8 @@ const ff = require("helper.friendFoeRecognition");
 
 const profitVisual = require("visual.roomProfit");
 
+const secondCarrierMinCapacity = 400;
+
 module.exports = class RemoteMinesAspect {
     constructor(roomai) {
         this.roomai = roomai;
@@ -46,13 +48,13 @@ module.exports = class RemoteMinesAspect {
         if(!hasDefender) {
             this.spawn(spawnHelper.bestAvailableParts(this.room, defender.meeleeConfigs()), { role: defender.name, room: remoteRoom.name, originRoom: this.room.name }, remoteRoom.name);
         }
-        
+
         return true;
     }
 
     spawnReserver(remoteRoom) {
         if(!this.roomai.canSpawn()) return;
-        
+
         var needReservation = !remoteRoom.controller.owner && (!remoteRoom.controller.reservation || remoteRoom.controller.reservation.ticksToEnd < 2000);
         var hasReserver = _.any(spawnHelper.globalCreepsWithRole(reserver.name), (c) => c.memory.target == remoteRoom.controller.id);
         if(needReservation && !hasReserver) {
@@ -62,7 +64,7 @@ module.exports = class RemoteMinesAspect {
 
     spawnMiner(source) {
         if(!this.roomai.canSpawn()) return;
-        
+
         var hasMiner = _.any(spawnHelper.globalCreepsWithRole(miner.name), (c) => c.memory.target == source.id);
         if(!hasMiner) {
             this.spawn(spawnHelper.bestAvailableParts(this.room, miner.energyConfigs), { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true }, source.room.name);
@@ -71,10 +73,12 @@ module.exports = class RemoteMinesAspect {
 
     spawnCarrier(source) {
         if(!this.roomai.canSpawn()) return;
-        
-        var hasStore = logistic.storeFor(source);
-        var hasCarrier = _.any(spawnHelper.globalCreepsWithRole(carrier.name), (c) => c.memory.source == source.id);
-        if(hasStore && !hasCarrier) {
+
+        let hasStore = logistic.storeFor(source);
+        let carrierCapacity = _.sum(_.filter(spawnHelper.globalCreepsWithRole(carrier.name), (c) => c.memory.source == source.id), (c) => _.filter(c.body, (p) => p.type === CARRY).length) * CARRY_CAPACITY;
+        let neededCapacity = this.neededCollectorCapacity(source);
+        let missingCapacity = neededCapacity - carrierCapacity;
+        if(hasStore && (carrierCapacity == 0 || missingCapacity >= secondCarrierMinCapacity)) {
             let memory = {
                 role: carrier.name,
                 source: source.id,
@@ -83,7 +87,7 @@ module.exports = class RemoteMinesAspect {
                 selfSustaining: true,
                 registerRevenueFor: source.room.name
             };
-            this.spawn(spawnHelper.bestAvailableParts(this.room, carrier.configsForCapacity(this.neededCollectorCapacity(source), { workParts: 1 })), memory, source.room.name);
+            this.spawn(spawnHelper.bestAvailableParts(this.room, carrier.configsForCapacity(missingCapacity, { workParts: 1 })), memory, source.room.name);
         }
     }
 
