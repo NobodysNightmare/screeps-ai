@@ -99,7 +99,9 @@ module.exports = class SuppliesAspect {
 
     runLinks() {
         for(let link of this.roomai.links.sources()) {
-            if(link.energy / link.energyCapacity >= 0.5) {
+            let threshold = 0.5;
+            if(link === this.roomai.links.controller()) threshold = 1.0;
+            if(link.energy / link.energyCapacity >= threshold) {
                 link.transferEnergy(this.roomai.links.storage());
             }
         }
