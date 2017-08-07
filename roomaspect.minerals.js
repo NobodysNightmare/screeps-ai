@@ -49,21 +49,14 @@ module.exports = class MineralsAspect {
             _.filter(spawnHelper.globalCreepsWithRole(carrier.name), (creep) => creep.memory.source == this.mineral.id).length > 0) {
             return;
         }
-
-        let destination;
-        if(this.masterRoom() && this.masterRoom().terminal) {
-            destination = this.masterRoom().terminal;
-        } else if(this.room.storage) {
-            destination = this.room.storage;
-        }
         
-        if(!destination) return;
+        if(!this.room.storage) return;
         
         let parts = spawnHelper.bestAvailableParts(this.room, carrier.partConfigs);
         let memory = {
             role: carrier.name,
             source: this.mineral.id,
-            destination: destination.id,
+            destination: this.room.storage.id,
             resource: this.mineral.mineralType
         };
 
