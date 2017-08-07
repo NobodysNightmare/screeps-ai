@@ -33,7 +33,7 @@ module.exports = class MineralsAspect {
             return;
         }
 
-        var parts = spawnHelper.bestAvailableParts(this.room, miner.mineralConfigs);
+        var parts = spawnHelper.bestAvailableParts(this.room, miner.mineralConfigs(this.mineral));
         var memory = {
             role: miner.name,
             target: this.mineral.id,

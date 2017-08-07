@@ -1,4 +1,5 @@
-var logistic = require('helper.logistic');
+const logistic = require('helper.logistic');
+const spawnHelper = require("helper.spawning");
 
 module.exports = {
     name: "miner",
@@ -8,13 +9,17 @@ module.exports = {
         [WORK, WORK, WORK, CARRY, MOVE, MOVE],
         [WORK, WORK, CARRY, MOVE]
     ],
-    mineralConfigs: [
-        [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-        [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE],
-        [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE],
-        [WORK, WORK, WORK, CARRY, MOVE, MOVE],
-        [WORK, WORK, CARRY, MOVE]
-    ],
+    mineralConfigs: function(mineral) {
+        let configs = [];
+        
+        let workNeeded = Math.ceil(mineral.mineralAmount * EXTRACTOR_COOLDOWN / CREEP_LIFE_TIME);
+        workNeeded = Math.max(workNeeded, 5);
+        for(let parts = Math.min(workNeeded, 32); parts > 2; parts -= 1) {
+            configs.push(spawnHelper.makeParts(parts, WORK, 2, CARRY, Math.ceil(parts / 2), MOVE));
+        }
+        
+        return configs;
+    },
     run: function(creep) {
         var target = Game.getObjectById(creep.memory.target);
         if(!target) return;
