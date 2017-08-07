@@ -41,6 +41,13 @@ at which location the associated link of the storage will be placed.
 Note: Since only one storage can be placed, placing additional storages will clear the old
 storage location.
 
+#### Terminal
+
+* **Building name:** `terminal`
+* **color:** no significance
+
+Plans a terminal at the specified location.
+
 #### Reactor
 
 * **Building name:** `reactor`
