@@ -35,7 +35,7 @@ module.exports = {
 
         // use route in pathfinder to block rooms
         // too buggy without pathfinder
-        creep.moveTo(new RoomPosition(25, 25, roomName));
+        creep.goTo(new RoomPosition(25, 25, roomName), { avoidHostiles: true });
     },
     calculateRoute: function(startRoom, endRoom) {
         let route = Game.map.findRoute(startRoom, endRoom, { routeCallback: routeCallback });
