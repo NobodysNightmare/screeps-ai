@@ -44,7 +44,8 @@ module.exports = class MineralsAspect {
     }
 
     buildCarrier() {
-        if(logistic.storeFor(this.mineral) === this.room.terminal ||
+        let mineralStore = logistic.storeFor(this.mineral);
+        if(mineralStore === this.room.terminal || mineralStore === this.room.storage ||
             _.filter(spawnHelper.globalCreepsWithRole(carrier.name), (creep) => creep.memory.source == this.mineral.id).length > 0) {
             return;
         }
