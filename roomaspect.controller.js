@@ -5,10 +5,6 @@ var spawnHelper = require("helper.spawning");
 var carrier = require("role.carrier");
 var upgrader = require("role.upgrader");
 
-const LOW_ENERGY_LIMIT = 50000;
-const HIGH_ENERGY_LIMIT = 200000;
-const EXCESSIVE_ENERGY_LIMIT = 500000;
-
 module.exports = class ControllerAspect {
     constructor(roomai) {
         this.roomai = roomai;
@@ -91,11 +87,11 @@ module.exports = class ControllerAspect {
         let energy = 10;
 
         if(this.room.storage) {
-            if(this.room.storage.store.energy > EXCESSIVE_ENERGY_LIMIT) {
+            if(this.room.storage.store.energy > this.highLimit) {
                 energy = 40;
-            } else if(this.room.storage.store.energy > HIGH_ENERGY_LIMIT) {
+            } else if(this.room.storage.store.energy > this.normalLimit) {
                 energy = 20;
-            } else if(this.room.storage.store.energy < LOW_ENERGY_LIMIT) {
+            } else if(this.room.storage.store.energy < this.lowLimit) {
                 energy = 4;
             }
         }
@@ -103,7 +99,7 @@ module.exports = class ControllerAspect {
         if(this.room.controller.level == 8) {
             let maxOutput = 15;
             // TODO: provide different prebuilt configurations depending on mode
-            if(this.roomai.mode !== "normal") maxOutput = 4;
+            if(this.roomai.mode !== "normal" && this.roomai.mode !== "gcl") maxOutput = 4;
             return _.min([maxOutput, energy]);
         } else {
             return energy;
@@ -114,16 +110,32 @@ module.exports = class ControllerAspect {
         if(this.room.controller.level == 8) return 1;
 
         if(this.room.storage) {
-            if(this.room.storage.store.energy < LOW_ENERGY_LIMIT) {
+            if(this.room.storage.store.energy < this.lowLimit) {
                 return 1;
             }
 
-            if(this.room.controller.level == 7 && this.room.storage.store.energy < EXCESSIVE_ENERGY_LIMIT) {
+            if(this.room.controller.level == 7 && this.room.storage.store.energy < this.highLimit) {
                 return 1;
             }
         }
 
         return 2;
+    }
+    
+    get lowLimit() {
+        return 50000;
+    }
+    
+    get normalLimit() {
+        if(this.roomai.mode === "gcl") return 150000;
+        
+        return 200000;
+    }
+    
+    get highLimit() {
+        if(this.roomai.mode === "gcl") return 250000;
+        
+        return 500000;
     }
 }
 
