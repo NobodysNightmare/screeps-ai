@@ -27,6 +27,7 @@ const roles = [
     require("role.downgrader"),
 ];
 
+const ConstructionSitesCleaner = require("cleaner.constructionSites");
 const logistic = require("helper.logistic");
 
 const statsVisual = require("visual.globalStatistics");
@@ -86,6 +87,8 @@ module.exports.loop = function() {
                 suppressErrors(() => room.ai().run());
             }
         }
+
+        new ConstructionSitesCleaner().run();
 
         statsVisual.run();
         profitVisual.run();
