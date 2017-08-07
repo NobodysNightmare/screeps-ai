@@ -62,6 +62,11 @@ runCreeps = profiler.registerFN(runCreeps, 'Creep Actions');
 
 module.exports.loop = function() {
     profiler.wrap(function() {
+        statsVisual.initialize();
+        if(Memory.lastCompletedTick < Game.time - 1) {
+            Memory.stats.skippedTicks += 1;
+        }
+        
         if(Game.time % 10 === 0 && Game.cpu.bucket < 5000) {
             console.log("Bucket at " + Game.cpu.bucket);
         }
@@ -93,5 +98,7 @@ module.exports.loop = function() {
 
         statsVisual.run();
         profitVisual.run();
+        
+        Memory.lastCompletedTick = Game.time;
     });
 }

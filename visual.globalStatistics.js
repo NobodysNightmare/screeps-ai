@@ -1,4 +1,9 @@
 module.exports = {
+    initialize: function() {
+      if(!Memory.stats) Memory.stats = {
+          skippedTicks: 0
+      }
+    },
     run: function() {
         this.refresh();
         this.draw();
@@ -9,6 +14,7 @@ module.exports = {
         let stats = Memory.stats;
         let myRooms = _.filter(Game.rooms, (r) => r.controller && r.controller.my);
         
+        stats.gameTime = Game.time;
         stats.gcl = Game.gcl;
         stats.empire = this.empireStats(myRooms);
         stats.rooms = this.roomStats(myRooms);
