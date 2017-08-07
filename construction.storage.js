@@ -27,6 +27,13 @@ module.exports = {
         let dir = this.directions[storage.dir];
         room.createConstructionSite(storage.x, storage.y, STRUCTURE_STORAGE);
         room.createConstructionSite(storage.x + dir.x, storage.y + dir.y, STRUCTURE_LINK);
+        for(let x = -1; x <= 1; x += 1) {
+            for(let y = -1; y <= 1; y += 1) {
+                if(x === 0 && y === 0) continue;
+                if(x === dir.x && y === dir.y) continue;
+                room.createConstructionSite(storage.x + x, storage.y + y, STRUCTURE_ROAD);
+            }
+        }
     },
     updateCostMatrix: function(matrix, storage) {
         let dir = this.directions[storage.dir];
