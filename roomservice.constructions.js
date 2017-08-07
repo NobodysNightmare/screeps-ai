@@ -3,6 +3,7 @@ const constructions = {
     extensionCluster: require("construction.extensionCluster"),
     reactor: require("construction.reactor"),
     storage: require("construction.storage"),
+    terminal: require("construction.terminal"),
     tower: require("construction.tower")
 }
 
