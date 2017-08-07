@@ -9,9 +9,11 @@ module.exports = {
         this.draw();
     },
     refresh: function() {
+        let stats = Memory.stats;
+        stats.avgCpu += Game.cpu.getUsed() / 5;
+        
         if(Game.time % 5 !== 0) return;
         
-        let stats = Memory.stats;
         let myRooms = _.filter(Game.rooms, (r) => r.controller && r.controller.my);
         
         stats.gameTime = Game.time;
@@ -22,7 +24,8 @@ module.exports = {
             main_used: RawMemory.get().length
         };
         stats.cpu = Game.cpu;
-        stats.cpu.used = Game.cpu.getUsed();
+        stats.cpu.used = stats.avgCpu;
+        stats.avgCpu = 0;
     },
     empireStats: function(myRooms) {
         myRooms = _.filter(myRooms, (r) => r.storage);
