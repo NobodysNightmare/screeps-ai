@@ -60,7 +60,7 @@ module.exports = {
         return target;
     },
     findNormalPriorityConstructionTarget: function(creep) {
-        return creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType != STRUCTURE_ROAD && cs.structureType != STRUCTURE_RAMPART });
+        return creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => (cs.structureType !== STRUCTURE_ROAD || Game.map.getTerrainAt(cs.pos) === "swamp") && cs.structureType != STRUCTURE_RAMPART });
     },
     findLowPriorityConstructionTarget: function(creep) {
         return creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType == STRUCTURE_ROAD || cs.structureType == STRUCTURE_RAMPART });
