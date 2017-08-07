@@ -3,13 +3,19 @@ const friends = [
     "cazantyl",
     "daboross",
     "DoctorPC",
-    "Lolzor",
+    "Geir1983",
+    "Hernanduer",
+    "InvisioBlack",
     "likeafox",
     "Parthon",
     "poppahorse",
-    "Vlahn",
-    "Zeekner",
     "Regnare",
+    "Tijnoz",
+    "Totalschaden",
+    "Vlahn",
+    "W4rl0ck",
+    "Yilmas",
+    "Zeekner",
     "Zyzyzyryxy"
 ];
 
