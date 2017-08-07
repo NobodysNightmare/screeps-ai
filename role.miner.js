@@ -6,7 +6,9 @@ module.exports = {
     energyConfigs: [
         [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
         [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE],
+        [WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
         [WORK, WORK, WORK, CARRY, MOVE, MOVE],
+        [WORK, WORK, WORK, CARRY, MOVE],
         [WORK, WORK, CARRY, MOVE]
     ],
     mineralConfigs: function(mineral) {
