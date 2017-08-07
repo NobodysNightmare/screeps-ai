@@ -1,6 +1,7 @@
 const roles = [
     require("role.harvester"),
     require("role.miner"),
+    require("role.linkCollector"),
     require("role.upgrader"),
     require("role.builder"),
     require("role.claimer"),

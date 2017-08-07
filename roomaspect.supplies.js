@@ -22,9 +22,7 @@ module.exports = class SuppliesAspect {
 
         if(this.linksEnabled) {
             let collector = spawnHelper.localCreepsWithRole(this.roomai, linkCollector.name)[0];
-            if(collector) {
-                linkCollector.runWithRoomAI(collector, this.roomai);
-            } else {
+            if(!collector) {
                 this.buildLinkCollector();
             }
 

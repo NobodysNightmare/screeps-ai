@@ -2,10 +2,7 @@ module.exports = {
     name: "linkCollector",
     parts: [CARRY, CARRY, MOVE],
     run: function(creep) {
-        // creep is run from a different method inside the supplies aspect,
-        // so that it has access to the links service...
-    },
-    runWithRoomAI: function(creep, roomai) {
+        let roomai = creep.room.ai();
         if(roomai.links.checkOpenRequests()) {
             this.transfer(creep, roomai.room.storage, roomai.links.storage());
         } else {
