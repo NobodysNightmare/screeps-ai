@@ -26,6 +26,8 @@ module.exports = {
         }
 
         var flag = Game.flags[creep.memory.flag];
+        if(!flag) return;
+        
         if(creep.pos.roomName == flag.pos.roomName) {
             this.attackRoom(creep);
         } else {
