@@ -1,7 +1,7 @@
-ROUTE_MY_ROOM_COST = 1;
-ROUTE_NEUTRAL_ROOM_COST = 2;
-ROUTE_HOSTILE_ROOM_COST = 4;
-ROUTE_HIGHWAY_ROOM_COST = 1.5;
+const ROUTE_MY_ROOM_COST = 1;
+const ROUTE_NEUTRAL_ROOM_COST = 2;
+const ROUTE_HOSTILE_ROOM_COST = 4;
+const ROUTE_HIGHWAY_ROOM_COST = 1.5;
 
 const roomNameRegex = /^[EW]([0-9]+)[NS]([0-9]+)$/;
 const inverseDirections = {

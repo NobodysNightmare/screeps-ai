@@ -1,6 +1,6 @@
 const ff = require("helper.friendFoeRecognition");
 
-AVOID_HOSTILE_COST = 5;
+const AVOID_HOSTILE_COST = 5;
 
 module.exports = class PathBuilder {
     constructor() {
