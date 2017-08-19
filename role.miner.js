@@ -39,16 +39,16 @@ module.exports = {
             var store = logistic.storeFor(target);
             if(store) {
                 let harvestPower = creep.memory.resource === RESOURCE_ENERGY ? HARVEST_POWER : HARVEST_MINERAL_POWER;
-                if(creep.memory.selfSustaining && (store.hits / store.hitsMax) < 0.5) {
+                if(creep.memory.resource === RESOURCE_ENERGY && (store.hits / store.hitsMax) < 0.5) {
                     if(creep.repair(store) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(store);
                     }
-                } else if(creep.carry[creep.memory.resource] >=  creep.carryCapacity - (harvestPower * creep.getActiveBodyparts(WORK))) {
+                } else if(creep.carry[creep.memory.resource] >= creep.carryCapacity - (harvestPower * creep.getActiveBodyparts(WORK))) {
                     if(creep.transfer(store, creep.memory.resource) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(store);
                     }
                 }
-            } else if(creep.memory.selfSustaining && creep.carry.energy >= _.filter(creep.body, (part) => part.type == WORK).length * 5) {
+            } else if(creep.memory.resource === RESOURCE_ENERGY && creep.carry.energy >= _.filter(creep.body, (part) => part.type == WORK).length * 5) {
                 this.buildContainer(creep, target);
             }
         } else if(harvestResult == ERR_NOT_IN_RANGE) {
@@ -62,7 +62,7 @@ module.exports = {
             if(creep.build(constructionSite) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(constructionSite);
             }
-        } else {
+        } else if(creep.memory.selfSustaining) {
             creep.pos.createConstructionSite(STRUCTURE_CONTAINER);
         }
     },
