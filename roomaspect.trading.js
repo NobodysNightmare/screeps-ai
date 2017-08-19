@@ -3,6 +3,9 @@ const trader = require("role.trader");
 
 const MAX_TRANSFER = 20000;
 const TERMINAL_MAX_FILL = 270000;
+const NPC_ONLY_SALES = true;
+
+const npcRoomRegex = /^[WE][0-9]*0[NS][0-9]*0$/;
 
 module.exports = class TradingAspect {
     constructor(roomai) {
@@ -31,7 +34,11 @@ module.exports = class TradingAspect {
                 } else if(Game.time % 200 === 50) {
                     let sellable = this.trading.sellableAmount(resource);
                     if(sellable >= 100) {
-                        return this.sell(resource, sellable);
+                        if(NPC_ONLY_SALES) {
+                            return this.sellToNpcs(resource, sellable);
+                        } else {
+                            return this.sellToFreeMarket(resource, sellable);
+                        }
                     }
                 }
             }
@@ -60,36 +67,44 @@ module.exports = class TradingAspect {
         return true;
     }
 
-    sell(resource, amount) {
+    sellToFreeMarket(resource, amount) {
         amount = _.min([amount, this.terminal.store[resource]]);
         if(amount < 100) return;
         let sales = Game.market.getAllOrders((o) => o.type == "sell" && o.resourceType == resource && o.remainingAmount > 100);
         let minPrice = _.min(sales, 'price').price * 0.90;
+        
         let buyers = Game.market.getAllOrders((o) => o.type == "buy" && o.resourceType == resource && o.amount > 0 && o.price >= minPrice);
         buyers = _.sortBy(buyers, (b) => Game.map.getRoomLinearDistance(b.roomName, this.room.name, true));
-        buyers = _.sortBy(buyers, (b) => -b.price);
-        for(let remainingStore = amount; remainingStore > 0; ) {
-            var buyer = buyers.shift();
-            if(!buyer) {
-                break;
-            }
+        let buyer = _.sortBy(buyers, (b) => -b.price).shift();
+        if(!buyer) return;
 
-            let dealAmount = Math.min(remainingStore, buyer.amount);
-            let dealCost = Game.market.calcTransactionCost(dealAmount, this.room.name, buyer.roomName);
-            let energyAvailable = this.terminal.store[RESOURCE_ENERGY];
-            let energyDepleted = false;
-            if(dealCost > energyAvailable) {
-                dealAmount = Math.floor(dealAmount * (energyAvailable / dealCost));
-                energyDepleted = true;
-            }
-
-            let result = Game.market.deal(buyer.id, dealAmount, this.room.name);
-            if(result != OK || energyDepleted) {
-                break;
-            }
-
-            remainingStore -= dealAmount;
+        let dealAmount = Math.min(amount, buyer.amount);
+        let dealCost = Game.market.calcTransactionCost(dealAmount, this.room.name, buyer.roomName);
+        let energyAvailable = this.terminal.store[RESOURCE_ENERGY];
+        if(dealCost > energyAvailable) {
+            dealAmount = Math.floor(dealAmount * (energyAvailable / dealCost));
         }
+
+        Game.market.deal(buyer.id, dealAmount, this.room.name);
+    }
+    
+    sellToNpcs(resource, amount) {
+        amount = _.min([amount, this.terminal.store[resource]]);
+        if(amount < 100) return;
+        
+        let buyers = Game.market.getAllOrders((o) => o.type == "buy" && o.resourceType == resource && o.amount > 0 && npcRoomRegex.exec(o.roomName));
+        buyers = _.sortBy(buyers, (b) => Game.map.getRoomLinearDistance(b.roomName, this.room.name, true));
+        let buyer = _.sortBy(buyers, (b) => -b.price).shift();
+        if(!buyer) return;
+
+        let dealAmount = Math.min(amount, buyer.amount);
+        let dealCost = Game.market.calcTransactionCost(dealAmount, this.room.name, buyer.roomName);
+        let energyAvailable = this.terminal.store[RESOURCE_ENERGY];
+        if(dealCost > energyAvailable) {
+            dealAmount = Math.floor(dealAmount * (energyAvailable / dealCost));
+        }
+
+        Game.market.deal(buyer.id, dealAmount, this.room.name);
     }
 
     buildTrader() {
