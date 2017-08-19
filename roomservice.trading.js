@@ -28,7 +28,8 @@ module.exports = class Trading {
             "XUH2O",
             "XZHO2",
             "XZH2O",
-            "G"
+            "G",
+            "OH"
         ];
     }
     
