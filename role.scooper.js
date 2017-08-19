@@ -47,7 +47,7 @@ module.exports = {
 
         let target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
         if(!target && (!creep.room.controller || (creep.room.controller && !creep.room.controller.my))) {
-            target = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (s) => parkStructures.includes(s.structureType) });
+            target = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (s) => parkStructures.includes(s.structureType) && _.sum(s.store) > 0 });
         }
 
         if(!target) {
@@ -64,7 +64,14 @@ module.exports = {
             return;
         }
 
-        if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
+        let result = null;
+        if(target.structureType) {
+            result = creep.withdraw(target, _.last(Object.keys(target.store)));
+        } else {
+            result = creep.pickup(target);
+        }
+
+        if(result === ERR_NOT_IN_RANGE) {
             creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
         }
     }
