@@ -12,6 +12,13 @@ module.exports = class Trading {
         this.room = room;
         this.storage = this.room.storage;
         this.terminal = this.room.terminal;
+        
+        if(!room.memory.trading) {
+            room.memory.trading = {
+                manualExports: {}
+            }
+        }
+        this.memory = room.memory.trading;
     }
 
     get sellingBlacklist() {
@@ -48,7 +55,15 @@ module.exports = class Trading {
     neededImportToStorage(resource) {
         if(resource === RESOURCE_ENERGY && this.terminal.store[resource] <= this.terminalEnergyBuffer) return 0;
         
-        return Math.max(0, this.baselineAmount(resource) - (this.storage.store[resource] || 0));
+        let baselineMiss = this.baselineAmount(resource) - (this.storage.store[resource] || 0);
+        
+        let manualExport = this.manualExports[resource];
+        if(manualExport) {
+            let amountInTerminal = this.terminal.store[resource] || 0;
+            return Math.max(0, Math.min(amountInTerminal - manualExport.amount, baselineMiss));
+        }
+        
+        return Math.max(0, baselineMiss);
     }
 
     get resourcesExportableFromStorage() {
@@ -56,6 +71,12 @@ module.exports = class Trading {
     }
 
     possibleExportFromStorage(resource) {
+        let manualExport = this.manualExports[resource];
+        if(manualExport) {
+            let amountInTerminal = this.terminal.store[resource] || 0;
+            return Math.max(0, manualExport.amount - amountInTerminal);
+        }
+        
         return Math.max(0, (this.storage.store[resource] || 0) - this.baselineAmount(resource));
     }
 
@@ -98,6 +119,25 @@ module.exports = class Trading {
         if(baseMinerals.includes(resource)) return 20000;
 
         return 10000;
+    }
+    
+    get manualExports() {
+        return this.memory.manualExports;
+    }
+    
+    exportManually(resource, amount, targetRoom) {
+        if(!resource || !amount || !targetRoom) return false;
+        
+        this.manualExports[resource] = {
+            amount: amount,
+            room: targetRoom
+        };
+        
+        return true;
+    }
+    
+    clearManualExport(resource) {
+        delete this.manualExports[resource];
     }
 }
 

@@ -20,11 +20,13 @@ module.exports = class TradingAspect {
         if(!this.trading.isTradingPossible()) return;
         this.transferExcessResource();
         this.buildTrader();
+        this.drawManualExports();
     }
 
     transferExcessResource() {
         if(this.terminal.cooldown) return;
         for(var resource in this.terminal.store) {
+            if(this.performManualExport(resource)) return;
             let exportable = this.trading.possibleExportFromRoom(resource);
             if(exportable >= 100) {
                 if(this.balanceToEmpire(resource, exportable)) {
@@ -43,6 +45,24 @@ module.exports = class TradingAspect {
                 }
             }
         }
+    }
+
+    performManualExport(resource) {
+        let exportDescription = this.trading.manualExports[resource];
+        if(!exportDescription) return;
+        
+        let exportable = Math.min(exportDescription.amount, this.terminal.store[resource] || 0);
+        if(exportable >= 100) {
+            let result = this.terminal.send(resource, Math.min(exportable, MAX_TRANSFER), exportDescription.room, "Manual export");
+            if(result === OK) {
+                exportDescription.amount -= exportable;
+                if(exportDescription.amount < 100) {
+                    delete this.trading.manualExports[resource];
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     balanceToEmpire(resource, amount) {
@@ -111,6 +131,15 @@ module.exports = class TradingAspect {
         if(!this.roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(this.roomai, trader.name) >= 1) return;
         if(this.trading.resourcesExportableFromStorage.length > 0 || this.trading.resourcesImportableToStorage.length > 0) {
             this.roomai.spawn(trader.parts, { role: trader.name });
+        }
+    }
+    
+    drawManualExports() {
+        let yOffset = 0;
+        for(let resource in this.trading.manualExports) {
+            let exportDescription = this.trading.manualExports[resource];
+            this.room.visual.text(resource + ": " + exportDescription.amount, this.terminal.pos.x + 1, this.terminal.pos.y - yOffset, { stroke: "#000", font: 0.4, align: "left" });
+            yOffset += 0.5;
         }
     }
 }
