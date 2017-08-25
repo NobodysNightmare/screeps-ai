@@ -18,16 +18,20 @@ module.exports = class LabsAspect {
     }
 
     run() {
-        if(!this.room.storage || !this.reactor || !this.reactor.isValid()) return;
+        if(!this.room.storage || !((this.reactor && this.reactor.isValid()) || this.boosters.length > 0)) return;
         if(Game.cpu.bucket < 5000) {
             return;
         }
 
         this.updateDeficits();
-        this.setCurrentReaction();
+        if(this.reactor) {
+            this.setCurrentReaction();
+            this.reactor.react();
+            this.reactor.renderVisuals();
+        }
+
         this.buildScientists();
-        this.reactor.react();
-        this.reactor.renderVisuals();
+        
         for(let booster of this.boosters) {
             booster.renderVisuals();
         }
@@ -83,7 +87,7 @@ module.exports = class LabsAspect {
     buildScientists() {
         if(!this.roomai.canSpawn()) return;
 
-        let needToReact = this.reactor.compound;
+        let needToReact = this.reactor && this.reactor.compound;
         let needToBoost = _.some(this.boosters, (b) => b.needEnergy() || (b.needMineral() && this.room.storage.store[b.resource]));
         if(needToReact || needToBoost) {
             if(spawnHelper.numberOfLocalCreeps(this.roomai, scientist.name) >= 1) return;

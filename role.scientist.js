@@ -63,7 +63,7 @@ module.exports = {
             creep.moveTo(target);
         }
     },
-    store: function(creep, reactor) {
+    store: function(creep) {
         let target = creep.room.storage;
         if(!target) return;
 
@@ -76,6 +76,13 @@ module.exports = {
         }
     },
     pickAtStorage: function(creep, reactor) {
+        if(!reactor) {
+            // boost-only operation
+            if(this.pickupBoost(creep)) {
+                creep.memory.state = "deliverBoost";
+            }
+            return;
+        }
         let resources = [];
         if(reactor.inputSatisfied(0) && reactor.inputs[0].mineralAmount < reactor.inputs[0].mineralCapacity) {
             resources.push({ type: reactor.baseMinerals[0], amount: reactor.inputs[0].mineralAmount });
