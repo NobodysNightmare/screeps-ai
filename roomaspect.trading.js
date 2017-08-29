@@ -49,11 +49,12 @@ module.exports = class TradingAspect {
 
     performManualExport(resource) {
         let exportDescription = this.trading.manualExports[resource];
-        if(!exportDescription) return;
+        if(!exportDescription) return false;
         
         let exportable = Math.min(exportDescription.amount, this.terminal.store[resource] || 0);
+        exportable = Math.min(exportable, MAX_TRANSFER);
         if(exportable >= 100) {
-            let result = this.terminal.send(resource, Math.min(exportable, MAX_TRANSFER), exportDescription.room, "Manual export");
+            let result = this.terminal.send(resource, exportable, exportDescription.room, "Manual export");
             if(result === OK) {
                 exportDescription.amount -= exportable;
                 if(exportDescription.amount < 100) {
