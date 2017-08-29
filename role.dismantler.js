@@ -93,8 +93,6 @@ module.exports = {
         return false;
     },
     shouldWait: function(creep) {
-        let waitFor = Game.creeps[creep.memory.waitFor];
-        if(!waitFor) return false;
         if(movement.isOnExit(creep)) return false;
 
         if(creep.room.controller && creep.room.controller.my) {
@@ -106,6 +104,9 @@ module.exports = {
             console.log("Dismantler " + creep.name + " waiting for follower to be spawned. (" + creep.room.name + ")");
             return true;
         }
+        
+        let waitFor = Game.creeps[creep.memory.waitFor];
+        if(!waitFor) return false;
 
         return !creep.pos.isNearTo(waitFor);
     }
