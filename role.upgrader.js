@@ -1,6 +1,7 @@
-var spawnHelper = require('helper.spawning');
+const spawnHelper = require('helper.spawning');
 const boosting = require("helper.boosting");
-var logistic = require('helper.logistic');
+const logistic = require('helper.logistic');
+const movement = require("helper.movement");
 
 module.exports = {
     name: "upgrader",
@@ -19,12 +20,19 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        if(boosting.accept(creep, "XGH2O")) return;
+        
+        if(creep.memory.room && creep.room.name !== creep.memory.room) {
+            movement.moveToRoom(creep, creep.memory.room);
+            return;
+        } else if(movement.isOnExit(creep)) {
+            movement.leaveExit(creep);
+        }
+        
         let controller = creep.room.controller;
         if(creep.room.storage && creep.room.storage.store.energy < 10000 && controller.ticksToDowngrade > 5000) {
             return; // strictly conserve energy when supply is very low
         }
-        
-        if(boosting.accept(creep, "XGH2O")) return;
         
         var container = logistic.storeFor(controller);
         if(container && ((container.store && container.store.energy > 0) || container.energy > 0 || creep.carry.energy > 0)) {
