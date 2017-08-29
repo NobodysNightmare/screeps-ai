@@ -49,7 +49,7 @@ module.exports = {
         }
 
         if(!target) {
-            target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType != STRUCTURE_CONTROLLER });
+            target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType != STRUCTURE_CONTROLLER && s.structureType !== STRUCTURE_RAMPART });
         }
 
         if(!target) {
@@ -65,11 +65,16 @@ module.exports = {
     attack: function(creep, target) {
         let result = creep.dismantle(target);
         if(result == ERR_NOT_IN_RANGE) {
-            this.aggressiveMove(creep, target);
+            if(!this.aggressiveMove(creep, target)) {
+                let temporaryTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (s) => s.structureType != STRUCTURE_CONTROLLER });
+                if(creep.pos.isNearTo(temporaryTarget)) {
+                    creep.dismantle(temporaryTarget);
+                }
+            }
         }
     },
     aggressiveMove: function(creep, target) {
-        if(this.shouldWait(creep)) return;
+        if(this.shouldWait(creep)) return false;
 
         if(creep.moveTo(target, { maxRooms: 1 }) === ERR_NO_PATH) {
             creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 1 });
@@ -81,8 +86,11 @@ module.exports = {
 
             if(moveTarget) {
                 creep.dismantle(moveTarget);
+                return true;
             }
         }
+        
+        return false;
     },
     shouldWait: function(creep) {
         let waitFor = Game.creeps[creep.memory.waitFor];
