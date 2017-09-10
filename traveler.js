@@ -1,3 +1,5 @@
+const ff = require("helper.friendFoeRecognition")
+
 /**
  * To start using Traveler, require it in main.js:
  * Example: var Traveler = require('Traveler.js');
@@ -133,7 +135,7 @@ class Traveler {
     travelTo(creep, destination, options = {}) {
         // register hostile rooms entered
         if (creep.room.controller) {
-            if (creep.room.controller.owner && !creep.room.controller.my) {
+            if (creep.room.controller.owner && ff.isHostile(creep.room.controller)) {
                 this.memory.hostileRooms[creep.room.name] = creep.room.controller.level;
             }
             else {
