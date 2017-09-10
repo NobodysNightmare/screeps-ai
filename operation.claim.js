@@ -1,13 +1,15 @@
 const spawnHelper = require("helper.spawning");
+const builder = require("role.builder");
 const claimer = require("role.claimer");
 const conqueror = require("role.conqueror");
 const miner = require("role.miner");
 
 module.exports = class ClaimOperation {
-    constructor(roomai, targetFlag) {
+    constructor(roomai, targetFlag, claimLevel) {
         this.roomai = roomai;
         this.room = roomai.room;
         this.targetFlag = targetFlag;
+        this.claimLevel = claimLevel;
     }
 
     run() {
@@ -49,6 +51,13 @@ module.exports = class ClaimOperation {
             if(!hasMiner) {
                 this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, miner.energyConfigs), { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true });
             }
+        }
+        
+        if(this.claimLevel < 2) return;
+        
+        let hasBuilders = _.filter(spawnHelper.globalCreepsWithRole(builder.name), (c) => c.memory.room === remoteRoom.name).length >= 2;
+        if(!hasBuilders) {
+            this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, builder.configs(10)), { role: builder.name, room: remoteRoom.name });
         }
     }
 }
