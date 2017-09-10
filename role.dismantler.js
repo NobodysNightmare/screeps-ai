@@ -3,6 +3,8 @@ const ff = require("helper.friendFoeRecognition");
 const movement = require("helper.movement");
 const spawnHelper = require("helper.spawning");
 
+const blacklistedStructures = [STRUCTURE_STORAGE];
+
 module.exports = {
     name: "dismantler",
     configs: function(options) {
@@ -49,11 +51,11 @@ module.exports = {
         }
 
         if(!target) {
-            target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType != STRUCTURE_CONTROLLER && s.structureType !== STRUCTURE_RAMPART });
+            target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType != STRUCTURE_CONTROLLER && s.structureType !== STRUCTURE_RAMPART && !blacklistedStructures.includes(s.structureType) });
         }
 
         if(!target) {
-            target = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (s) => s.structureType != STRUCTURE_CONTROLLER });
+            target = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (s) => s.structureType !== STRUCTURE_CONTROLLER && !blacklistedStructures.includes(s.structureType) });
         }
 
         if(target) {

@@ -45,7 +45,7 @@ module.exports = {
         }
     },
     attackRoom: function(creep) {
-        var target = null;
+        let target = Game.flags[creep.memory.flag].pos.lookFor(LOOK_STRUCTURES)[0];
 
         if(!target) {
             target = creep.pos.findClosestByRange(FIND_HOSTILE_SPAWNS);
@@ -84,7 +84,7 @@ module.exports = {
 
         if(creep.memory._move.path) {
             let nextStep = Room.deserializePath(creep.memory._move.path)[0];
-            let moveTarget = _.find(creep.room.lookForAt(LOOK_STRUCTURES, creep.room.getPositionAt(nextStep.x, nextStep.y)), (s) => s.structureType == STRUCTURE_WALL || ff.isHostile(s));
+            let moveTarget = _.find(creep.room.lookForAt(LOOK_STRUCTURES, creep.room.getPositionAt(nextStep.x, nextStep.y)), (s) => s.structureType === STRUCTURE_WALL || ff.isHostile(s));
             if(!moveTarget) {
                 moveTarget = _.find(creep.room.lookForAt(LOOK_CREEPS, creep.room.getPositionAt(nextStep.x, nextStep.y)), (c) => ff.isHostile(c));
             }
@@ -100,8 +100,6 @@ module.exports = {
         }
     },
     shouldWait: function(creep) {
-        let waitFor = Game.creeps[creep.memory.waitFor];
-        if(!waitFor) return false;
         if(movement.isOnExit(creep)) return false;
 
         if(creep.room.controller && creep.room.controller.my) {
@@ -113,6 +111,9 @@ module.exports = {
             console.log("Attacker " + creep.name + " waiting for follower to be spawned. (" + creep.room.name + ")");
             return true;
         }
+        
+        let waitFor = Game.creeps[creep.memory.waitFor];
+        if(!waitFor) return false;
 
         return !creep.pos.isNearTo(waitFor);
     }
