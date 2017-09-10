@@ -10,6 +10,7 @@ const friends = [
     "Parthon",
     "poppahorse",
     "Regnare",
+    "Subodai",
     "Tijnoz",
     "Totalschaden",
     "Vlahn",
