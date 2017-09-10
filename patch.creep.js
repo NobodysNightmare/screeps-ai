@@ -1,7 +1,14 @@
+const CreepMover = require("creepmover");
 const PathBuilder = require("pathbuilder");
 const ff = require("helper.friendFoeRecognition");
 
 Creep.prototype.goTo = function(target, options) {
+    // TODO: make this the default
+    if(options && options.newPathing) {
+        let mover = new CreepMover(this, target, options);
+        return mover.move();
+    }
+    
     let builder = new PathBuilder();
     options = options || {}
     if(options.avoidHostiles) {

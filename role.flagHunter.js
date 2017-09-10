@@ -5,7 +5,7 @@ module.exports = {
     ],
     run: function(creep) {
         var target = Game.flags[creep.memory.flag];
-        creep.moveTo(target, { ignoreDestructibleStructures: creep.memory.ignoreDestructibleStructures });
+        creep.goTo(target, { debugCosts: true, newPathing: true });
     }
 };
 

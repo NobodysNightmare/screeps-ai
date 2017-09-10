@@ -48,7 +48,7 @@ module.exports = {
             creep.memory.state = "pickAtReactor";
             this.pickAtReactor(creep, reactor);
         } else {
-            creep.moveTo(target);
+            creep.goTo(target, { newPathing: true });
         }
     },
     pickAtReactor: function(creep, reactor) {
@@ -60,7 +60,7 @@ module.exports = {
             creep.memory.state = "store";
             this.store(creep, reactor);
         } else if(creep.withdraw(target, target.mineralType) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.goTo(target, { newPathing: true });
         }
     },
     store: function(creep) {
@@ -72,7 +72,7 @@ module.exports = {
             creep.transfer(target, resource);
             creep.memory.state = "pickAtStorage";
         } else {
-            creep.moveTo(target);
+            creep.goTo(target, { newPathing: true });
         }
     },
     pickAtStorage: function(creep, reactor) {
@@ -160,7 +160,7 @@ module.exports = {
         } else {
             let transferResult = creep.transfer(target.lab, creepMineral || RESOURCE_ENERGY);
             if(transferResult === ERR_NOT_IN_RANGE) {
-                creep.moveTo(target.lab);
+                creep.goTo(target.lab, { newPathing: true });
             } else {
                 creep.memory.state = "pickAtBooster";
             }
