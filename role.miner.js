@@ -36,6 +36,7 @@ module.exports = {
         }
 
         if(harvestResult == OK) {
+            creep.memory.stopped = true;
             var store = logistic.storeFor(target);
             if(store) {
                 let harvestPower = creep.memory.resource === RESOURCE_ENERGY ? HARVEST_POWER : HARVEST_MINERAL_POWER;

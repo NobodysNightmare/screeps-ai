@@ -29,6 +29,7 @@ module.exports = {
             movement.leaveExit(creep);
         }
         
+        creep.memory.stopped = true;
         let controller = creep.room.controller;
         if(creep.room.storage && creep.room.storage.store.energy < 10000 && controller.ticksToDowngrade > 5000) {
             return; // strictly conserve energy when supply is very low
@@ -48,9 +49,11 @@ module.exports = {
             if(withdrawResult == OK) {
                 if(creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(controller);
+                    creep.memory.stopped = false;
                 }
             } else if(withdrawResult == ERR_NOT_IN_RANGE) {
                 creep.moveTo(container);
+                creep.memory.stopped = false;
             }
 
           return;
@@ -66,11 +69,13 @@ module.exports = {
         if(creep.memory.upgrading) {
             if(creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(controller);
+                creep.memory.stopped = false;
             }
         }
         else {
             var source = controller.pos.findClosestByRange(FIND_SOURCES);
             logistic.obtainEnergy(creep, source);
+            creep.memory.stopped = false;
         }
     }
 };

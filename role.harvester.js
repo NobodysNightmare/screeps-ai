@@ -39,6 +39,7 @@ module.exports = {
         let targets = this.findTargets(creep);
         let target = targets.shift();
         if(target) {
+            creep.memory.stopped = false;
             let transferResult = creep.transfer(target, RESOURCE_ENERGY);
             if(transferResult == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
@@ -48,8 +49,11 @@ module.exports = {
                     creep.moveTo(target);
                 }
             }
-        } else if(creep.carry.energy < creep.carryCapacity) {
-            creep.memory.delivering = false;
+        } else {
+            creep.memory.stopped = true;
+            if(creep.carry.energy < creep.carryCapacity) {
+                creep.memory.delivering = false;
+            }
         }
     },
     findTargets: function(creep) {
@@ -90,6 +94,7 @@ module.exports = {
         return _.sortBy(targets, (t) => creep.pos.getRangeTo(t));
     },
     pickup: function(creep) {
+        creep.memory.stopped = false;
         var source = Game.getObjectById(creep.memory.source);
         var result = logistic.obtainEnergy(creep, source, true);
         if(result == logistic.obtainResults.withdrawn) {

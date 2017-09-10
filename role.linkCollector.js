@@ -15,9 +15,12 @@ module.exports = {
                 creep.moveTo(source);
             }
         }
-        // TODO: withdraw + transfer in one step
+        
         if(creep.carry.energy > 0){
-            if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            let transferResult = creep.transfer(target, RESOURCE_ENERGY);
+            if(transferResult === OK) {
+                creep.memory.stopped = true;
+            } else if(transferResult === ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
             }
         }
