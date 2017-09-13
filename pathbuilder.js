@@ -60,6 +60,7 @@ module.exports = class PathBuilder {
             
             let matrix = new PathFinder.CostMatrix;
             builder.doAvoidStructures(roomName, matrix);
+            builder.doAvoidConstructionSites(roomName, matrix);
             if(builder.avoidCreeps) {
                 builder.doAvoidAllCreeps(roomName, matrix);
             } else {
@@ -85,6 +86,19 @@ module.exports = class PathBuilder {
             blocked = blocked || (structure.structureType === STRUCTURE_RAMPART && !structure.my);
             if(blocked) {
                 matrix.set(structure.pos.x, structure.pos.y, 255);
+            }
+        }
+    }
+    
+    doAvoidConstructionSites(roomName, matrix) {
+        let room = Game.rooms[roomName];
+        if(!room) return;
+        
+        let sites = room.find(FIND_CONSTRUCTION_SITES);
+        for(let site of sites) {
+            let blocked = OBSTACLE_OBJECT_TYPES.includes(site.structureType) && !ff.isHostile(site);
+            if(blocked) {
+                matrix.set(site.pos.x, site.pos.y, 255);
             }
         }
     }
