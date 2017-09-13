@@ -23,10 +23,11 @@ module.exports = {
         
         let towers = _.sortBy(_.sortBy(creep.room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_TOWER && s.energy < s.energyCapacity }), (s) => s.pos.getRangeTo(creep)), (s) => s.energy);
         let target = towers[0];
+        if(!target) return;
         if(creep.pos.isNearTo(target)) {
             creep.transfer(target, RESOURCE_ENERGY);
         } else {
-            creep.moveTo(target);
+            creep.goTo(target, { newPathing: true });
         }
     },
     
@@ -34,7 +35,7 @@ module.exports = {
         if(creep.pos.isNearTo(creep.room.storage)) {
             creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
         } else {
-            creep.moveTo(creep.room.storage);
+            creep.goTo(creep.room.storage, { newPathing: true });
         }
     }
 };

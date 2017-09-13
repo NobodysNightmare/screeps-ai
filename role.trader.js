@@ -31,7 +31,7 @@ module.exports = {
             if(_.sum(creep.carry) == 0) return false;
             creep.transfer(target, _.last(_.keys(creep.carry)))
         } else {
-            creep.moveTo(target);
+            creep.goTo(target, { newPathing: true });
         }
 
         return true;
