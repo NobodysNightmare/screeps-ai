@@ -25,7 +25,9 @@ module.exports = class TradingAspect {
 
     transferExcessResource() {
         if(this.terminal.cooldown) return;
-        for(var resource in this.terminal.store) {
+        // reversing to avoid selling off energy before transfering mats
+        let resources = Object.keys(this.terminal.store).reverse();
+        for(var resource of resources) {
             if(this.performManualExport(resource)) return;
             let exportable = this.trading.possibleExportFromRoom(resource);
             if(exportable >= 100) {
