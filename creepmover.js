@@ -14,13 +14,15 @@ module.exports = class CreepMover {
         this.options = options || {};
         this.pathBuilder = this.configurePathBuilder(this.options);
     }
-    
+
     move() {
-        let targetRange = this.options.range || this.rangeByTarget();
-        let target = { pos: this.target.pos, range: targetRange };
+        if(!this.target) return ERR_INVALID_TARGET;
         if(this.creep.fatigue > 0) return ERR_TIRED;
+
+        let targetRange = this.options.range || this.rangeByTarget();
+        let target = { pos: this.target.pos, range: Math.max(1, targetRange) };
         if(this.creep.pos.getRangeTo(target) <= targetRange) return OK;
-        
+
         let data = this.deserializeData();
         if(!CreepMover.samePos(data.target, target.pos)) {
             data.path = null;
@@ -42,24 +44,28 @@ module.exports = class CreepMover {
                 }
             }
         }
-        
+
         if(!data.path) {
-            let options = {
-                plainCost: this.pathBuilder.plainCost,
-                swampCost: this.pathBuilder.swampCost,
-                roomCallback: this.pathBuilder.getRoomCallback()
-            };
-            
-            options = Object.assign({}, this.options, options);
-            let result = PathFinder.search(this.creep.pos, target, options);
-            data.path = CreepMover.serializePath(this.creep.pos, result.path);
             data.target = target.pos;
+            if(this.creep.pos.isNearTo(target)) {
+                data.path = this.creep.pos.getDirectionTo(target).toString();
+            } else {
+                let options = {
+                    plainCost: this.pathBuilder.plainCost,
+                    swampCost: this.pathBuilder.swampCost,
+                    roomCallback: this.pathBuilder.getRoomCallback()
+                };
+
+                options = Object.assign({}, this.options, options);
+                let result = PathFinder.search(this.creep.pos, target, options);
+                data.path = CreepMover.serializePath(this.creep.pos, result.path);
+            }
         }
-        
+
         this.serializeData(data);
         return this.creep.move(this.nextDir(data));
     }
-    
+
     configurePathBuilder(builderOptions) {
         let builder = new PathBuilder();
         if(this.options.debugCosts) builder.debugCosts = true;
@@ -67,17 +73,17 @@ module.exports = class CreepMover {
         if(this.options.preferRoads === false) builder.preferRoads = false;
         return builder;
     }
-    
+
     rangeByTarget() {
         if(this.target.structureType && OBSTACLE_OBJECT_TYPES.includes(this.target.structureType)) {
             return 1;
         } else if(Game.map.getTerrainAt(this.target.pos) === "wall") {
             return 1;
         }
-        
+
         return 0;
     }
-    
+
     deserializeData() {
         let data = this.creep.memory._goto;
         if(!data) {
@@ -90,10 +96,10 @@ module.exports = class CreepMover {
         }
         if(data.lastPos) data.lastPos = new RoomPosition(data.lastPos.x, data.lastPos.y, this.creep.room.name);
         if(data.target) data.target = new RoomPosition(data.target.x, data.target.y, data.target.roomName);
-        
+
         return data;
     }
-    
+
     serializeData(data) {
         this.creep.memory._goto = {
             lastPos: { x: this.creep.pos.x, y: this.creep.pos.y },
@@ -102,16 +108,16 @@ module.exports = class CreepMover {
             path: data.path
         };
     }
-    
+
     nextDir(data) {
         return parseInt(data.path[0], 10);
     }
-    
+
     static samePos(posA, posB) {
         if(!!posA !== !!posB) return false;
         return posA.roomName === posB.roomName && posA.x === posB.x && posA.y === posB.y;
     }
-    
+
     // Taken from Traveler (https://github.com/bonzaiferroni/Traveler)
     static positionAtDirection(origin, direction) {
         let offsetX = [0, 0, 1, 1, 1, 0, -1, -1, -1];
@@ -123,7 +129,7 @@ module.exports = class CreepMover {
         }
         return new RoomPosition(x, y, origin.roomName);
     }
-    
+
     // Taken from Traveler (https://github.com/bonzaiferroni/Traveler)
     static serializePath(startPos, path) {
         let serializedPath = "";
