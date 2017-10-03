@@ -27,6 +27,7 @@ const Constructions = require("roomservice.constructions");
 const Defense = require("roomservice.defense");
 const Labs = require("roomservice.labs");
 const Links = require("roomservice.links");
+const Observer = require("roomservice.observer");
 const Trading = require("roomservice.trading");
 
 module.exports = class RoomAI {
@@ -38,6 +39,7 @@ module.exports = class RoomAI {
         this.defense = new Defense(room);
         this.links = new Links(room);
         this.labs = new Labs(room);
+        this.observer = new Observer(room);
         this.trading = new Trading(room);
         this.mode = this.room.memory.mode || "normal";
     }
@@ -54,6 +56,8 @@ module.exports = class RoomAI {
         for(let construction of constructions) {
             construction.perform(this.room);
         }
+        
+        this.observer.performObservation();
 
         for(let spawn of this.spawns) {
             this.renderSpawnOverlay(spawn);
@@ -71,7 +75,7 @@ module.exports = class RoomAI {
         let result = spawn.createCreep(parts, undefined, memory);
         if(_.isString(result)) {
             this.availableSpawns.shift();
-        } else if(result == ERR_NOT_ENOUGH_ENERGY) {
+        } else if(result === ERR_NOT_ENOUGH_ENERGY) {
             this.spawnReserved = true;
         }
 

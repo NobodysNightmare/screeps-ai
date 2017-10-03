@@ -22,9 +22,8 @@ module.exports = class FarmPowerOperation {
         let healers = spawnHelper.globalCreepsWithRole(healer.name);
         let farmers = _.filter(spawnHelper.globalCreepsWithRole(powerFarmer.name), (c) => c.memory.target == this.targetRoomName);
 
-        let observerStructure = this.room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_OBSERVER }).shift();
-        if(observerStructure) {
-            observerStructure.observeRoom(this.targetRoomName);
+        if(this.roomai.observer.isAvailable()) {
+            this.roomai.observer.observeLater(this.targetRoomName);
         }
 
         for(let farmerCreep of farmers) {
@@ -48,7 +47,7 @@ module.exports = class FarmPowerOperation {
                 }
             }
         } else {
-            if(!observerStructure && !_.any(spawnHelper.globalCreepsWithRole(observer.name), (c) => c.memory.target == this.targetRoomName)) {
+            if(!this.roomai.observer.isAvailable() && !_.any(spawnHelper.globalCreepsWithRole(observer.name), (c) => c.memory.target == this.targetRoomName)) {
                 this.roomai.spawn(observer.parts, { role: observer.name, target: this.targetRoomName });
             }
         }
