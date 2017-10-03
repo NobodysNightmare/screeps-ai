@@ -35,11 +35,12 @@ module.exports = class CreepMover {
         } else {
             data.stuck = 0;
             if(data.path) {
-                let expectedPos = CreepMover.positionAtDirection(data.lastPos, this.nextDir(data));
-                if(CreepMover.samePos(this.creep.pos, expectedPos)) {
+                let expectedPos = CreepMover.nextCoord(data.lastPos, this.nextDir(data));
+                if(CreepMover.sameCoord(this.creep.pos, expectedPos)) {
                     data.path = data.path.substr(1);
                     if(data.path.length === 0) data.path = null;
                 } else {
+                    console.log("CreepMover (" + this.creep.name + "): unexpected movement. Expected: " + expectedPos.x + "|" + expectedPos.y + " Got: " + this.creep.pos.x + "|" + this.creep.pos.y);
                     data.path = null;
                 }
             }
@@ -117,17 +118,25 @@ module.exports = class CreepMover {
         if(!!posA !== !!posB) return false;
         return posA.roomName === posB.roomName && posA.x === posB.x && posA.y === posB.y;
     }
-
-    // Taken from Traveler (https://github.com/bonzaiferroni/Traveler)
-    static positionAtDirection(origin, direction) {
+    
+    static sameCoord(posA, posB) {
+        if(!!posA !== !!posB) return false;
+        return posA.x === posB.x && posA.y === posB.y;
+    }
+    
+    static nextCoord(origin, direction) {
         let offsetX = [0, 0, 1, 1, 1, 0, -1, -1, -1];
         let offsetY = [0, -1, -1, 0, 1, 1, 1, 0, -1];
         let x = origin.x + offsetX[direction];
         let y = origin.y + offsetY[direction];
-        if (x > 49 || x < 0 || y > 49 || y < 0) {
-            return;
-        }
-        return new RoomPosition(x, y, origin.roomName);
+        
+        // correctly predict position when switching room
+        if(x === 0) x = 49;
+        else if(x === 49) x = 0;
+        else if(y === 0) y = 49;
+        else if(y === 49) y = 0;
+        
+        return { x: x, y: y };
     }
 
     // Taken from Traveler (https://github.com/bonzaiferroni/Traveler)
