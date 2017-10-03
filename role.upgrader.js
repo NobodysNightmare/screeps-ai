@@ -31,7 +31,7 @@ module.exports = {
         
         creep.memory.stopped = true;
         let controller = creep.room.controller;
-        if(creep.room.storage && creep.room.storage.store.energy < 10000 && controller.ticksToDowngrade > 5000) {
+        if(creep.room.storage && creep.room.storage.store.energy < 10000 && controller.ticksDowngraded() < 1000) {
             return; // strictly conserve energy when supply is very low
         }
         

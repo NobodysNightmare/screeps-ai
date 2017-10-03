@@ -34,6 +34,7 @@ const logistic = require("helper.logistic");
 const statsVisual = require("visual.globalStatistics");
 const profitVisual = require("visual.roomProfit");
 
+require("patch.controller");
 require("patch.creep");
 require("patch.room");
 require("traveler");

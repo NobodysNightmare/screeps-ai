@@ -40,7 +40,7 @@ module.exports = class ControllerAspect {
             return;
         }
         
-        if(this.room.storage && this.room.storage.store.energy < 10000 && this.controller.ticksToDowngrade > 5000) {
+        if(this.room.storage && this.room.storage.store.energy < 10000 && this.controller.ticksDowngraded() < 1000) {
             return; // strictly conserve energy when supply is very low
         }
 
