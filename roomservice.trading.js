@@ -118,7 +118,7 @@ module.exports = class Trading {
         
         if(baseMinerals.includes(resource)) return 20000;
 
-        return 10000;
+        return 15000;
     }
     
     get manualExports() {
