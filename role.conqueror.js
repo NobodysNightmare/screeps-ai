@@ -16,7 +16,7 @@ module.exports = {
     run: function(creep) {
         let flag = Game.flags[creep.memory.flag];
         if(creep.room.name !== flag.pos.roomName) {
-            movement.moveToRoom(creep, flag.pos.roomName);
+            creep.travelTo(flag, { useFindRoute: true }); // Pathing quickfix (replace with goTo soonish)
             return;
         }
 
