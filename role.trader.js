@@ -4,8 +4,6 @@ const spawnHelper = require("helper.spawning");
 // this amount of energy in the terminal
 const EXPORT_ENERGY_THRESHOLD = 25000;
 
-const STORAGE_ENERGY_RESERVE = 100000;
-
 // if free space in the terminal gets below this value, we consider it overfilled
 const TERMINAL_WORKING_BUFFER = 1000;
 
@@ -41,13 +39,7 @@ module.exports = {
                     // overflow protection for terminal
                     // do not put further minerals in, if there is no energy to export them
                     if(terminal.store.energy < EXPORT_ENERGY_THRESHOLD) {
-                        let terminalCapacity = terminal.storeCapacity - _.sum(terminal.store);
-                        if(storage.store.enery > STORAGE_ENERGY_RESERVE && terminalCapacity > 0) {
-                            exportResource = RESOURCE_ENERGY;
-                            amount = Math.min(creep.carryCapacity, terminalCapacity);
-                        } else {
-                            return;
-                        }
+                        return;
                     }
 
                     creep.withdraw(storage, exportResource, amount);
