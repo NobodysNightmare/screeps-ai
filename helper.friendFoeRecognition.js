@@ -17,6 +17,7 @@ const friends = [
     "W4rl0ck",
     "Yilmas",
     "Zeekner",
+    "Zpike",
     "Zyzyzyryxy"
 ];
 
