@@ -33,7 +33,7 @@ module.exports = class Observer {
         
         let result = this.observer.observeRoom(target);
         if(result !== OK) {
-            this.memory.queue.unshift(target);
+            this.memory.queue.push(target);
             console.log("Observer " + this.observer.room.name + ": Got unexpected result " + result);
         }
     }
