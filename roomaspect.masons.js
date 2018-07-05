@@ -1,6 +1,8 @@
 var spawnHelper = require("helper.spawning");
 var mason = require("role.mason");
 
+const MAX_WALLS = 299950000;
+
 module.exports = class MasonsAspect {
     constructor(roomai) {
         this.roomai = roomai;
@@ -15,19 +17,23 @@ module.exports = class MasonsAspect {
         let parts = spawnHelper.bestAvailableParts(this.room, mason.configs(16));
         this.roomai.spawn(parts, { role: mason.name, room: this.room.name });
     }
-    
+
     masonCount() {
         if(!this.room.storage) return 0;
-        
+
         return Math.max(this.neededForNukes(), this.neededForWalls());
     }
-    
+
     neededForNukes() {
         let nukes = this.room.find(FIND_NUKES);
         return Math.min(nukes.length, 2);
     }
 
     neededForWalls() {
+        let wallHeight = _.min(_.map(this.room.ai().defense.borderStructures, (s) => s.hits));
+
+        if(wallHeight == 0 || wallHeight >= MAX_WALLS) return 0;
+
         if(this.room.storage.store.energy < 200000) {
             return 0;
         } else if(this.room.storage.store.energy < 300000) {
