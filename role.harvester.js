@@ -18,6 +18,12 @@ module.exports = {
         [WORK, CARRY, MOVE]
     ],
     run: function(creep) {
+        // check if our carry  has something else than energy and drop it (e.g. due to overfilling protection)
+        let wrongCarryResource = Object.keys(creep.carry)[1];
+        if(wrongCarryResource) {
+            creep.drop(wrongCarryResource);
+        }
+
         if(creep.memory.delivering && creep.carry.energy == 0) {
             creep.memory.delivering = false;
         }
@@ -26,6 +32,13 @@ module.exports = {
         }
 
         if(creep.carry.energy < creep.carryCapacity && creep.pos.isNearTo(creep.room.storage)) {
+            // Safety valve: protect storage from overflowing with anything but energy
+            if(creep.room.storage.storeCapacity - _.sum(creep.room.storage.store) < 10000) {
+                let excessResource = _.invert(creep.room.storage.store)[_.sortBy(creep.room.storage.store, (r) => -r)[0]];
+                console.log("Storage in room " + creep.room.name + " is overfilled! Removing excess " + excessResource);
+                creep.withdraw(creep.room.storage, excessResource);
+                return;
+            }
             creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
         }
 
