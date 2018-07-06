@@ -12,7 +12,7 @@ module.exports = class SourcesAspect {
 
         // order sources by distance to primary spawn, to ensure that aspects
         // work on that source first
-        this.sources = _.sortBy(this.sources, (s) => s.pos.getRangeTo(roomai.spawns[0]));
+        this.sources = _.sortBy(this.sources, (s) => s.pos.getRangeTo(roomai.spawns.primary));
     }
 
     run() {

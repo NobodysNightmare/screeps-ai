@@ -13,7 +13,7 @@ module.exports = class SuppliesAspect {
     }
 
     run() {
-        var primarySpawn = this.roomai.spawns[0];
+        var primarySpawn = this.roomai.spawns.primary;
         if(!primarySpawn) return;
 
         let source = primarySpawn.pos.findClosestByRange(FIND_SOURCES);
@@ -65,7 +65,7 @@ module.exports = class SuppliesAspect {
 
         // FIXME: ordering duplicated with miners
         let roomai = this.roomai;
-        sources = _.sortBy(sources, (s) => s.pos.getRangeTo(roomai.spawns[0]));
+        sources = _.sortBy(sources, (s) => s.pos.getRangeTo(roomai.spawns.primary));
 
         let existingCollectors = spawnHelper.localCreepsWithRole(this.roomai, carrier.name);
         let existingMiners = spawnHelper.localCreepsWithRole(this.roomai, miner.name);
@@ -74,7 +74,7 @@ module.exports = class SuppliesAspect {
             if(logistic.storeFor(source) === storage) continue;
             if(_.any(existingCollectors, (m) => m.memory.source == source.id && m.memory.destination == storage.id)) continue;
             if(this.linksEnabled && this.roomai.links.linkAt(source)) continue;
-            
+
             if(_.any(existingMiners, (m) => m.memory.target == source.id)) {
                 let parts = spawnHelper.bestAffordableParts(this.room, carrier.configsForCapacity(this.neededCollectorCapacity(source)), true);
                 this.roomai.spawn(parts, { role: carrier.name, source: source.id, destination: storage.id, resource: RESOURCE_ENERGY });

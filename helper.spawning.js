@@ -44,7 +44,7 @@ module.exports = {
     },
     localCreepsWithRole: function(roomai, role) {
         let creeps = roomai.room.find(FIND_MY_CREEPS);
-        creeps = creeps.concat(_.compact(_.map(roomai.spawns, (spawn) => spawn.spawning && Game.creeps[spawn.spawning.name])));
+        creeps = creeps.concat(_.compact(_.map(roomai.spawns.spawns, (spawn) => spawn.spawning && Game.creeps[spawn.spawning.name])));
         return _.filter(creeps, (creep) => creep.memory.role == role);
     },
     numberOfLocalCreeps: function(roomai, role) {
@@ -55,7 +55,7 @@ module.exports = {
             this._globalCreepCacheTime = Game.time;
             this._globalCreepCache = _.groupBy(Game.creeps, (c) => c.memory.role);
         }
-        
+
         return this._globalCreepCache[role] || [];
     }
 };
