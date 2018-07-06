@@ -3,8 +3,6 @@ module.exports = class Spawns {
         this.room = room;
         this.spawns = room.find(FIND_MY_SPAWNS);
         this.availableSpawns = _.filter(this.spawns, (s) => !s.spawning);
-
-        // primary spawn is still used in some places; TODO: find out if necessary
         this.primary = this.spawns[0];
     }
 
@@ -14,11 +12,18 @@ module.exports = class Spawns {
             return false;
         }
 
-        let result = spawn.createCreep(parts, undefined, memory);
-        if(_.isString(result)) {
+        let name = this.nameCreep(memory.role);
+        let result = spawn.spawnCreep(parts, name, {
+                                        memory: memory,
+                                        energyStructures: this.energyStructures
+                                    });
+        if(result === OK) {
             this.availableSpawns.shift();
+            return name; // be compatible with old spawn API
         } else if(result === ERR_NOT_ENOUGH_ENERGY) {
             this.spawnReserved = true;
+        } else {
+            console.log(this.room.name + " - Unexpected spawn result: " + result);
         }
 
         return result;
@@ -43,6 +48,30 @@ module.exports = class Spawns {
             spawn.room.visual.circle(spawn.pos, {fill: '#000000', radius: 0.5, opacity: 0.8 });
             spawn.room.visual.text(remaining, spawn.pos.x - 0.0, spawn.pos.y + 0.2, { align: "center", size: 0.6 })
         }
+    }
+
+    nameCreep(role) {
+        let rolePart = role ? (role + "-") : "";
+        let id = this.fetchCreepId().toString();
+        return rolePart + id + "-" + Game.shard.name;
+    }
+
+    fetchCreepId() {
+        let id = (Memory.nextCreepId || 0) % 10000;
+        Memory.nextCreepId = id + 1;
+        return id;
+    }
+
+    get energyStructures() {
+        if(!this._energyStructures) {
+            let structures = this.room.find(FIND_MY_STRUCTURES, {
+                                                filter: (s) => s.structureType === STRUCTURE_SPAWN || s.structureType === STRUCTURE_EXTENSION
+                                            });
+            let reference = this.room.storage || this.primary.pos.findClosestByRange(FIND_SOURCES);
+            this._energyStructures = _.sortBy(structures, (s) => s.pos.getRangeTo(reference));
+        }
+
+        return this._energyStructures;
     }
 }
 
