@@ -42,7 +42,7 @@ module.exports = class Spawns {
     renderSpawnOverlay(spawn) {
         if(spawn.spawning) {
             let role = Game.creeps[spawn.spawning.name].memory.role;
-            let remaining = spawn.spawning.remainingTime;
+            let remaining = spawn.spawning.remainingTime - 1;
             spawn.room.visual.rect(spawn.pos.x - 1.3, spawn.pos.y + 0.9, 2.6, 0.6,{fill: '#333', opacity: 0.8, stroke: '#fff', strokeWidth: 0.03 });
             spawn.room.visual.text(role, spawn.pos.x - 0.0, spawn.pos.y + 1.3, { align: "center", size: 0.4 });
             spawn.room.visual.circle(spawn.pos, {fill: '#000000', radius: 0.5, opacity: 0.8 });
