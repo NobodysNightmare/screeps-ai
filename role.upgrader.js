@@ -21,20 +21,20 @@ module.exports = {
     },
     run: function(creep) {
         if(boosting.accept(creep, "XGH2O")) return;
-        
+
         if(creep.memory.room && creep.room.name !== creep.memory.room) {
             movement.moveToRoom(creep, creep.memory.room);
             return;
         } else if(movement.isOnExit(creep)) {
             movement.leaveExit(creep);
         }
-        
+
         creep.memory.stopped = true;
         let controller = creep.room.controller;
         if(creep.room.storage && creep.room.storage.store.energy < 10000 && controller.ticksDowngraded() < 1000) {
             return; // strictly conserve energy when supply is very low
         }
-        
+
         var container = logistic.storeFor(controller);
         if(container && ((container.store && container.store.energy > 0) || container.energy > 0 || creep.carry.energy > 0)) {
             var withdrawResult = OK;
@@ -73,8 +73,12 @@ module.exports = {
             }
         }
         else {
-            var source = controller.pos.findClosestByRange(FIND_SOURCES);
-            logistic.obtainEnergy(creep, source);
+            // when manually obtaining energy, go for the source farther from the
+            // primary spawn, since harvesters are already taking the close one.
+            // choice becomes irrelevant with miners and storage
+            let sources = creep.room.find(FIND_SOURCES);
+            sources = _.sortBy(sources, (s) => -s.pos.getRangeTo(creep.room.ai().spawns.primary));
+            logistic.obtainEnergy(creep, sources[0]);
             creep.memory.stopped = false;
         }
     }
