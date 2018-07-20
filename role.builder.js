@@ -27,7 +27,7 @@ module.exports = {
         } else if(movement.isOnExit(creep)) {
             movement.leaveExit(creep);
         }
-        
+
         if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
             creep.memory.lastTarget = null;
@@ -45,25 +45,31 @@ module.exports = {
         }
     },
     chooseTarget: function(creep) {
-        var lastTarget = Game.getObjectById(creep.memory.lastTarget);
+        let lastTarget = Game.getObjectById(creep.memory.lastTarget);
         if(lastTarget) {
             if(this.isConstructionSite(lastTarget) || (!this.isConstructionSite(lastTarget) && lastTarget.hits < lastTarget.hitsMax)) {
                 return lastTarget;
             }
         }
 
-        var target = this.findEmergencyRepairTarget(creep) ||
-                     this.findNormalPriorityConstructionTarget(creep) ||
-                     this.findLowPriorityConstructionTarget(creep) ||
+        let constructions = _.sortBy(creep.room.find(FIND_MY_CONSTRUCTION_SITES), (cs) => cs.pos.getRangeTo(creep.pos));
+        let target = this.findEmergencyRepairTarget(creep) ||
+                     this.findHighPriorityConstructionTarget(creep, constructions) ||
+                     this.findNormalPriorityConstructionTarget(creep, constructions) ||
+                     this.findLowPriorityConstructionTarget(creep, constructions) ||
                      this.findNormalRepairTarget(creep);
 
         return target;
     },
-    findNormalPriorityConstructionTarget: function(creep) {
-        return creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => (cs.structureType !== STRUCTURE_ROAD || Game.map.getTerrainAt(cs.pos) === "swamp") && cs.structureType != STRUCTURE_RAMPART });
+    findHighPriorityConstructionTarget: function(creep, constructions) {
+        if(creep.room.storage) return null;
+        return _.find(constructions, (cs) => cs.structureType === STRUCTURE_STORAGE);
     },
-    findLowPriorityConstructionTarget: function(creep) {
-        return creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType == STRUCTURE_ROAD || cs.structureType == STRUCTURE_RAMPART });
+    findNormalPriorityConstructionTarget: function(creep, constructions) {
+        return _.find(constructions, (cs) => (cs.structureType !== STRUCTURE_ROAD || Game.map.getTerrainAt(cs.pos) === "swamp") && cs.structureType != STRUCTURE_RAMPART);
+    },
+    findLowPriorityConstructionTarget: function(creep, constructions) {
+        return _.find(constructions, (cs) => cs.structureType == STRUCTURE_ROAD || cs.structureType == STRUCTURE_RAMPART);
     },
     findNormalRepairTarget: function(creep) {
         let supplyNominal = creep.room.storage && creep.room.storage.store.energy >= 10000;
