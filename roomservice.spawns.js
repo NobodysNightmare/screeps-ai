@@ -24,6 +24,7 @@ module.exports = class Spawns {
             this.spawnReserved = true;
         } else {
             console.log(this.room.name + " - Unexpected spawn result: " + result);
+            console.log("Name was: " + name + " Parts were " + parts);
         }
 
         return result;
