@@ -39,7 +39,7 @@ module.exports = class ControllerAspect {
         if(!this.roomai.canSpawn() || existingUpgraders.length >= this.upgraderCount()) {
             return;
         }
-        
+
         if(this.room.storage && this.room.storage.store.energy < 10000 && this.controller.ticksDowngraded() < 1000) {
             return; // strictly conserve energy when supply is very low
         }
@@ -60,18 +60,19 @@ module.exports = class ControllerAspect {
             for(let source of this.room.find(FIND_SOURCES)) {
                 let sourceStore = logistic.storeFor(source);
                 if(controllerStore === sourceStore) continue;
-                
-                if(!_.any(existingCarriers, (m) => m.memory.source == source.id) &&
-                    sourceStore) {
+
+                if(!_.any(existingCarriers, (m) => m.memory.source == source.id) && sourceStore) {
                     this.spawnCarrier(source, 300);
                 }
             }
         }
     }
 
-    spawnCarrier(source, capacityOverride) {
-        // TODO: capacityOverride is a hack to ensure that my current main room isn't drained by an unneccessarily large carrier
-        var capacity = capacityOverride || logistic.distanceByPath(source, this.controller) * 2 * this.energyPerTick();
+    spawnCarrier(source, capacityCap) {
+        // avoid spawning overly large carriers
+        let capacity = logistic.distanceByPath(source, this.controller) * 2 * this.energyPerTick();
+        if(capacityCap) capacity = Math.min(capacity, capacityCap);
+
         var parts = spawnHelper.bestAvailableParts(this.room, carrier.configsForCapacity(capacity));
         var memory = {
             role: carrier.name,
@@ -117,24 +118,27 @@ module.exports = class ControllerAspect {
             if(this.room.controller.level == 7 && this.room.storage.store.energy < this.highLimit) {
                 return 1;
             }
+        } else if(this.room.controller.level >= 4) {
+            // ensure spawn capacity for builders is available when storage needs to be built
+            return 1;
         }
 
         return 2;
     }
-    
+
     get lowLimit() {
         return 50000;
     }
-    
+
     get normalLimit() {
         if(this.roomai.mode === "gcl") return 150000;
-        
+
         return 200000;
     }
-    
+
     get highLimit() {
         if(this.roomai.mode === "gcl") return 250000;
-        
+
         return 500000;
     }
 }
