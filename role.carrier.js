@@ -11,7 +11,7 @@ module.exports = {
     configsForCapacity: function(capacity, options) {
         var workParts = (options && options.workParts) || 0;
         var configs = [];
-        for(var carries = Math.ceil(capacity / 50); carries >= 2; carries -= 1) {
+        for(var carries = Math.max(2, Math.ceil(capacity / 50)); carries >= 2; carries -= 1) {
             let config = Array(workParts).fill(WORK).concat(Array(carries).fill(CARRY)).concat(Array(Math.ceil((carries + workParts) / 2)).fill(MOVE));
             // maximum creep size is 50 parts
             if(config.length <= 50) configs.push(config);
@@ -62,7 +62,7 @@ module.exports = {
         // TODO: also collect raw resources lying around the source
         if(!this.source(creep)) return;
         let target = logistic.storeFor(this.source(creep)) || this.source(creep);
-        
+
         if(creep.pos.isNearTo(target)) {
             let result = creep.withdraw(target, creep.memory.resource);
             if(result == OK) {
@@ -70,7 +70,7 @@ module.exports = {
             }
         } else {
             creep.travelTo(target);
-        } 
+        }
     },
     buildRoad: function(creep) {
         var constructionSite = _.find(creep.pos.lookFor(LOOK_CONSTRUCTION_SITES), (cs) => cs.structureType == STRUCTURE_ROAD);
