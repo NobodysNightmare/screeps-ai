@@ -2,8 +2,8 @@ const buildings = require("helper.buildings");
 const logistic = require("helper.logistic");
 
 function determineStoreType(target, linkAllowed) {
-    linkAllowed &&= target.room.storage && target.room.ai().links.storage();
-    linkAllowed &&= buildings.available(target.room, STRUCTURE_LINK) > 0;
+    linkAllowed = linkAllowed && target.room.storage && target.room.ai().links.storage();
+    linkAllowed = linkAllowed && buildings.available(target.room, STRUCTURE_LINK) > 0;
 
     if(linkAllowed) {
         return STRUCTURE_LINK;
@@ -16,7 +16,7 @@ function determineStoreType(target, linkAllowed) {
 // aborts iteration when callback returns true.
 // Will return true if iteration was aborted early.
 function eachSpaceAround(target, callback) {
-    let pos = target.pos || target;
+    let pos = target.pos;
     for(let xDir = -1; xDir <= 1; xDir++) {
         for(let yDir = -1; yDir <= 1; yDir++) {
             let x = pos.x + xDir;
@@ -37,7 +37,7 @@ module.exports = {
         }
 
         let storeType = determineStoreType(target, linkAllowed);
-        eachSpaceAround(target, (pos) => this.buildAt(pos, storeType));
+        eachSpaceAround(target, (pos) => this.buildAt(target.room, pos, storeType));
     },
     buildWithAccessTo: function(target, linkAllowed) {
         if(logistic.storeFor(target, true)) {
@@ -47,11 +47,11 @@ module.exports = {
         let storeType = determineStoreType(target, linkAllowed);
         let that = this;
         eachSpaceAround(target, function(minerPos) {
-            return eachSpaceAround(minerPos, (pos) => that.buildAt(pos, storeType));
+            return eachSpaceAround({ pos: minerPos, room: target.room }, (pos) => that.buildAt(target.room, pos, storeType));
         });
     },
-    buildAt: function(pos, structureType) {
-        let result = target.room.createConstructionSite(pos.x, pos.y, structureType);
+    buildAt: function(room, pos, structureType) {
+        let result = room.createConstructionSite(pos.x, pos.y, structureType);
         return result == OK;
     }
 };
