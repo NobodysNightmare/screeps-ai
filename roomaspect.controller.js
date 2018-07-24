@@ -1,4 +1,4 @@
-var container = require("construction.containers");
+const store = require("construction.stores");
 var logistic = require('helper.logistic');
 var spawnHelper = require("helper.spawning");
 
@@ -26,7 +26,7 @@ module.exports = class ControllerAspect {
         } else if(logistic.storeFor(this.controller)) {
             this.buildCarriers();
         } else {
-            container.buildNear(this.controller);
+            store.buildNextTo(this.controller, true);
         }
 
         this.buildUpgraders();

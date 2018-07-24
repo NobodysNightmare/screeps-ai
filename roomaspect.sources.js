@@ -1,6 +1,6 @@
 var spawnHelper = require("helper.spawning");
 
-var container = require("construction.containers");
+const store = require("construction.stores");
 var logistic = require('helper.logistic');
 var miner = require("role.miner");
 
@@ -16,17 +16,17 @@ module.exports = class SourcesAspect {
     }
 
     run() {
-        this.buildContainers();
+        this.buildStores();
         this.buildMiners();
     }
 
-    buildContainers() {
+    buildStores() {
         if(Game.time % 20 != 0) {
             return;
         }
 
         for(let source of this.sources) {
-            container.buildNear(source);
+            store.buildNextTo(source);
         }
     }
 

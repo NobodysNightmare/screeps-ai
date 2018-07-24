@@ -1,4 +1,4 @@
-var container = require("construction.containers");
+var store = require("construction.stores");
 var spawnHelper = require("helper.spawning");
 const logistic = require("helper.logistic");
 
@@ -49,9 +49,9 @@ module.exports = class MineralsAspect {
             _.filter(spawnHelper.globalCreepsWithRole(carrier.name), (creep) => creep.memory.source == this.mineral.id).length > 0) {
             return;
         }
-        
+
         if(!this.room.storage) return;
-        
+
         let parts = spawnHelper.bestAvailableParts(this.room, carrier.partConfigs);
         let memory = {
             role: carrier.name,
@@ -69,7 +69,7 @@ module.exports = class MineralsAspect {
         }
 
         this.room.createConstructionSite(this.mineral.pos, STRUCTURE_EXTRACTOR);
-        container.buildNear(this.mineral);
+        store.buildNextTo(this.mineral);
     }
 
     masterRoom() {
