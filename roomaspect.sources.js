@@ -26,7 +26,7 @@ module.exports = class SourcesAspect {
         }
 
         for(let source of this.sources) {
-            store.buildNextTo(source);
+            store.buildWithAccessTo(source, true);
         }
     }
 
