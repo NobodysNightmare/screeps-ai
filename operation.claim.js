@@ -4,6 +4,14 @@ const claimer = require("role.claimer");
 const conqueror = require("role.conqueror");
 const miner = require("role.miner");
 
+const cleanableStructures = [
+    STRUCTURE_SPAWN,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_TOWER,
+    STRUCTURE_RAMPART,
+    STRUCTURE_LINK
+];
+
 module.exports = class ClaimOperation {
     constructor(roomai, targetFlag, claimLevel) {
         this.roomai = roomai;
@@ -16,6 +24,7 @@ module.exports = class ClaimOperation {
         let targetRoom = this.targetFlag.room;
         if(targetRoom && targetRoom.find(FIND_MY_SPAWNS).length > 0) {
             this.kickstartRoom(targetRoom);
+            this.cleanHostileStructures(targetRoom);
         } else {
             let claimers = _.filter(spawnHelper.globalCreepsWithRole(claimer.name), (c) => c.memory.flag == this.targetFlag.name);
             let conquerors = _.filter(spawnHelper.globalCreepsWithRole(conqueror.name), (c) => c.memory.flag == this.targetFlag.name);
@@ -34,9 +43,10 @@ module.exports = class ClaimOperation {
             if(conquerors.length < 2) {
                 this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, conqueror.configs()), { role: conqueror.name, flag: this.targetFlag.name });
             }
-            
+
             if(myRoom) {
                 targetRoom.createConstructionSite(this.targetFlag.pos, STRUCTURE_SPAWN);
+                this.cleanHostileStructures(targetRoom);
             }
         }
     }
@@ -52,12 +62,23 @@ module.exports = class ClaimOperation {
                 this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, miner.energyConfigs), { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true });
             }
         }
-        
+
         if(this.claimLevel < 2) return;
-        
+
         let hasBuilders = _.filter(spawnHelper.globalCreepsWithRole(builder.name), (c) => c.memory.room === remoteRoom.name).length >= 2;
         if(!hasBuilders) {
             this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, builder.configs(10)), { role: builder.name, room: remoteRoom.name });
+        }
+    }
+
+    cleanHostileStructures(remoteRoom) {
+        if(remoteRoom.storage && !remoteRoom.storage.my) {
+            if(remoteRoom.storage.store.energy <= 10000) remoteRoom.storage.destroy();
+        }
+
+        let hostileStructures = remoteRoom.find(FIND_HOSTILE_STRUCTURES);
+        for(let structure of hostileStructures) {
+            if(cleanableStructures.includes(structure.structureType)) structure.destroy();
         }
     }
 }
