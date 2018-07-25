@@ -22,7 +22,7 @@ module.exports = {
                 if(importResource) {
                     let amount = Math.min(creep.carryCapacity, terminal.store[importResource], trading.neededImportToStorage(importResource));
                     creep.withdraw(terminal, importResource, amount);
-                } else if(terminal.storeCapacity - _.sum(terminal.store) < TERMINAL_WORKING_BUFFER) {
+                } else if(terminal.my && (terminal.storeCapacity - _.sum(terminal.store) < TERMINAL_WORKING_BUFFER)) {
                     let excessResource = _.invert(terminal.store)[_.sortBy(terminal.store, (r) => -r)[0]];
                     console.log("Terminal in room " + creep.room.name + " is overfilled! Temporarily importing " + excessResource);
                     creep.withdraw(terminal, excessResource);
