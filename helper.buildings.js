@@ -12,5 +12,11 @@ module.exports = {
         let wip = room.find(FIND_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType === structureType }).length;
 
         return Math.max(0, buildable - (built + wip));
+    },
+    intervals: {
+        store: 20
+    },
+    underConstruction: function(room, structureType) {
+        return room.find(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType === structureType }).length;
     }
 };

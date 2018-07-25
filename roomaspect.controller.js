@@ -1,6 +1,7 @@
+const buildings = require("helper.buildings");
+const logistic = require('helper.logistic');
+const spawnHelper = require("helper.spawning");
 const store = require("construction.stores");
-var logistic = require('helper.logistic');
-var spawnHelper = require("helper.spawning");
 
 var carrier = require("role.carrier");
 var upgrader = require("role.upgrader");
@@ -25,7 +26,7 @@ module.exports = class ControllerAspect {
             }
         } else if(logistic.storeFor(this.controller)) {
             this.buildCarriers();
-        } else {
+        } else if(Game.time % buildings.intervals.store === 0) {
             store.buildNextTo(this.controller, true);
         }
 

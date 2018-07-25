@@ -1,10 +1,10 @@
-var constructions = [
+const constructions = [
     require("construction.extractor"),
     require("construction.ramparts"),
     require("construction.roads")
 ];
 
-var aspects = [
+const aspects = [
     require("roomaspect.supplies"),
     require("roomaspect.sources"),
     require("roomaspect.defense"),
@@ -21,7 +21,7 @@ var aspects = [
     require("roomaspect.nuker")
 ];
 
-var structureTower = require("structure.tower");
+const structureTower = require("structure.tower");
 
 const Constructions = require("roomservice.constructions");
 const Defense = require("roomservice.defense");
@@ -58,6 +58,7 @@ module.exports = class RoomAI {
         }
 
         this.observer.performObservation();
+        this.links.replaceNextContainerByLink();
 
         this.spawns.renderOverlay();
 

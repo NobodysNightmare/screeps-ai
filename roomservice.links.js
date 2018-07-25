@@ -1,3 +1,4 @@
+const buildings = require("helper.buildings");
 const logistic = require("helper.logistic");
 
 module.exports = class Links {
@@ -66,6 +67,36 @@ module.exports = class Links {
                 if(result !== OK) {
                     this.room.memory.links.requests.unshift(target.id);
                 }
+            }
+        }
+    }
+
+    replaceNextContainerByLink() {
+        // syncing up with store building. Executing one tick ahead of store builders
+        if(Game.time % buildings.intervals.store !== buildings.intervals.store - 1) return;
+        if(!this.storage()) return;
+        if(buildings.available(this.room, STRUCTURE_LINK) == 0) return;
+        if(buildings.underConstruction(this.room, STRUCTURE_LINK) > 0) return;
+
+        let targets = [this.room.controller] + this.room.find(FIND_SOURCES);
+        for(let target of targets) {
+            if(!this.linkAt(target)) {
+                let store = logistic.storeFor(target);
+                if(store && store.structureType === STRUCTURE_CONTAINER) {
+                    console.log("Link Replacement: Destroying container at " + store.pos + ".")
+                    store.destroy();
+
+                    // only replace one container at a time:
+                    // return when we found a destroyable container
+                    return;
+                } else if(!store) {
+                    // only replace one container at a time:
+                    // wait for link to be built up completely
+                    return;
+                }
+
+                // there is a non-link, non-container storage at the target.
+                // presumably a terminal or storage, continuing without replacement
             }
         }
     }

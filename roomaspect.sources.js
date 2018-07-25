@@ -1,8 +1,8 @@
-var spawnHelper = require("helper.spawning");
-
+const buildings = require("helper.buildings");
+const logistic = require('helper.logistic');
+const miner = require("role.miner");
+const spawnHelper = require("helper.spawning");
 const store = require("construction.stores");
-var logistic = require('helper.logistic');
-var miner = require("role.miner");
 
 module.exports = class SourcesAspect {
     constructor(roomai) {
@@ -21,7 +21,7 @@ module.exports = class SourcesAspect {
     }
 
     buildStores() {
-        if(Game.time % 20 != 0) {
+        if(Game.time % buildings.intervals.store !== 0) {
             return;
         }
 
