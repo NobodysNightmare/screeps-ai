@@ -1,5 +1,3 @@
-const movement = require("helper.movement");
-
 const parkStructures = [STRUCTURE_STORAGE, STRUCTURE_POWER_BANK, STRUCTURE_CONTAINER];
 
 module.exports = {
@@ -18,7 +16,8 @@ module.exports = {
             this.returnHome(creep);
         } else {
             if(creep.room.name !== creep.memory.target) {
-                creep.goTo(new RoomPosition(25, 25, creep.memory.target), { avoidHostiles: true });
+                let target = { pos: new RoomPosition(25, 25, creep.memory.target) };
+                creep.goTo(target, { avoidHostiles: true, newPathing: true });
             } else {
                 this.scoopRoom(creep);
             }
@@ -36,7 +35,7 @@ module.exports = {
                 creep.memory.returningHome = false;
             }
         } else {
-            creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
+            creep.goTo(target, { ignoreRoads: true, avoidHostiles: true, newPathing: true });
         }
     },
     scoopRoom: function(creep) {
@@ -58,7 +57,7 @@ module.exports = {
                 target = creep.pos.findClosestByRange(FIND_STRUCTURES,
                     { filter: (s) => parkStructures.includes(s.structureType) });
                 if(!target) target = creep.room.getPositionAt(25, 25);
-                creep.goTo(target, { range: 5, ignoreRoads: true, avoidHostiles: true });
+                creep.goTo(target, { range: 5, ignoreRoads: true, avoidHostiles: true, newPathing: true });
             }
 
             return;
@@ -72,7 +71,7 @@ module.exports = {
         }
 
         if(result === ERR_NOT_IN_RANGE) {
-            creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
+            creep.goTo(target, { ignoreRoads: true, avoidHostiles: true, newPathing: true });
         }
     }
 };

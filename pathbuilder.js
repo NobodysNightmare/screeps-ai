@@ -1,5 +1,6 @@
 const ff = require("helper.friendFoeRecognition");
 
+const AVOID_CREEPS_COST = 50;
 const AVOID_HOSTILE_COST = 5;
 const ROAD_COST = 1;
 
@@ -118,7 +119,7 @@ module.exports = class PathBuilder {
 
         let creeps = room.find(FIND_CREEPS);
         for(let creep of creeps) {
-            matrix.set(creep.pos.x, creep.pos.y, 255);
+            matrix.set(creep.pos.x, creep.pos.y, AVOID_CREEPS_COST);
         }
     }
 
@@ -130,7 +131,7 @@ module.exports = class PathBuilder {
         for(let creep of creeps) {
             let stopped = creep.memory.stopped;
             if(stopped) {
-                matrix.set(creep.pos.x, creep.pos.y, 255);
+                matrix.set(creep.pos.x, creep.pos.y, AVOID_CREEPS_COST);
             }
         }
     }
