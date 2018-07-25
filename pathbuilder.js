@@ -8,12 +8,12 @@ const matrixCache = {
         this.ensureStore();
         return this.store[key];
     },
-    
+
     set: function(key, matrix) {
         this.ensureStore();
         this.store[key] = matrix;
     },
-    
+
     ensureStore: function() {
         if(!this.store || Game.time !== this.lastTick) {
             this.store = {};
@@ -31,7 +31,7 @@ module.exports = class PathBuilder {
         this.debugCosts = false;
         this.preferRoads = true;
     }
-    
+
     matrixCacheKey(roomName) {
         return JSON.stringify({
             roomName: roomName,
@@ -39,7 +39,7 @@ module.exports = class PathBuilder {
             preferRoads: this.preferRoads
         });
     }
-    
+
     // returns a callback to be used in Room.findPath
     getAdditiveCallback() {
         let builder = this;
@@ -50,14 +50,14 @@ module.exports = class PathBuilder {
             }
         };
     }
-    
+
     // returns a callback to be used in PathFinder.search
     getRoomCallback() {
         let builder = this;
         return function roomCallback(roomName) {
             let cachedMatrix = matrixCache.get(builder.matrixCacheKey(roomName));
             if(cachedMatrix) return cachedMatrix;
-            
+
             let matrix = new PathFinder.CostMatrix;
             builder.doAvoidStructures(roomName, matrix);
             builder.doAvoidConstructionSites(roomName, matrix);
@@ -66,34 +66,34 @@ module.exports = class PathBuilder {
             } else {
                 builder.doAvoidStoppedCreeps(roomName, matrix);
             }
-            
+
             if(builder.preferRoads) builder.doPreferRoads(roomName, matrix);
             if(builder.avoidHostiles) builder.doAvoidHostiles(roomName, matrix);
-            
+
             if(builder.debugCosts) builder.drawCosts(roomName, matrix);
             matrixCache.set(builder.matrixCacheKey(roomName), matrix);
             return matrix;
         };
     }
-    
+
     doAvoidStructures(roomName, matrix) {
         let room = Game.rooms[roomName];
         if(!room) return;
-        
+
         let structures = room.find(FIND_STRUCTURES);
         for(let structure of structures) {
             let blocked = OBSTACLE_OBJECT_TYPES.includes(structure.structureType);
-            blocked = blocked || (structure.structureType === STRUCTURE_RAMPART && !structure.my);
+            blocked = blocked || (structure.structureType === STRUCTURE_RAMPART && !(structure.my || structure.isPublic));
             if(blocked) {
                 matrix.set(structure.pos.x, structure.pos.y, 255);
             }
         }
     }
-    
+
     doAvoidConstructionSites(roomName, matrix) {
         let room = Game.rooms[roomName];
         if(!room) return;
-        
+
         let sites = room.find(FIND_CONSTRUCTION_SITES);
         for(let site of sites) {
             let blocked = OBSTACLE_OBJECT_TYPES.includes(site.structureType) && !ff.isHostile(site);
@@ -102,21 +102,21 @@ module.exports = class PathBuilder {
             }
         }
     }
-    
+
     doAvoidAllCreeps(roomName, matrix) {
         let room = Game.rooms[roomName];
         if(!room) return;
-        
+
         let creeps = room.find(FIND_CREEPS);
         for(let creep of creeps) {
             matrix.set(creep.pos.x, creep.pos.y, 255);
         }
     }
-    
+
     doAvoidStoppedCreeps(roomName, matrix) {
         let room = Game.rooms[roomName];
         if(!room) return;
-        
+
         let creeps = room.find(FIND_MY_CREEPS);
         for(let creep of creeps) {
             let stopped = creep.memory.stopped;
@@ -125,11 +125,11 @@ module.exports = class PathBuilder {
             }
         }
     }
-    
+
     doPreferRoads(roomName, matrix) {
         let room = Game.rooms[roomName];
         if(!room) return;
-        
+
         let roads = room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_ROAD });
         for(let road of roads) {
             if(matrix.get(road.pos.x, road.pos.y) == 0) {
@@ -137,18 +137,18 @@ module.exports = class PathBuilder {
             }
         }
     }
-    
+
     doAvoidHostiles(roomName, matrix) {
         let room = Game.rooms[roomName];
         if(!room) return;
-        
+
         let hostiles = ff.findHostiles(room);
         for(let hostile of hostiles) {
             let range = 0;
             if(_.some(hostile.body, (p) => p.type === RANGED_ATTACK)) range = 3;
             else if(_.some(hostile.body, (p) => p.type === ATTACK)) range = 1;
             if(range === 0) continue;
-            
+
             for(let dx = -range; dx <= range; dx += 1) {
                 for(let dy = -range; dy <= range; dy += 1) {
                     let x = hostile.pos.x + dx;
@@ -158,7 +158,7 @@ module.exports = class PathBuilder {
             }
         }
     }
-    
+
     drawCosts(roomName, matrix) {
         let visual = new RoomVisual(roomName);
         for(let x = 0; x < 50; x += 1) {
@@ -166,7 +166,7 @@ module.exports = class PathBuilder {
                 let baseCost = this.getTerrainCost(Game.map.getTerrainAt(x, y, roomName));
                 let cost = matrix.get(x, y);
                 if(cost === 0) continue;
-                
+
                 if(cost >= baseCost) {
                     if(cost === 255) {
                         visual.circle(x, y, { radius: 0.5, fill: "#f00" });
@@ -179,7 +179,7 @@ module.exports = class PathBuilder {
             }
         }
     }
-    
+
     getTerrainCost(terrain) {
         if(terrain === "plain") return this.plainCost;
         if(terrain === "swamp") return this.swampCost;
