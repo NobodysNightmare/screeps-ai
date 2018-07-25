@@ -30,6 +30,7 @@ module.exports = class PathBuilder {
         this.avoidHostiles = false;
         this.debugCosts = false;
         this.preferRoads = true;
+        this.allowedRooms = null;
     }
 
     matrixCacheKey(roomName) {
@@ -55,6 +56,8 @@ module.exports = class PathBuilder {
     getRoomCallback() {
         let builder = this;
         return function roomCallback(roomName) {
+            if(!builder.isRoomAllowed(roomName)) return false;
+
             let cachedMatrix = matrixCache.get(builder.matrixCacheKey(roomName));
             if(cachedMatrix) return cachedMatrix;
 
@@ -74,6 +77,12 @@ module.exports = class PathBuilder {
             matrixCache.set(builder.matrixCacheKey(roomName), matrix);
             return matrix;
         };
+    }
+
+    isRoomAllowed(roomName) {
+        if(!this.allowedRooms) return true;
+
+        return this.allowedRooms.includes(roomName);
     }
 
     doAvoidStructures(roomName, matrix) {

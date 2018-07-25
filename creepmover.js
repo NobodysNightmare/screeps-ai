@@ -1,9 +1,9 @@
 const PathBuilder = require("pathbuilder");
+const RouteFinder = require("routefinder");
 
 const DEFAULT_STUCK_LIMIT = 5;
 
 // TODO:
-//  - long range routing
 //  - don't cache path on "hot" options (e.g. avoidHostiles)
 //  - more options (e.g. allow to path over hostile structures only)
 
@@ -12,7 +12,8 @@ module.exports = class CreepMover {
         this.creep = creep;
         this.target = target;
         this.options = options || {};
-        this.pathBuilder = this.configurePathBuilder(this.options);
+        this.routeFinder = new RouteFinder(creep.room.name, target.pos.roomName);
+        this.pathBuilder = this.configurePathBuilder(this.options, this.routeFinder);
     }
 
     move() {
@@ -59,6 +60,9 @@ module.exports = class CreepMover {
 
                 options = Object.assign({}, this.options, options);
                 let result = PathFinder.search(this.creep.pos, target, options);
+                if(result.incomplete) {
+                    console.log("CreepMover (" + this.creep.name + "): Could not find complete path from " + this.creep.pos + " to " +  this.target.pos + ".");
+                }
                 data.path = CreepMover.serializePath(this.creep.pos, result.path);
             }
         }
@@ -67,8 +71,9 @@ module.exports = class CreepMover {
         return this.creep.move(this.nextDir(data));
     }
 
-    configurePathBuilder(builderOptions) {
+    configurePathBuilder(builderOptions, routeFinder) {
         let builder = new PathBuilder();
+        builder.allowedRooms = routeFinder.findRoute();
         if(this.options.debugCosts) builder.debugCosts = true;
         if(this.options.avoidHostiles) builder.avoidHostiles = true;
         if(this.options.preferRoads === false) builder.preferRoads = false;
@@ -118,24 +123,24 @@ module.exports = class CreepMover {
         if(!!posA !== !!posB) return false;
         return posA.roomName === posB.roomName && posA.x === posB.x && posA.y === posB.y;
     }
-    
+
     static sameCoord(posA, posB) {
         if(!!posA !== !!posB) return false;
         return posA.x === posB.x && posA.y === posB.y;
     }
-    
+
     static nextCoord(origin, direction) {
         let offsetX = [0, 0, 1, 1, 1, 0, -1, -1, -1];
         let offsetY = [0, -1, -1, 0, 1, 1, 1, 0, -1];
         let x = origin.x + offsetX[direction];
         let y = origin.y + offsetY[direction];
-        
+
         // correctly predict position when switching room
         if(x === 0) x = 49;
         else if(x === 49) x = 0;
         else if(y === 0) y = 49;
         else if(y === 49) y = 0;
-        
+
         return { x: x, y: y };
     }
 
