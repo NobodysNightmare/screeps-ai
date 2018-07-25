@@ -72,8 +72,7 @@ module.exports = class Links {
     }
 
     replaceNextContainerByLink() {
-        // syncing up with store building. Executing one tick ahead of store builders
-        if(Game.time % buildings.intervals.store !== buildings.intervals.store - 1) return;
+        if(this.room.ai().intervals.buildStores.isActiveIn(1)) return;
         if(!this.storage()) return;
         if(buildings.available(this.room, STRUCTURE_LINK) == 0) return;
         if(buildings.underConstruction(this.room, STRUCTURE_LINK) > 0) return;

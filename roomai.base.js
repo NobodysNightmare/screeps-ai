@@ -1,5 +1,4 @@
 const constructions = [
-    require("construction.extractor"),
     require("construction.ramparts"),
     require("construction.roads")
 ];
@@ -25,6 +24,7 @@ const structureTower = require("structure.tower");
 
 const Constructions = require("roomservice.constructions");
 const Defense = require("roomservice.defense");
+const Intervals = require("roomservice.intervals");
 const Labs = require("roomservice.labs");
 const Links = require("roomservice.links");
 const Observer = require("roomservice.observer");
@@ -36,6 +36,7 @@ module.exports = class RoomAI {
         this.room = room;
         this.constructions = new Constructions(room);
         this.defense = new Defense(room);
+        this.intervals = new Intervals();
         this.links = new Links(room);
         this.labs = new Labs(room);
         this.observer = new Observer(room);

@@ -1,4 +1,3 @@
-const buildings = require("helper.buildings");
 const logistic = require('helper.logistic');
 const miner = require("role.miner");
 const spawnHelper = require("helper.spawning");
@@ -21,7 +20,7 @@ module.exports = class SourcesAspect {
     }
 
     buildStores() {
-        if(Game.time % buildings.intervals.store !== 0) {
+        if(!this.roomai.intervals.buildStores.isActive()) {
             return;
         }
 

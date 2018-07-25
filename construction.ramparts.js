@@ -14,16 +14,12 @@ var protectedStructures = [
 
 module.exports = {
     perform: function(room) {
-        if(Game.time % 100 != 0) {
+        if(!room.ai().intervals.buildComplexStructure.isActive()) {
             return;
         }
-        
-        if(!(room.controller && room.controller.my)) {
-            return;
-        }
-        
-        for(var store of room.find(FIND_STRUCTURES, { filter: (s) => protectedStructures.includes(s.structureType) })) {
-            room.createConstructionSite(store.pos, STRUCTURE_RAMPART);
+
+        for(let structure of room.find(FIND_STRUCTURES, { filter: (s) => protectedStructures.includes(s.structureType) })) {
+            room.createConstructionSite(structure.pos, STRUCTURE_RAMPART);
         }
     }
 };

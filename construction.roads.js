@@ -6,7 +6,7 @@ const roadableStructures = [
 module.exports = {
     perform: function(room) {
         let storagePos = room.storagePos();
-        if(Game.time % 100 != 0 || !storagePos) {
+        if(!room.ai().intervals.buildComplexStructure.isActive() || !storagePos) {
             return;
         }
 

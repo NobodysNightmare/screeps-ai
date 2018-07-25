@@ -64,12 +64,12 @@ module.exports = class MineralsAspect {
     }
 
     buildStructures() {
-        if(Game.time % 20 != 0) {
-            return;
+        if(this.roomai.intervals.buildSimpleStructure.isActive()) {
+            this.room.createConstructionSite(this.mineral.pos, STRUCTURE_EXTRACTOR);
         }
-
-        this.room.createConstructionSite(this.mineral.pos, STRUCTURE_EXTRACTOR);
-        store.buildNextTo(this.mineral);
+        if(this.roomai.intervals.buildStores.isActive()) {
+            store.buildNextTo(this.mineral);
+        }
     }
 
     masterRoom() {

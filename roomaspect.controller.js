@@ -1,4 +1,3 @@
-const buildings = require("helper.buildings");
 const logistic = require('helper.logistic');
 const spawnHelper = require("helper.spawning");
 const store = require("construction.stores");
@@ -26,7 +25,7 @@ module.exports = class ControllerAspect {
             }
         } else if(logistic.storeFor(this.controller)) {
             this.buildCarriers();
-        } else if(Game.time % buildings.intervals.store === 0) {
+        } else if(this.roomai.intervals.buildStores.isActive()) {
             store.buildNextTo(this.controller, true);
         }
 

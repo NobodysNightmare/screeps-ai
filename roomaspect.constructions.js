@@ -10,7 +10,7 @@ module.exports = class ConstructionsAspect {
 
         for(let building of this.roomai.constructions.buildings) {
             building.outline();
-            if(Game.time % 90 == 0) {
+            if(this.roomai.intervals.buildComplexStructure.isActive()) {
                 building.build();
             }
         }
