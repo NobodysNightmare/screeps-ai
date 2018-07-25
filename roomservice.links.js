@@ -13,6 +13,7 @@ module.exports = class Links {
     }
 
     storage() {
+        if(!this.room.storage) return null;
         return this.linkAt(this.room.storage);
     }
 
@@ -77,7 +78,7 @@ module.exports = class Links {
         if(buildings.available(this.room, STRUCTURE_LINK) == 0) return;
         if(buildings.underConstruction(this.room, STRUCTURE_LINK) > 0) return;
 
-        let targets = [this.room.controller] + this.room.find(FIND_SOURCES);
+        let targets = [this.room.controller].concat(this.room.find(FIND_SOURCES));
         for(let target of targets) {
             if(!this.linkAt(target)) {
                 let store = logistic.storeFor(target);
