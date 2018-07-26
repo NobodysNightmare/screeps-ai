@@ -93,11 +93,11 @@ module.exports = class MineralsAspect {
     }
 
     buildStoreCleaner() {
+        let store = logistic.storeFor(this.mineral);
         if(_.any(spawnHelper.localCreepsWithRole(this.roomai, carrier.name), (c) => c.memory.source === store.id)) {
             return;
         }
 
-        let store = logistic.storeFor(this.mineral);
         let parts = spawnHelper.bestAvailableParts(this.room, carrier.configsForCapacity(100));
         let memory = {
             role: carrier.name,

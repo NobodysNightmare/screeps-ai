@@ -55,7 +55,7 @@ module.exports = class CreepMover {
             if(this.creep.pos.isNearTo(target)) {
                 data.path = this.creep.pos.getDirectionTo(target).toString();
             } else {
-                let allowedRooms = routeFinder.findRoute();
+                let allowedRooms = this.routeFinder.findRoute();
                 this.pathBuilder.allowedRooms = allowedRooms;
                 let options = {
                     plainCost: this.pathBuilder.plainCost,
