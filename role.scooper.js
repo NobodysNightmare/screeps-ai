@@ -56,7 +56,7 @@ module.exports = {
                 // park and wait
                 target = creep.pos.findClosestByRange(FIND_STRUCTURES,
                     { filter: (s) => parkStructures.includes(s.structureType) });
-                if(!target) target = creep.room.getPositionAt(25, 25);
+                if(!target) target = { pos: creep.room.getPositionAt(25, 25) };
                 creep.goTo(target, { range: 5, ignoreRoads: true, avoidHostiles: true, newPathing: true });
             }
 
