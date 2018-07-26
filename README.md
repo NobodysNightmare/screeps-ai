@@ -164,7 +164,6 @@ Multiple rooms in a resource array will be supported round robin.
     * Manual operation for supply transports
 * Use observers to obtain vision on a room
 * Improve own pathfinder
-    * findRoute for long travels
     * Plan routes depending on known facts about rooms
     * automatically collect known facts about rooms
 * Automated base-building?
