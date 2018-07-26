@@ -22,6 +22,9 @@ module.exports = class MineralsAspect {
                 this.buildMiner();
                 this.buildCarrier();
             }
+            if(this.storePoisoned()) {
+                this.buildStoreCleaner();
+            }
         }
 
         this.buildStructures();
@@ -46,7 +49,7 @@ module.exports = class MineralsAspect {
     buildCarrier() {
         let mineralStore = logistic.storeFor(this.mineral);
         if(mineralStore === this.room.terminal || mineralStore === this.room.storage ||
-            _.filter(spawnHelper.globalCreepsWithRole(carrier.name), (creep) => creep.memory.source == this.mineral.id).length > 0) {
+            _.any(spawnHelper.localCreepsWithRole(this.roomai, carrier.name), (creep) => creep.memory.source == this.mineral.id)) {
             return;
         }
 
@@ -82,6 +85,29 @@ module.exports = class MineralsAspect {
 
     needWorkers() {
         return this.roomai.canSpawn() && this.mineral.mineralAmount > 0;
+    }
+
+    storePoisoned() {
+        let store = logistic.storeFor(this.mineral);
+        return store && store.structureType === STRUCTURE_CONTAINER && store.store.energy > (store.storeCapacity / 2);
+    }
+
+    buildStoreCleaner() {
+        if(_.any(spawnHelper.localCreepsWithRole(this.roomai, carrier.name), (c) => c.memory.source === store.id)) {
+            return;
+        }
+
+        let store = logistic.storeFor(this.mineral);
+        let parts = spawnHelper.bestAvailableParts(this.room, carrier.configsForCapacity(100));
+        let memory = {
+            role: carrier.name,
+            source: store.id,
+            destination: this.room.storage.id,
+            resource: "energy"
+        };
+
+        this.roomai.spawn(parts, memory);
+        console.log("Mineral store in " + this.room.name + " contains energy. Cleaning up!");
     }
 }
 
