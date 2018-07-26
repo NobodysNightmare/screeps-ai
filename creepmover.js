@@ -3,6 +3,9 @@ const RouteFinder = require("routefinder");
 
 const DEFAULT_STUCK_LIMIT = 5;
 
+const MINIMUM_OPS = 2000; // default value for PathFinder
+const OPS_PER_ROOM = 1000; // pathing a route of N rooms can take up to N CPU
+
 // TODO:
 //  - don't cache path on "hot" options (e.g. avoidHostiles)
 //  - more options (e.g. allow to path over hostile structures only)
@@ -13,7 +16,7 @@ module.exports = class CreepMover {
         this.target = target;
         this.options = options || {};
         this.routeFinder = new RouteFinder(creep.room.name, target.pos.roomName);
-        this.pathBuilder = this.configurePathBuilder(this.options, this.routeFinder);
+        this.pathBuilder = this.configurePathBuilder(this.options);
     }
 
     move() {
@@ -52,10 +55,13 @@ module.exports = class CreepMover {
             if(this.creep.pos.isNearTo(target)) {
                 data.path = this.creep.pos.getDirectionTo(target).toString();
             } else {
+                let allowedRooms = routeFinder.findRoute();
+                this.pathBuilder.allowedRooms = allowedRooms;
                 let options = {
                     plainCost: this.pathBuilder.plainCost,
                     swampCost: this.pathBuilder.swampCost,
-                    roomCallback: this.pathBuilder.getRoomCallback()
+                    roomCallback: this.pathBuilder.getRoomCallback(),
+                    maxOps: Math.max(MINIMUM_OPS, OPS_PER_ROOM * allowedRooms.length)
                 };
 
                 options = Object.assign({}, this.options, options);
@@ -71,9 +77,8 @@ module.exports = class CreepMover {
         return this.creep.move(this.nextDir(data));
     }
 
-    configurePathBuilder(builderOptions, routeFinder) {
+    configurePathBuilder(builderOptions) {
         let builder = new PathBuilder();
-        builder.allowedRooms = routeFinder.findRoute();
         if(this.options.debugCosts) builder.debugCosts = true;
         if(this.options.avoidHostiles) builder.avoidHostiles = true;
         if(this.options.preferRoads === false) builder.preferRoads = false;
