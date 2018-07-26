@@ -16,7 +16,7 @@ module.exports = class CreepMover {
         this.target = target;
         this.options = options || {};
         this.routeFinder = new RouteFinder(creep.room.name, target.pos.roomName);
-        this.pathBuilder = this.configurePathBuilder(this.options);
+        this.pathBuilder = this.configurePathBuilder(this.creep, this.options);
     }
 
     move() {
@@ -77,11 +77,11 @@ module.exports = class CreepMover {
         return this.creep.move(this.nextDir(data));
     }
 
-    configurePathBuilder(builderOptions) {
+    configurePathBuilder(creep, builderOptions) {
         let builder = new PathBuilder();
-        if(this.options.debugCosts) builder.debugCosts = true;
-        if(this.options.avoidHostiles) builder.avoidHostiles = true;
-        if(this.options.preferRoads === false) builder.preferRoads = false;
+        if(creep.memory.debugPath) builder.debugCosts = true;
+        if(builderOptions.avoidHostiles) builder.avoidHostiles = true;
+        if(builderOptions.preferRoads === false) builder.preferRoads = false;
         return builder;
     }
 
