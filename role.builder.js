@@ -107,7 +107,10 @@ module.exports = {
         }
     },
     constructOrRepair: function(creep, target) {
-        if(!target) return;
+        if(!target) {
+            creep.memory.stopped = true;
+            return;
+        }
         var result;
 
         if(this.isConstructionSite(target)) {
@@ -119,8 +122,10 @@ module.exports = {
         if(result == OK) {
             // lock onto target as soon as actual work is happening
             creep.memory.lastTarget = target.id;
+            creep.memory.stopped = true;
         } else if(result == ERR_NOT_IN_RANGE) {
             creep.goTo(target, { newPathing: true, range: 3 });
+            creep.memory.stopped = false;
         }
     },
     isConstructionSite: function(target) {
