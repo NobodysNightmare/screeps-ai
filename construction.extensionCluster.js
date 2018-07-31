@@ -33,12 +33,11 @@ module.exports = {
 
         room.visual.poly(_.map(this.roadParts.concat(this.roadParts[0]), (p) => [x + p.x, y + p.y]), { stroke: "#77f" });
     },
-    build: function(room, cluster) {
+    build: function(proxy, cluster) {
         let x = cluster.x,
             y = cluster.y;
         for(let pos of this.extensionParts) {
-            let result = room.createConstructionSite(x + pos.x, y + pos.y, STRUCTURE_EXTENSION);
-            if(result == ERR_RCL_NOT_ENOUGH) break;
+            proxy.planConstruction(x + pos.x, y + pos.y, STRUCTURE_EXTENSION);
         }
 
         for(let pos of this.roadParts) {

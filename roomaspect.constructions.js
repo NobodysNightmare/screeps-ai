@@ -1,3 +1,5 @@
+const BuildProxy = require("construction.buildproxy");
+
 module.exports = class ConstructionsAspect {
     constructor(roomai) {
         this.roomai = roomai;
@@ -8,11 +10,16 @@ module.exports = class ConstructionsAspect {
         this.roomai.constructions.addBuildings();
         this.roomai.constructions.removeBuildings();
 
+        let buildProxy = new BuildProxy(this.room);
         for(let building of this.roomai.constructions.buildings) {
             building.outline();
             if(this.roomai.intervals.buildComplexStructure.isActive()) {
-                building.build();
+                building.build(buildProxy);
             }
+        }
+
+        if(this.roomai.intervals.buildComplexStructure.isActive()) {
+            buildProxy.commit();
         }
     }
 }

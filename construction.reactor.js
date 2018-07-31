@@ -30,25 +30,25 @@ module.exports = {
 
         room.visual.poly(_.map(corners, (p) => [x + p.x, y + p.y]), { stroke: "#77f" });
     },
-    build: function(room, reactor) {
+    build: function(room, reactor, roomai) {
         let dir = this.directions[reactor.dir];
-        room.createConstructionSite(reactor.x + dir.x, reactor.y, STRUCTURE_LAB);
-        room.createConstructionSite(reactor.x, reactor.y + dir.y, STRUCTURE_LAB);
+        proxy.planConstruction(reactor.x + dir.x, reactor.y, STRUCTURE_LAB);
+        proxy.planConstruction(reactor.x, reactor.y + dir.y, STRUCTURE_LAB);
 
         for(let x = -1; x <= 1; x += 1) {
             for(let y = -1; y <= 1; y += 1) {
                 if(x == 0 && (y == 0 || y == dir.y)) continue;
                 if(y == 0 && (x == 0 || x == dir.x)) continue;
                 if(x == dir.x && y == dir.y) {
-                    room.createConstructionSite(reactor.x + x, reactor.y + y, STRUCTURE_ROAD);
+                    proxy.planConstruction(reactor.x + x, reactor.y + y, STRUCTURE_ROAD);
                 } else {
-                    room.createConstructionSite(reactor.x + x, reactor.y + y, STRUCTURE_LAB);
+                    proxy.planConstruction(reactor.x + x, reactor.y + y, STRUCTURE_LAB);
                 }
             }
         }
 
-        room.createConstructionSite(reactor.x, reactor.y, STRUCTURE_ROAD);
-        room.ai().labs.updateReactor(reactor, dir);
+        proxy.planConstruction(reactor.x, reactor.y, STRUCTURE_ROAD);
+        roomai.labs.updateReactor(reactor, dir);
     },
     updateCostMatrix: function(matrix, reactor) {
         let dir = this.directions[reactor.dir];

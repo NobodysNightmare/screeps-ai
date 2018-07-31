@@ -1,10 +1,14 @@
 const constructions = {
     booster: require("construction.booster"),
-    extensionCluster: require("construction.extensionCluster"),
     reactor: require("construction.reactor"),
+    spawn: require("construction.spawn"),
     storage: require("construction.storage"),
     terminal: require("construction.terminal"),
-    tower: require("construction.tower")
+    tower: require("construction.tower"),
+
+    // building extensions last, so that they are processed
+    // after spawns, allowing them to be built inside the cluster
+    extensionCluster: require("construction.extensionCluster")
 }
 
 const buildFlagRegex = /^build([A-Za-z]+)$/;
@@ -17,8 +21,8 @@ class Building {
         this.room = room;
     }
 
-    build() {
-        this.builder.build(this.room, this.memory);
+    build(proxy) {
+        this.builder.build(proxy, this.memory, this.room.ai());
     }
 
     outline() {

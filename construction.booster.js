@@ -5,10 +5,10 @@ module.exports = {
 
         room.visual.circle(x, y, { stroke: "#77f", radius: 0.5, fill: null });
     },
-    build: function(room, booster) {
-        room.createConstructionSite(booster.x, booster.y, STRUCTURE_LAB);
-        let lab = _.find(room.ai().labs.all, (l) => l.pos.x === booster.x && l.pos.y === booster.y);
-        if(lab) room.ai().labs.setBooster(lab);
+    build: function(proxy, booster, roomai) {
+        proxy.planConstruction(booster.x, booster.y, STRUCTURE_LAB);
+        let lab = _.find(roomai.labs.all, (l) => l.pos.x === booster.x && l.pos.y === booster.y);
+        if(lab) roomai.labs.setBooster(lab);
     },
     updateCostMatrix: function(matrix, booster) {
         matrix.set(booster.x, booster.y, 255);

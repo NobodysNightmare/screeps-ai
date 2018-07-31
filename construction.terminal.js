@@ -16,8 +16,8 @@ module.exports = {
 
         room.visual.poly(_.map(this.outlineCorners, (p) => [x + p.x, y + p.y]), { stroke: "#77f" });
     },
-    build: function(room, terminal) {
-        room.createConstructionSite(terminal.x, terminal.y, STRUCTURE_TERMINAL);
+    build: function(proxy, terminal) {
+        proxy.planConstruction(terminal.x, terminal.y, STRUCTURE_TERMINAL);
     },
     updateCostMatrix: function(matrix, terminal) {
         matrix.set(terminal.x, terminal.y, 255);
