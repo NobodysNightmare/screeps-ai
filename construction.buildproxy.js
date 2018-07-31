@@ -1,30 +1,21 @@
-function serializePos(x, y) {
-    return x + "|" + y;
-}
-
-function deserializePos(string) {
-    let parts = string.split("|");
-    return { x: parseInt(parts[0]), y: parseInt(parts[1]) };
-}
-
 module.exports = class BuildProxy {
     constructor(room) {
         this.room = room;
-        this.plan = {}
+        this.plan = new Map();
     }
 
     planConstruction(x, y, structureType) {
-        let posString = serializePos(x, y);
-        if(this.plan[posString]) return false;
+        let pos = { x: x, y: y };
+        if(this.plan.has(pos)) return false;
 
-        this.plan[posString] = structureType;
+        this.plan.set(pos, structureType);
         return true;
     }
 
     commit() {
-        for(let posString in this.plan) {
-            let structureType = this.plan[posString];
-            let pos = deserializePos(posString);
+        for(let posAndType of this.plan) {
+            let pos = posAndType[0];
+            let structureType = posAndType[1];
 
             this.room.createConstructionSite(pos.x, pos.y, structureType);
         }

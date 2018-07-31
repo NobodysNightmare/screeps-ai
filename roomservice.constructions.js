@@ -1,15 +1,15 @@
-const constructions = {
-    booster: require("construction.booster"),
-    reactor: require("construction.reactor"),
-    spawn: require("construction.spawn"),
-    storage: require("construction.storage"),
-    terminal: require("construction.terminal"),
-    tower: require("construction.tower"),
+const constructions = new Map([
+    ["booster", require("construction.booster")],
+    ["reactor", require("construction.reactor")],
+    ["spawn", require("construction.spawn")],
+    ["storage", require("construction.storage")],
+    ["terminal", require("construction.terminal")],
+    ["tower", require("construction.tower")],
 
     // building extensions last, so that they are processed
     // after spawns, allowing them to be built inside the cluster
-    extensionCluster: require("construction.extensionCluster")
-}
+    ["extensionCluster", require("construction.extensionCluster")],
+]);
 
 const buildFlagRegex = /^build([A-Za-z]+)$/;
 const removeFlagRegex = /^remove([A-Za-z]+)$/;
@@ -47,7 +47,7 @@ module.exports = class Constructions {
 
     initializeMemory() {
         this.memory = this.room.memory.constructions;
-        for(let type in constructions) {
+        for(let type of constructions.keys()) {
             if(!this.memory[type]) this.memory[type] = [];
         }
     }
@@ -62,8 +62,9 @@ module.exports = class Constructions {
 
     createBuildings() {
         let result = [];
-        for(let type in constructions) {
-            let builder = constructions[type];
+        for(let typeAndBuilder of constructions) {
+            let type = typeAndBuilder[0];
+            let builder = typeAndBuilder[1];
             for(let memory of this.memory[type]) {
                 result.push(new Building(builder, memory, this.room));
             }
@@ -76,7 +77,7 @@ module.exports = class Constructions {
         let results = _.filter(_.map(this.flags, (f) => ({ match: buildFlagRegex.exec(f.name), flag: f })), (m) => m.match);
         for(let result of results) {
             let type = result.match[1].charAt(0).toLowerCase() + result.match[1].slice(1);
-            let builder = constructions[type];
+            let builder = constructions.get(type);
             if(!this.memory[type]) this.memory[type] = [];
             builder.addBuilding(this.memory[type], result.flag);
             result.flag.remove();
@@ -87,7 +88,7 @@ module.exports = class Constructions {
         let results = _.filter(_.map(this.flags, (f) => ({ match: removeFlagRegex.exec(f.name), flag: f })), (m) => m.match);
         for(let result of results) {
             let type = result.match[1].charAt(0).toLowerCase() + result.match[1].slice(1);
-            let builder = constructions[type];
+            let builder = constructions.get(type);
             builder.removeBuilding(this.memory[type], result.flag);
             result.flag.remove();
         }
