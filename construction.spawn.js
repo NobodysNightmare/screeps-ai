@@ -1,9 +1,9 @@
 module.exports = {
     outline: function(room, spawn) {
         let x = spawn.x,
-            y = tospawnwer.y;
+            y = spawn.y;
 
-        spawn.room.visual.circle(x, y, { stroke: "#77f", radius: 0.5 });
+        room.visual.circle(x, y, { stroke: "#77f", fill: null, radius: 0.5 });
     },
     build: function(proxy, spawn) {
         proxy.planConstruction(spawn.x, spawn.y, STRUCTURE_SPAWN);

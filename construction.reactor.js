@@ -30,7 +30,7 @@ module.exports = {
 
         room.visual.poly(_.map(corners, (p) => [x + p.x, y + p.y]), { stroke: "#77f" });
     },
-    build: function(room, reactor, roomai) {
+    build: function(proxy, reactor, roomai) {
         let dir = this.directions[reactor.dir];
         proxy.planConstruction(reactor.x + dir.x, reactor.y, STRUCTURE_LAB);
         proxy.planConstruction(reactor.x, reactor.y + dir.y, STRUCTURE_LAB);

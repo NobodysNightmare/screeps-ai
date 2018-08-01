@@ -41,7 +41,7 @@ module.exports = {
         }
 
         for(let pos of this.roadParts) {
-            room.createConstructionSite(x + pos.x, y + pos.y, STRUCTURE_ROAD);
+            proxy.planConstruction(x + pos.x, y + pos.y, STRUCTURE_ROAD);
         }
     },
     updateCostMatrix: function(matrix, cluster) {
