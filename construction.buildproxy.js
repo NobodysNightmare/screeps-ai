@@ -1,3 +1,14 @@
+const Y_MULTIPLIER = 100;
+
+function serializePos(pos) {
+    return pos.x + (Y_MULTIPLIER * pos.y);
+}
+
+function deserializePos(value) {
+    let x = value % Y_MULTIPLIER;
+    return { x: x, y: (value - x) / Y_MULTIPLIER };
+}
+
 module.exports = class BuildProxy {
     constructor(room) {
         this.room = room;
@@ -5,17 +16,18 @@ module.exports = class BuildProxy {
     }
 
     planConstruction(x, y, structureType) {
-        let pos = { x: x, y: y };
-        if(this.plan.has(pos)) return false;
+        let posValue = serializePos({ x: x, y: y });
 
-        this.plan.set(pos, structureType);
+        if(this.plan.has(posValue)) return false;
+
+        this.plan.set(posValue, structureType);
         return true;
     }
 
     commit() {
-        for(let posAndType of this.plan) {
-            let pos = posAndType[0];
-            let structureType = posAndType[1];
+        for(let posValueAndType of this.plan) {
+            let pos = deserializePos(posValueAndType[0]);
+            let structureType = posValueAndType[1];
 
             this.room.createConstructionSite(pos.x, pos.y, structureType);
         }
