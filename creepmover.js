@@ -30,24 +30,37 @@ module.exports = class CreepMover {
         let data = this.deserializeData();
         if(!CreepMover.samePos(data.target, target.pos)) {
             data.path = null;
+            data.stuck = 0;
         } else if(CreepMover.samePos(this.creep.pos, data.lastPos)) {
             data.stuck += 1;
-            if(data.stuck >= (this.options.stuckLimit || DEFAULT_STUCK_LIMIT)) {
-                data.path = null;
-                this.pathBuilder.avoidCreeps = true;
-            }
         } else {
-            data.stuck = 0;
             if(data.path) {
                 let expectedPos = CreepMover.nextCoord(data.lastPos, this.nextDir(data));
                 if(CreepMover.sameCoord(this.creep.pos, expectedPos)) {
                     data.path = data.path.substr(1);
                     if(data.path.length === 0) data.path = null;
+                } else if(CreepMover.sameCoord(this.creep.pos, CreepMover.coordInDirection(data.lastPos, this.nextDir(data)))) {
+                    // creep moved correctly into a room exit but got back
+                    // either due to fatigue or because of a blocking creep on other side
+                    // increase stuck count in case of block, but return immediately,
+                    // waiting to be back on correct side of the exit
+                    if(creep.memory.debugPath) {
+                        console.log("CreepMover (" + this.creep.name + "): Creep moved backwards through exit portal. Waiting another tick.");
+                    }
+                    data.stuck += 1;
+                    return OK;
                 } else {
                     console.log("CreepMover (" + this.creep.name + "): unexpected movement. Expected: " + expectedPos.x + "|" + expectedPos.y + " Got: " + this.creep.pos.x + "|" + this.creep.pos.y);
                     data.path = null;
                 }
             }
+
+            data.stuck = 0;
+        }
+
+        if(data.stuck >= (this.options.stuckLimit || DEFAULT_STUCK_LIMIT)) {
+            data.path = null;
+            this.pathBuilder.avoidCreeps = true;
         }
 
         if(!data.path) {
@@ -134,19 +147,28 @@ module.exports = class CreepMover {
         return posA.x === posB.x && posA.y === posB.y;
     }
 
-    static nextCoord(origin, direction) {
+    // returns coordinate in given direction from origin
+    static coordInDirection(origin, direction) {
         let offsetX = [0, 0, 1, 1, 1, 0, -1, -1, -1];
         let offsetY = [0, -1, -1, 0, 1, 1, 1, 0, -1];
         let x = origin.x + offsetX[direction];
         let y = origin.y + offsetY[direction];
 
-        // correctly predict position when switching room
-        if(x === 0) x = 49;
-        else if(x === 49) x = 0;
-        else if(y === 0) y = 49;
-        else if(y === 49) y = 0;
-
         return { x: x, y: y };
+    }
+
+    // returns coordinate that creep will be next tick when
+    // moving into given direction (considering room exits)
+    static nextCoord(origin, direction) {
+        let result = CreepMover.coordInDirection(origin, direction);
+
+        // correctly predict position when switching room
+        if(result.x === 0) result.x = 49;
+        else if(result.x === 49) result.x = 0;
+        else if(result.y === 0) result.y = 49;
+        else if(result.y === 49) result.y = 0;
+
+        return result;
     }
 
     // Taken from Traveler (https://github.com/bonzaiferroni/Traveler)
