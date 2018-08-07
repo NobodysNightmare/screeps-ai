@@ -40,17 +40,18 @@ module.exports = class CreepMover {
                     data.path = data.path.substr(1);
                     if(data.path.length === 0) data.path = null;
                 } else if(CreepMover.sameCoord(this.creep.pos, CreepMover.coordInDirection(data.lastPos, this.nextDir(data)))) {
+                    // nextCoord and coordInDirection are different:
                     // creep moved correctly into a room exit but got back
                     // either due to fatigue or because of a blocking creep on other side
                     // increase stuck count in case of block, but return immediately,
                     // waiting to be back on correct side of the exit
                     if(creep.memory.debugPath) {
-                        console.log("CreepMover (" + this.creep.name + "): Creep moved backwards through exit portal. Waiting another tick.");
+                        this.log("Creep moved backwards through exit portal. Waiting another tick.");
                     }
                     data.stuck += 1;
                     return OK;
                 } else {
-                    console.log("CreepMover (" + this.creep.name + "): unexpected movement. Expected: " + expectedPos.x + "|" + expectedPos.y + " Got: " + this.creep.pos.x + "|" + this.creep.pos.y);
+                    this.log("Unexpected movement. Expected: " + expectedPos.x + "|" + expectedPos.y + " Got: " + this.creep.pos.x + "|" + this.creep.pos.y);
                     data.path = null;
                 }
             }
@@ -80,7 +81,7 @@ module.exports = class CreepMover {
                 options = Object.assign({}, this.options, options);
                 let result = PathFinder.search(this.creep.pos, target, options);
                 if(result.incomplete) {
-                    console.log("CreepMover (" + this.creep.name + "): Could not find complete path from " + this.creep.pos + " to " +  this.target.pos + ".");
+                    this.log("Could not find complete path from " + this.creep.pos + " to " +  this.target.pos + ".");
                 }
                 data.path = CreepMover.serializePath(this.creep.pos, result.path);
             }
@@ -135,6 +136,10 @@ module.exports = class CreepMover {
 
     nextDir(data) {
         return parseInt(data.path[0], 10);
+    }
+
+    log(message) {
+        console.log("CreepMover (" + this.creep.name + "): " + message);
     }
 
     static samePos(posA, posB) {
