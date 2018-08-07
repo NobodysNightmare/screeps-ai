@@ -1,4 +1,5 @@
 const logistic = require('helper.logistic');
+const roads = require("construction.roads");
 const spawnHelper = require("helper.spawning");
 const store = require("construction.stores");
 
@@ -30,6 +31,12 @@ module.exports = class ControllerAspect {
         }
 
         this.buildUpgraders();
+
+        if(this.roomai.intervals.buildComplexStructure.isActive()) {
+            let storagePos = this.room.storagePos();
+            if(storagePos) roads.buildRoadFromTo(this.room, storagePos, this.controller.pos);
+            roads.buildRoadAround(this.room, this.controller.pos);
+        }
     }
 
     buildUpgraders() {

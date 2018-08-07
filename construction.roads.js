@@ -4,26 +4,6 @@ const roadableStructures = [
 ];
 
 module.exports = {
-    perform: function(room) {
-        let storagePos = room.storagePos();
-        if(!room.ai().intervals.buildComplexStructure.isActive() || !storagePos) {
-            return;
-        }
-
-        for(let source of room.find(FIND_SOURCES)) {
-            this.buildRoadAround(room, source.pos);
-            this.buildRoadFromTo(room, storagePos, source.pos);
-        }
-
-        this.buildRoadAround(room, room.controller.pos);
-        this.buildRoadFromTo(room, storagePos, room.controller.pos);
-
-        if(room.controller.level >= 6) {
-            for(let mineral of room.find(FIND_MINERALS)) {
-                this.buildRoadFromTo(room, storagePos, mineral.pos);
-            }
-        }
-    },
     buildRoadFromTo: function(room, start, end) {
         let buildings = room.ai().constructions.buildings;
         var path = start.findPathTo(end, { ignoreCreeps: true, costCallback: function(roomName, matrix) {

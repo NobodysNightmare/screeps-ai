@@ -1,5 +1,6 @@
 const logistic = require('helper.logistic');
 const miner = require("role.miner");
+const roads = require("construction.roads");
 const spawnHelper = require("helper.spawning");
 const store = require("construction.stores");
 
@@ -16,6 +17,7 @@ module.exports = class SourcesAspect {
 
     run() {
         this.buildStores();
+        this.buildRoads();
         this.buildMiners();
     }
 
@@ -26,6 +28,17 @@ module.exports = class SourcesAspect {
 
         for(let source of this.sources) {
             store.buildWithAccessTo(source, true);
+        }
+    }
+
+    buildRoads() {
+        let storagePos = this.room.storagePos();
+        if(!this.roomai.intervals.buildComplexStructure.isActive() || !storagePos) {
+            return;
+        }
+
+        for(let source of this.sources) {
+            roads.buildRoadFromTo(this.room, storagePos, source.pos);
         }
     }
 

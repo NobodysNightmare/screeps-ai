@@ -1,6 +1,7 @@
 var store = require("construction.stores");
 var spawnHelper = require("helper.spawning");
 const logistic = require("helper.logistic");
+const roads = require("construction.roads");
 
 var carrier = require("role.carrier");
 var miner = require("role.miner");
@@ -73,6 +74,9 @@ module.exports = class MineralsAspect {
         if(this.roomai.intervals.buildStores.isActive()) {
             store.buildNextTo(this.mineral);
         }
+        if(this.roomai.intervals.buildComplexStructure.isActive() && this.room.storage) {
+            roads.buildRoadFromTo(room, this.room.storage.pos, this.mineral.pos);
+        }
     }
 
     masterRoom() {
@@ -93,6 +97,7 @@ module.exports = class MineralsAspect {
     }
 
     buildStoreCleaner() {
+        if(!this.room.storage) return;
         let store = logistic.storeFor(this.mineral);
         if(_.any(spawnHelper.localCreepsWithRole(this.roomai, carrier.name), (c) => c.memory.source === store.id)) {
             return;

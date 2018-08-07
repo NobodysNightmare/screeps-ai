@@ -10,6 +10,20 @@ const keyStructures = [
     STRUCTURE_EXTENSION
 ];
 
+const protectedStructures = [
+    STRUCTURE_SPAWN,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_LINK,
+    STRUCTURE_STORAGE,
+    STRUCTURE_TOWER,
+    STRUCTURE_POWER_SPAWN,
+    STRUCTURE_LAB,
+    STRUCTURE_TERMINAL,
+    STRUCTURE_CONTAINER,
+    STRUCTURE_NUKER,
+    STRUCTURE_OBSERVER
+];
+
 module.exports = class DefenseAspect {
     constructor(roomai) {
         this.roomai = roomai;
@@ -25,6 +39,7 @@ module.exports = class DefenseAspect {
     run() {
         this.engageSafeMode();
         this.checkNukes();
+        this.buildRamparts();
         this.updateAttackTimes();
         this.displayAttackTime();
         var primaryHostile = Game.getObjectById(this.room.memory.primaryHostile);
@@ -41,11 +56,11 @@ module.exports = class DefenseAspect {
         if(!this.roomai.canSpawn() || !primaryHostile) {
             return;
         }
-        
+
         if(spawnHelper.localCreepsWithRole(this.roomai, reloader.name).length < 1 && this.room.controller.level >= 5) {
             this.roomai.spawn(reloader.parts, { role: reloader.name });
         }
-        
+
         // TODO: new condition?
         if(this.attackTime <= 50) return;
 
@@ -65,14 +80,24 @@ module.exports = class DefenseAspect {
         controller.activateSafeMode();
         Game.notify("Safe mode engaged in room " + this.room.name + " (RCL " + controller.level +")");
     }
-    
+
     checkNukes() {
         let nukes = this.room.find(FIND_NUKES, { filter: (n) => n.timeToLand > NUKE_LAND_TIME - 5})
         for(let nuke of nukes) {
             Game.notify("Nuke incoming at " + this.room.name + " (Origin: " + nuke.launchRoomName + ")");
         }
     }
-    
+
+    buildRamparts() {
+        if(!this.roomai.intervals.buildComplexStructure.isActive()) {
+            return;
+        }
+
+        for(let structure of this.room.find(FIND_STRUCTURES, { filter: (s) => protectedStructures.includes(s.structureType) })) {
+            this.room.createConstructionSite(structure.pos, STRUCTURE_RAMPART);
+        }
+    }
+
     updateAttackTimes() {
         if(this.hostiles.length > 0) {
             if(!this.memory.attackTime) this.memory.attackTime = 0;
@@ -80,24 +105,24 @@ module.exports = class DefenseAspect {
             this.memory.attackCooldown = 100;
         } else {
             if(this.memory.attackCooldown > 0) this.memory.attackCooldown -= 1;
-            
+
             if(this.memory.attackCooldown == 0) {
                 this.memory.attackTime = 0;
             }
         }
     }
-    
+
     displayAttackTime() {
         if(this.attackTime == 0) return;
         this.room.visual.text("Attack time: " + this.attackTime, 0, 1, { align: "left", color: "#faa", stroke: "#000" });
     }
-    
+
     get hostiles() {
         if(!this._hostiles) this._hostiles = ff.findHostiles(this.room);
-        
+
         return this._hostiles;
     }
-    
+
     get attackTime() {
         return this.memory.attackTime || 0;
     }

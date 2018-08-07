@@ -1,8 +1,3 @@
-const constructions = [
-    require("construction.ramparts"),
-    require("construction.roads")
-];
-
 const aspects = [
     require("roomaspect.supplies"),
     require("roomaspect.sources"),
@@ -52,10 +47,6 @@ module.exports = class RoomAI {
 
         for(let tower of this.room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {
             structureTower.run(tower);
-        }
-
-        for(let construction of constructions) {
-            construction.perform(this.room);
         }
 
         this.observer.performObservation();
