@@ -1,9 +1,3 @@
-const ROUTE_MY_ROOM_COST = 1;
-const ROUTE_NEUTRAL_ROOM_COST = 2;
-const ROUTE_HOSTILE_ROOM_COST = 4;
-const ROUTE_HIGHWAY_ROOM_COST = 1.5;
-
-const roomNameRegex = /^[EW]([0-9]+)[NS]([0-9]+)$/;
 const inverseDirections = {
     "1": BOTTOM,
     "2": BOTTOM_LEFT,
@@ -15,27 +9,9 @@ const inverseDirections = {
     "8": BOTTOM_RIGHT
 };
 
-function routeCallback(roomName, fromRoomName) {
-    let room = Game.rooms[roomName];
-    let match = roomNameRegex.exec(roomName);
-
-    if(room && room.controller && room.controller.my) return ROUTE_MY_ROOM_COST;
-    if(match[1].endsWith("0") || match[2].endsWith("0")) return ROUTE_HIGHWAY_ROOM_COST;
-    return ROUTE_NEUTRAL_ROOM_COST;
-}
-
 module.exports = {
     moveToRoom: function(creep, roomName) {
-        if(!creep.memory._route || creep.memory._route.target !== roomName) {
-            creep.memory._route = {
-                target: roomName,
-                route: this.calculateRoute(creep.room, roomName)
-            }
-        }
-
-        // use route in pathfinder to block rooms
-        // too buggy without pathfinder
-        creep.goTo(new RoomPosition(25, 25, roomName), { avoidHostiles: true });
+        creep.goTo({ pos: new RoomPosition(25, 25, roomName) }, { range: 10, avoidHostiles: true, newPathing: true });
     },
     calculateRoute: function(startRoom, endRoom) {
         let route = Game.map.findRoute(startRoom, endRoom, { routeCallback: routeCallback });
