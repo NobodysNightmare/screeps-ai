@@ -9,7 +9,7 @@ module.exports = {
         for(let parts = 25; parts >= 4; parts -= 1) {
             configs.push(spawnHelper.makeParts(parts, ATTACK, parts, MOVE));
         }
-        
+
         return configs;
     },
     run: function(creep) {
@@ -23,6 +23,8 @@ module.exports = {
         var target = Game.getObjectById(creep.room.memory.primaryHostile);
         if(target) {
             this.attack(creep, target);
+        } else if(movement.isOnExit(creep)) {
+            movement.leaveExit(creep);
         }
     },
     attack: function(creep, target) {
