@@ -45,7 +45,7 @@ module.exports = class CreepMover {
                     // either due to fatigue or because of a blocking creep on other side
                     // increase stuck count in case of block, but return immediately,
                     // waiting to be back on correct side of the exit
-                    if(creep.memory.debugPath) {
+                    if(this.creep.memory.debugPath) {
                         this.log("Creep moved backwards through exit portal. Waiting another tick.");
                     }
                     data.stuck += 1;
