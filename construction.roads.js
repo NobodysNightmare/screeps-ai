@@ -16,10 +16,13 @@ module.exports = {
         }
     },
     buildRoadAround: function(room, position) {
+        let terrain = room.getTerrain();
         for(var xOff = -1; xOff <= 1; xOff++) {
             for(var yOff = -1; yOff <= 1; yOff++) {
                 if(xOff != 0 || yOff != 0) {
-                    this.buildRoad(new RoomPosition(position.x + xOff, position.y + yOff, room.name));
+                    if(terrain.get(position.x + xOff, position.y + yOff) !== TERRAIN_MASK_WALL) {
+                        this.buildRoad(new RoomPosition(position.x + xOff, position.y + yOff, room.name));
+                    }
                 }
             }
         }

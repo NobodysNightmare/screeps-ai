@@ -4,6 +4,8 @@ const AVOID_CREEPS_COST = 50;
 const AVOID_HOSTILE_COST = 5;
 const ROAD_COST = 1;
 
+const TERRAIN_PLAIN = 0; // for whatever reason this has not been defined...
+
 const matrixCache = {
     get: function(key) {
         this.ensureStore();
@@ -153,6 +155,7 @@ module.exports = class PathBuilder {
         if(!room) return;
 
         let hostiles = ff.findHostiles(room);
+        let terrain = room.getTerrain();
         for(let hostile of hostiles) {
             let range = 0;
             if(_.some(hostile.body, (p) => p.type === RANGED_ATTACK)) range = 3;
@@ -163,7 +166,7 @@ module.exports = class PathBuilder {
                 for(let dy = -range; dy <= range; dy += 1) {
                     let x = hostile.pos.x + dx;
                     let y = hostile.pos.y + dy;
-                    if(Game.map.getTerrainAt(x, y, roomName) !== "wall") matrix.set(x, y, AVOID_HOSTILE_COST);
+                    if(terrain.get(x, y) !== TERRAIN_MASK_WALL) matrix.set(x, y, AVOID_HOSTILE_COST);
                 }
             }
         }
@@ -171,9 +174,10 @@ module.exports = class PathBuilder {
 
     drawCosts(roomName, matrix) {
         let visual = new RoomVisual(roomName);
+        let terrain = Game.map.getRoomTerrain(roomName);
         for(let x = 0; x < 50; x += 1) {
             for(let y = 0; y < 50; y += 1) {
-                let baseCost = this.getTerrainCost(Game.map.getTerrainAt(x, y, roomName));
+                let baseCost = this.getTerrainCost(terrain.get(x, y));
                 let cost = matrix.get(x, y);
                 if(cost === 0) continue;
 
@@ -191,8 +195,8 @@ module.exports = class PathBuilder {
     }
 
     getTerrainCost(terrain) {
-        if(terrain === "plain") return this.plainCost;
-        if(terrain === "swamp") return this.swampCost;
+        if(terrain === TERRAIN_PLAIN) return this.plainCost;
+        if(terrain === TERRAIN_MASK_SWAMP) return this.swampCost;
         return 255;
     }
 }

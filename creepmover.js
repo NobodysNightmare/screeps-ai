@@ -102,7 +102,7 @@ module.exports = class CreepMover {
     rangeByTarget() {
         if(this.target.structureType && OBSTACLE_OBJECT_TYPES.includes(this.target.structureType)) {
             return 1;
-        } else if(Game.map.getTerrainAt(this.target.pos) === "wall") {
+        } else if(Game.map.getRoomTerrain(this.target.pos.roomName).get(this.target.pos.x, this.target.pos.y) === TERRAIN_MASK_WALL) {
             return 1;
         }
 

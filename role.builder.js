@@ -66,7 +66,8 @@ module.exports = {
         return _.find(constructions, (cs) => cs.structureType === STRUCTURE_STORAGE);
     },
     findNormalPriorityConstructionTarget: function(creep, constructions) {
-        return _.find(constructions, (cs) => (cs.structureType !== STRUCTURE_ROAD || Game.map.getTerrainAt(cs.pos) === "swamp") && cs.structureType != STRUCTURE_RAMPART);
+        let terrain = creep.room.getTerrain();
+        return _.find(constructions, (cs) => (cs.structureType !== STRUCTURE_ROAD || terrain.get(cs.pos.x, cs.pos.y) === TERRAIN_MASK_SWAMP) && cs.structureType != STRUCTURE_RAMPART);
     },
     findLowPriorityConstructionTarget: function(creep, constructions) {
         return _.find(constructions, (cs) => cs.structureType == STRUCTURE_ROAD || cs.structureType == STRUCTURE_RAMPART);
