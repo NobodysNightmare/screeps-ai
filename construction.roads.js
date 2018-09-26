@@ -11,6 +11,10 @@ module.exports = {
                 building.updateCostMatrix(matrix);
             }
         } });
+
+        // remove target from path (road does not need to end ON target)
+        path.pop();
+
         for(var point of path) {
             this.buildRoad(new RoomPosition(point.x, point.y, room.name));
         }
