@@ -66,14 +66,10 @@ Build a lab that will be used to boost creeps.
 
 #### Walls
 
-* **Building name:** `walls`
-* **color:** "Odd" colors (e.g. red) will place the top-right corner, "even" colors the lower left corner.
+* **Building name:** `wall`
 
-All tiles on the wall rectangle and outside will be considered to belong to the outside wall,
-while all tiles inside this area will belong to the inner perimeter.
-
-While this will not yet automatically build any walls, masons will respect this outline and only
-reinforce outside walls and ramparts and none in the inner perimeter.
+Need to place flag twice. First flag will set the start position, second flag the end.
+Wall will be built as the corner from start to end, going into horizontal direction first.
 
 ### Spawning Creeps
 
