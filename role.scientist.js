@@ -29,7 +29,7 @@ module.exports = {
     },
     deliverToReactor: function(creep, reactor) {
         let target = null;
-        let resource = Object.keys(creep.carry)[1];
+        let resource = Object.keys(creep.carry)[0];
         if(resource == reactor.baseMinerals[0]) target = reactor.inputs[0];
         if(resource == reactor.baseMinerals[1]) target = reactor.inputs[1];
         if(!target) {
@@ -67,7 +67,7 @@ module.exports = {
         let target = creep.room.storage;
         if(!target) return;
 
-        let resource = Object.keys(creep.carry)[1];
+        let resource = Object.keys(creep.carry)[0];
         if(creep.pos.isNearTo(target)) {
             creep.transfer(target, resource);
             creep.memory.state = "pickAtStorage";
@@ -143,7 +143,7 @@ module.exports = {
         return false;
     },
     deliverBoost: function(creep) {
-        let creepMineral = Object.keys(creep.carry)[1];
+        let creepMineral = Object.keys(creep.carry)[0];
         let target = null;
         if(_.sum(creep.carry) > 0) {
             if(creepMineral) {

@@ -19,7 +19,7 @@ module.exports = {
     ],
     run: function(creep) {
         // check if our carry  has something else than energy and drop it (e.g. due to overfilling protection)
-        let wrongCarryResource = Object.keys(creep.carry)[1];
+        let wrongCarryResource = _.find(Object.keys(creep.carry), (r) => r != "energy");
         if(wrongCarryResource) {
             creep.drop(wrongCarryResource);
         }
