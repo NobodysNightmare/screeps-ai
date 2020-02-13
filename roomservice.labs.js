@@ -37,7 +37,7 @@ function decompose(compound) {
 
 function renderMineral(lab, resource, minAmount) {
     let color = "#f00";
-    if((resource === lab.mineralType && lab.mineralAmount >= minAmount) || (lab.mineralType === null && minAmount === 0)) color = "#0f0";
+    if((resource === lab.mineralType && lab.mineralAmount >= minAmount) || (!lab.mineralType && minAmount === 0)) color = "#0f0";
     lab.room.visual.text(resource, lab.pos.x, lab.pos.y + 0.2, {
         color: color,
         stroke: "#000",
@@ -60,15 +60,15 @@ class Reactor {
         if(!this.isValid()) return false;
         if(!this.compound) return false;
 
-        if(this.inputs[0].mineralType === null || !this.inputSatisfied(0)) return false;
-        if(this.inputs[1].mineralType === null || !this.inputSatisfied(1)) return false;
+        if(!this.inputs[0].mineralType || !this.inputSatisfied(0)) return false;
+        if(!this.inputs[1].mineralType || !this.inputSatisfied(1)) return false;
 
         return true;
     }
 
     inputSatisfied(index) {
         if(!this.inputs[index]) return false;
-        return this.inputs[index].mineralType === null || this.inputs[index].mineralType === this.baseMinerals[index];
+        return !this.inputs[index].mineralType || this.inputs[index].mineralType === this.baseMinerals[index];
     }
 
     get rallyPos() {
@@ -166,18 +166,18 @@ class Booster {
 
         return this.lab.energy >= LAB_BOOST_ENERGY && this.lab.mineralAmount >= LAB_BOOST_MINERAL;
     }
-    
+
     needEnergy() {
         if(!this.lab) return false;
-        
+
         return this.lab.energy < this.lab.energyCapacity;
     }
-    
+
     needMineral() {
         if(!this.lab) return false;
         if(!this.resource) return false;
         if(this.lab.mineralType !== this.resource) return true;
-        
+
         return this.lab.mineralAmount < this.lab.mineralCapacity;
     }
 
@@ -238,7 +238,7 @@ module.exports = class Labs {
 
         return this._boosters;
     }
-    
+
     get deficits() {
         return this.memory.deficits;
     }
