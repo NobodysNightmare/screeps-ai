@@ -29,7 +29,7 @@ module.exports = {
     },
     deliverToReactor: function(creep, reactor) {
         let target = null;
-        let resource = Object.keys(creep.carry)[0];
+        let resource = Object.keys(creep.store)[0];
         if(resource == reactor.baseMinerals[0]) target = reactor.inputs[0];
         if(resource == reactor.baseMinerals[1]) target = reactor.inputs[1];
         if(!target) {
@@ -56,7 +56,7 @@ module.exports = {
         if(!reactor.inputSatisfied(0)) target = reactor.inputs[0];
         if(!reactor.inputSatisfied(1)) target = reactor.inputs[1];
 
-        if(!target || target.mineralAmount === 0 || _.sum(creep.carry) === creep.carryCapacity) {
+        if(!target || target.mineralAmount === 0 || _.sum(creep.store) === creep.store.getCapacity()) {
             creep.memory.state = "store";
             this.store(creep, reactor);
         } else if(creep.withdraw(target, target.mineralType) === ERR_NOT_IN_RANGE) {
@@ -67,7 +67,7 @@ module.exports = {
         let target = creep.room.storage;
         if(!target) return;
 
-        let resource = Object.keys(creep.carry)[0];
+        let resource = Object.keys(creep.store)[0];
         if(creep.pos.isNearTo(target)) {
             creep.transfer(target, resource);
             creep.memory.state = "pickAtStorage";
@@ -100,7 +100,7 @@ module.exports = {
             let inStore = creep.room.storage.store[resource.type] || 0;
             if(missingInput > 0 && inStore > 0) {
                 missingInput = Math.max(5, missingInput);
-                creep.withdraw(creep.room.storage, resource.type, Math.min(creep.carryCapacity, missingInput, inStore));
+                creep.withdraw(creep.room.storage, resource.type, Math.min(creep.store.getCapacity(), missingInput, inStore));
             } else {
                 if(this.pickupBoost(creep)) {
                     creep.memory.state = "deliverBoost";
@@ -119,12 +119,12 @@ module.exports = {
     pickupBoost: function(creep) {
         let target = _.sortBy(_.filter(creep.room.ai().labs.boosters, (b) => b.lab.energy < b.lab.energyCapacity), (b) => b.lab.energy)[0];
         if(target) {
-            creep.withdraw(creep.room.storage, RESOURCE_ENERGY, Math.min(target.lab.energyCapacity - target.lab.energy, creep.carryCapacity));
+            creep.withdraw(creep.room.storage, RESOURCE_ENERGY, Math.min(target.lab.energyCapacity - target.lab.energy, creep.store.getCapacity()));
             return true;
         } else {
             target = _.sortBy(_.filter(creep.room.ai().labs.boosters, (b) => b.resource && creep.room.storage.store[b.resource] && (!b.lab.mineralType || b.resource === b.lab.mineralType) && b.lab.mineralAmount < b.lab.mineralCapacity), (b) => b.lab.mineralAmount)[0];
             if(target) {
-                let amount = Math.min(target.lab.mineralCapacity - target.lab.mineralAmount, creep.carryCapacity, creep.room.storage.store[target.resource]);
+                let amount = Math.min(target.lab.mineralCapacity - target.lab.mineralAmount, creep.store.getCapacity(), creep.room.storage.store[target.resource]);
                 if(amount > 0) {
                     creep.withdraw(creep.room.storage, target.resource, amount);
                     return true;
@@ -143,9 +143,9 @@ module.exports = {
         return false;
     },
     deliverBoost: function(creep) {
-        let creepMineral = Object.keys(creep.carry)[0];
+        let creepMineral = Object.keys(creep.store)[0];
         let target = null;
-        if(_.sum(creep.carry) > 0) {
+        if(_.sum(creep.store) > 0) {
             if(creepMineral) {
                 target = _.find(creep.room.ai().labs.boosters, (b) => b.resource === creepMineral);
             } else {

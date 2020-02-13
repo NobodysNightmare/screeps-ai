@@ -9,7 +9,7 @@ module.exports = {
             return;
         }
         
-        if(_.sum(creep.carry) > 0) {
+        if(_.sum(creep.store) > 0) {
             this.carryToNuker(creep);
         } else {
             this.pickupResource(creep);
@@ -18,7 +18,7 @@ module.exports = {
 
     carryToNuker: function(creep) {
         if(creep.pos.isNearTo(creep.room.nuker())) {
-            creep.transfer(creep.room.nuker(), _.last(_.keys(creep.carry)));
+            creep.transfer(creep.room.nuker(), _.last(_.keys(creep.store)));
         } else {
             creep.moveTo(creep.room.nuker());
         }
@@ -30,7 +30,7 @@ module.exports = {
             let missingGhodium = creep.room.nuker().ghodiumCapacity - creep.room.nuker().ghodium;
             let resource = missingGhodium > 0 ? RESOURCE_GHODIUM : RESOURCE_ENERGY;
             if(missingEnergy > 0 || missingGhodium > 0) {
-                let amount = Math.min(creep.carryCapacity, creep.room.storage.store[resource], resource === RESOURCE_GHODIUM ? missingGhodium : missingEnergy);
+                let amount = Math.min(creep.store.getCapacity(), creep.room.storage.store[resource], resource === RESOURCE_GHODIUM ? missingGhodium : missingEnergy);
                 creep.withdraw(creep.room.storage, resource, amount);
             } else {
                 creep.suicide();

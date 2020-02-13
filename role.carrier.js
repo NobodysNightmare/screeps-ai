@@ -24,7 +24,7 @@ module.exports = {
             logistic.pickupSpareEnergy(creep);
         }
 
-        if(_.sum(creep.carry) > 0) {
+        if(_.sum(creep.store) > 0) {
             if(this.deliver(creep)) this.pickup(creep);
         }
         else {
@@ -50,7 +50,7 @@ module.exports = {
         if(transferResult == OK) {
             if(creep.memory.registerRevenueFor && creep.memory.resource == RESOURCE_ENERGY) {
                 // assuming we always transfer all our energy
-                profitVisual.addRevenue(creep.memory.registerRevenueFor, creep.carry.energy);
+                profitVisual.addRevenue(creep.memory.registerRevenueFor, creep.store.energy);
             }
 
             return true;

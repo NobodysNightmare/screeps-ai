@@ -36,13 +36,13 @@ module.exports = {
         }
 
         var container = logistic.storeFor(controller);
-        if(container && ((container.store && container.store.energy > 0) || container.energy > 0 || creep.carry.energy > 0)) {
+        if(container && ((container.store && container.store.energy > 0) || container.energy > 0 || creep.store.energy > 0)) {
             var withdrawResult = OK;
 
             // only really withdraw when the carry is low, because only one
             // creep can withdraw from a container in the same tick. So we ensure
             // that multiple ugraders can do their job simultaneously
-            if(creep.carry.energy <= _.filter(creep.body, (part) => part.type == WORK).length) {
+            if(creep.store.energy <= _.filter(creep.body, (part) => part.type == WORK).length) {
                 withdrawResult = creep.withdraw(container, RESOURCE_ENERGY);
             }
 
@@ -59,10 +59,10 @@ module.exports = {
           return;
         }
 
-        if(creep.memory.upgrading && creep.carry.energy == 0) {
+        if(creep.memory.upgrading && creep.store.energy == 0) {
             creep.memory.upgrading = false;
         }
-        if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
+        if(!creep.memory.upgrading && creep.store.energy == creep.store.getCapacity()) {
             creep.memory.upgrading = true;
         }
 

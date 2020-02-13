@@ -28,11 +28,11 @@ module.exports = {
             movement.leaveExit(creep);
         }
 
-        if(creep.memory.building && creep.carry.energy == 0) {
+        if(creep.memory.building && creep.store.energy == 0) {
             creep.memory.building = false;
             creep.memory.lastTarget = null;
         }
-        if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
+        if(!creep.memory.building && creep.store.energy == creep.store.getCapacity()) {
             creep.memory.building = true;
         }
 

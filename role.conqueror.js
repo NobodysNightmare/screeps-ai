@@ -27,10 +27,10 @@ module.exports = {
             return;
         }
 
-        if(creep.memory.building && creep.carry.energy == 0) {
+        if(creep.memory.building && creep.store.energy == 0) {
             creep.memory.building = false;
         }
-        if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
+        if(!creep.memory.building && creep.store.energy == creep.store.getCapacity()) {
             creep.memory.building = true;
         }
 

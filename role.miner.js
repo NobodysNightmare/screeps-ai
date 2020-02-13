@@ -31,7 +31,7 @@ module.exports = {
         }
 
         var harvestResult = OK;
-        if(_.sum(creep.carry) < creep.carryCapacity) {
+        if(_.sum(creep.store) < creep.store.getCapacity()) {
             harvestResult = creep.harvest(target);
         }
 
@@ -44,12 +44,12 @@ module.exports = {
                     if(creep.repair(store) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(store);
                     }
-                } else if(creep.carry[creep.memory.resource] >= creep.carryCapacity - (harvestPower * creep.getActiveBodyparts(WORK))) {
+                } else if(creep.store[creep.memory.resource] >= creep.store.getCapacity() - (harvestPower * creep.getActiveBodyparts(WORK))) {
                     if(creep.transfer(store, creep.memory.resource) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(store);
                     }
                 }
-            } else if(creep.memory.resource === RESOURCE_ENERGY && creep.carry.energy >= _.filter(creep.body, (part) => part.type == WORK).length * 5) {
+            } else if(creep.memory.resource === RESOURCE_ENERGY && creep.store.energy >= _.filter(creep.body, (part) => part.type == WORK).length * 5) {
                 this.buildContainer(creep, target);
             }
         } else if(harvestResult == ERR_NOT_IN_RANGE) {

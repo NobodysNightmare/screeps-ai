@@ -28,7 +28,7 @@ module.exports = {
         let target = home && home.storage;
         if(!target) return;
         if(creep.pos.isNearTo(target)) {
-            let resource = _.findKey(creep.carry, (amount) => amount > 0);
+            let resource = _.findKey(creep.store, (amount) => amount > 0);
             if(resource) {
                 creep.transfer(target, resource);
             } else {
@@ -39,7 +39,7 @@ module.exports = {
         }
     },
     scoopRoom: function(creep) {
-        if(_.sum(creep.carry) == creep.carryCapacity) {
+        if(_.sum(creep.store) == creep.store.getCapacity()) {
             creep.memory.returningHome = true;
             return;
         }
@@ -50,7 +50,7 @@ module.exports = {
         }
 
         if(!target) {
-            if(_.sum(creep.carry) > 0) {
+            if(_.sum(creep.store) > 0) {
                 creep.memory.returningHome = true;
             } else {
                 // park and wait

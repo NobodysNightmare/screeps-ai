@@ -6,13 +6,14 @@ const baseMinerals = [
                         RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM,
                         RESOURCE_CATALYST
                     ];
+const rawCommodities = [RESOURCE_MIST, RESOURCE_BIOMASS, RESOURCE_METAL, RESOURCE_SILICON];
 
 module.exports = class Trading {
     constructor(room) {
         this.room = room;
         this.storage = this.room.storage;
         this.terminal = this.room.terminal;
-        
+
         if(!room.memory.trading) {
             room.memory.trading = {
                 manualExports: {}
@@ -39,7 +40,7 @@ module.exports = class Trading {
             "OH"
         ];
     }
-    
+
     get terminalEnergyBuffer() {
         return 110000;
     }
@@ -54,15 +55,15 @@ module.exports = class Trading {
 
     neededImportToStorage(resource) {
         if(resource === RESOURCE_ENERGY && this.terminal.store[resource] <= this.terminalEnergyBuffer) return 0;
-        
+
         let baselineMiss = this.baselineAmount(resource) - (this.storage.store[resource] || 0);
-        
+
         let manualExport = this.manualExports[resource];
         if(manualExport) {
             let amountInTerminal = this.terminal.store[resource] || 0;
             return Math.max(0, Math.min(amountInTerminal - manualExport.amount, baselineMiss));
         }
-        
+
         return Math.max(0, baselineMiss);
     }
 
@@ -76,7 +77,7 @@ module.exports = class Trading {
             let amountInTerminal = this.terminal.store[resource] || 0;
             return Math.max(0, manualExport.amount - amountInTerminal);
         }
-        
+
         return Math.max(0, (this.storage.store[resource] || 0) - this.baselineAmount(resource));
     }
 
@@ -101,41 +102,44 @@ module.exports = class Trading {
     baselineAmount(resource) {
         if(this.room.ai().mode === "unclaim") {
             if(resource == RESOURCE_ENERGY) return 30000;
-            
+
             return 0;
         }
-        
+
         if(resource == RESOURCE_ENERGY) {
             if(this.room.ai().mode === "support") return 350000;
-            
+
             return 600000;
         }
-        
+
         if(resource == RESOURCE_POWER) {
             if(this.room.powerSpawn()) return 15000;
             return 0;
         }
-        
+
         if(baseMinerals.includes(resource)) return 20000;
+
+        // I didn't yet optimize for new factory mechanics. Keep low stocks.
+        if(rawCommodities.includes(resource)) return 5000;
 
         return 15000;
     }
-    
+
     get manualExports() {
         return this.memory.manualExports;
     }
-    
+
     exportManually(resource, amount, targetRoom) {
         if(!resource || !amount || !targetRoom) return false;
-        
+
         this.manualExports[resource] = {
             amount: amount,
             room: targetRoom
         };
-        
+
         return true;
     }
-    
+
     clearManualExport(resource) {
         delete this.manualExports[resource];
     }

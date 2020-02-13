@@ -20,7 +20,7 @@ module.exports = {
 
                 let importResource = _.last(trading.resourcesImportableToStorage);
                 if(importResource) {
-                    let amount = Math.min(creep.carryCapacity, terminal.store[importResource], trading.neededImportToStorage(importResource));
+                    let amount = Math.min(creep.store.getCapacity(), terminal.store[importResource], trading.neededImportToStorage(importResource));
                     creep.withdraw(terminal, importResource, amount);
                 } else if(terminal.my && (terminal.storeCapacity - _.sum(terminal.store) < TERMINAL_WORKING_BUFFER)) {
                     let excessResource = _.invert(terminal.store)[_.sortBy(terminal.store, (r) => -r)[0]];
@@ -34,7 +34,7 @@ module.exports = {
 
                 let exportResource = _.last(trading.resourcesExportableFromStorage);
                 if(exportResource) {
-                    let amount = Math.min(creep.carryCapacity, trading.possibleExportFromStorage(exportResource));
+                    let amount = Math.min(creep.store.getCapacity(), trading.possibleExportFromStorage(exportResource));
 
                     // overflow protection for terminal
                     // do not put further minerals in, if there is no energy to export them
@@ -50,8 +50,8 @@ module.exports = {
 
     carryTo: function(creep, target) {
         if(creep.pos.isNearTo(target)) {
-            if(_.sum(creep.carry) == 0) return false;
-            creep.transfer(target, _.last(_.keys(creep.carry)))
+            if(_.sum(creep.store) == 0) return false;
+            creep.transfer(target, _.last(_.keys(creep.store)))
         } else {
             creep.goTo(target, { newPathing: true });
         }

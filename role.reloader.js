@@ -8,7 +8,7 @@ module.exports = {
             return;
         }
         
-        if(_.sum(creep.carry) > 0) {
+        if(_.sum(creep.store) > 0) {
             this.carryToTower(creep);
         } else {
             this.pickupResource(creep);
@@ -17,7 +17,7 @@ module.exports = {
 
     carryToTower: function(creep) {
         // withdraw when passing by
-        if(creep.carry.energy < creep.carryCapacity && creep.pos.isNearTo(creep.room.storage)) {
+        if(creep.store.energy < creep.store.getCapacity() && creep.pos.isNearTo(creep.room.storage)) {
             creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
         }
         

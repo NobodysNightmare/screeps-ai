@@ -12,11 +12,11 @@ module.exports = {
     },
     deliver: function(creep) {
         let spawner = this.spawner(creep);
-        if(creep.carry[RESOURCE_POWER]) {
+        if(creep.store[RESOURCE_POWER]) {
             if(creep.transfer(spawner, RESOURCE_POWER) == ERR_NOT_IN_RANGE) {
                 creep.goTo(spawner, { newPathing: true });
             }
-        } else if(creep.carry.energy) {
+        } else if(creep.store.energy) {
             let result = creep.transfer(spawner, RESOURCE_ENERGY);
             if(result == OK) {
                 creep.memory.delivering = false;
@@ -29,9 +29,9 @@ module.exports = {
     },
     pickup: function(creep) {
         let spawner = this.spawner(creep);
-        let neededPower = (spawner.powerCapacity - spawner.power) - (creep.carry[RESOURCE_POWER] || 0);
-        neededPower = Math.min(neededPower, creep.carryCapacity - _.sum(creep.carry), creep.room.storage.store.power || 0);
-        if(!creep.carry[RESOURCE_POWER] && neededPower > 0) {
+        let neededPower = (spawner.powerCapacity - spawner.power) - (creep.store[RESOURCE_POWER] || 0);
+        neededPower = Math.min(neededPower, creep.store.getCapacity() - _.sum(creep.store), creep.room.storage.store.power || 0);
+        if(!creep.store[RESOURCE_POWER] && neededPower > 0) {
             let result = creep.withdraw(creep.room.storage, RESOURCE_POWER, neededPower);
             if(result == ERR_NOT_IN_RANGE) {
                 creep.goTo(creep.room.storage, { newPathing: true });

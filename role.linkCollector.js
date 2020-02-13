@@ -10,13 +10,13 @@ module.exports = {
         }
     },
     transfer: function(creep, source, target) {
-        if(creep.carry.energy == 0) {
+        if(creep.store.energy == 0) {
             if(creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
             }
         }
         
-        if(creep.carry.energy > 0){
+        if(creep.store.energy > 0){
             let transferResult = creep.transfer(target, RESOURCE_ENERGY);
             if(transferResult === OK) {
                 creep.memory.stopped = true;
