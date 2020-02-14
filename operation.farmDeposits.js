@@ -32,7 +32,7 @@ module.exports = class FarmDepositsOperation {
 
             for(let minerCreep of miners) {
                 if(_.filter(carriers, (c) => c.memory.source == minerCreep.id).length < this.carrierCount) {
-                    let carrierParts = carrier.makeParts(25, CARRY, 25, MOVE); // TODO: get smaller for high cooldown Deposits?
+                    let carrierParts = spawnHelper.makeParts(25, CARRY, 25, MOVE); // TODO: get smaller for high cooldown Deposits?
                     let memory = {
                         role: carrier.name,
                         source: minerCreep.id,
