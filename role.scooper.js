@@ -39,7 +39,7 @@ module.exports = {
         }
     },
     scoopRoom: function(creep) {
-        if(_.sum(creep.store) == creep.store.getCapacity()) {
+        if(creep.store.getFreeCapacity() == 0) {
             creep.memory.returningHome = true;
             return;
         }
