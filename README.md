@@ -118,7 +118,16 @@ Spawns a creep to attack a controller.
 * **Operation name:** `power`
 * **color:** Controls number of simultaneous farmers.
 
-Will spawn all creeps neccessary to farm the power bank in a given room.
+Automatically scans the given room for a power bank. If one is detected, this operation will spawn
+all creeps neccessary to farm the power bank.
+
+#### Farming Deposits
+
+* **Operation name:** `deposits`
+* **color:** no effect
+
+Automatically scans the given room for a deposit. If one is detected, this operation will spawn
+all creeps neccessary to farm it until the cooldown is unsustainably high.
 
 #### Claiming a room
 

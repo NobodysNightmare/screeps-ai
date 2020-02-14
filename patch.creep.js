@@ -8,7 +8,7 @@ Creep.prototype.goTo = function(target, options) {
         let mover = new CreepMover(this, target, options);
         return mover.move();
     }
-    
+
     let builder = new PathBuilder();
     options = options || {}
     if(options.avoidHostiles) {
@@ -31,3 +31,5 @@ Creep.prototype.fleeFrom = function(hostiles, range) {
 Creep.prototype.canAttack = function() {
     return _.some(this.body, (p) => p.type === ATTACK || p.type === RANGED_ATTACK);
 }
+
+Creep.prototype.isCreep = true;

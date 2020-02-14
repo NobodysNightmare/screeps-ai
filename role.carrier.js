@@ -24,7 +24,7 @@ module.exports = {
             logistic.pickupSpareEnergy(creep);
         }
 
-        if(_.sum(creep.store) > 0) {
+        if(_.sum(creep.store) > 0 && !this.shouldWait(creep)) {
             if(this.deliver(creep)) this.pickup(creep);
         }
         else {
@@ -48,6 +48,7 @@ module.exports = {
         var target = logistic.storeFor(this.destination(creep)) || this.destination(creep);
         let transferResult = creep.transfer(target, creep.memory.resource);
         if(transferResult == OK) {
+            creep.memory.waitStart = null;
             if(creep.memory.registerRevenueFor && creep.memory.resource == RESOURCE_ENERGY) {
                 // assuming we always transfer all our energy
                 profitVisual.addRevenue(creep.memory.registerRevenueFor, creep.store.energy);
@@ -61,12 +62,12 @@ module.exports = {
     pickup: function(creep) {
         // TODO: also collect raw resources lying around the source
         if(!this.source(creep)) return;
-        let target = logistic.storeFor(this.source(creep)) || this.source(creep);
+        let target = this.source(creep).isCreep ? this.source(creep) : (logistic.storeFor(this.source(creep)) || this.source(creep));
 
         if(creep.pos.isNearTo(target)) {
-            let result = creep.withdraw(target, creep.memory.resource);
+            let result = this.withdraw(creep, target);
             if(result == OK) {
-                return true;
+                return this.startWait(creep);
             }
         } else {
             creep.goTo(target, { newPathing: true });
@@ -86,6 +87,28 @@ module.exports = {
     },
     destination: function(creep) {
       return Game.getObjectById(creep.memory.destination);
+    },
+    withdraw: function(creep, source) {
+        if(source.isCreep) {
+            return source.transfer(creep, creep.memory.resource);
+        } else {
+            return creep.withdraw(source, creep.memory.resource);
+        }
+    },
+    shouldWait: function(creep) {
+        if(!creep.memory.waitTicks) return false;
+        if(creep.store.getFreeCapacity() == 0) return false;
+        if(!creep.memory.waitStart) return true;
+        return creep.memory.waitStart + creep.memory.waitTicks > Game.time;
+    },
+    // starts waiting at source (if necessary), returns true if creep can go
+    // to destination immediately.
+    startWait: function(creep) {
+        if(!creep.memory.waitTicks) return true;
+
+        if(!creep.memory.waitStart) creep.memory.waitStart = Game.time;
+
+        return !this.shouldWait(creep);
     }
 };
 

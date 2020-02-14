@@ -1,4 +1,5 @@
 const logistic = require('helper.logistic');
+const movement = require("helper.movement");
 const spawnHelper = require("helper.spawning");
 
 module.exports = {
@@ -22,16 +23,22 @@ module.exports = {
 
         return configs;
     },
+    depositParts: spawnHelper.makeParts(30, WORK, 5, CARRY, 15, MOVE),
     run: function(creep) {
         var target = Game.getObjectById(creep.memory.target);
-        if(!target) return;
+        if(!target) {
+            if(creep.memory.targetRoom && creep.room.name !== creep.memory.targetRoom) {
+                movement.moveToRoom(creep, creep.memory.targetRoom);
+            }
+            return;
+        }
 
         if(Game.time % 10 == 0 && creep.memory.resource == RESOURCE_ENERGY) {
             this.considerSuicide(creep);
         }
 
         var harvestResult = OK;
-        if(_.sum(creep.store) < creep.store.getCapacity()) {
+        if(creep.store.getFreeCapacity() > 0) {
             harvestResult = creep.harvest(target);
         }
 
