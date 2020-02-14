@@ -84,17 +84,17 @@ module.exports = {
             return;
         }
         let resources = [];
-        if(reactor.inputSatisfied(0) && reactor.inputs[0].mineralAmount < reactor.inputs[0].mineralCapacity) {
-            resources.push({ type: reactor.baseMinerals[0], amount: reactor.inputs[0].mineralAmount });
+        if(reactor.inputSatisfied(0) && !reactor.inputFull(0)) {
+            resources.push({ type: reactor.baseMinerals[0], amount: reactor.inputs[0].store[reactor.inputs[0].mineralType] });
         }
-        if(reactor.inputSatisfied(1) && reactor.inputs[1].mineralAmount < reactor.inputs[1].mineralCapacity) {
-            resources.push({ type: reactor.baseMinerals[1], amount: reactor.inputs[1].mineralAmount });
+        if(reactor.inputSatisfied(1) && !reactor.inputFull(1)) {
+            resources.push({ type: reactor.baseMinerals[1], amount: reactor.inputs[1].store[reactor.inputs[1].mineralType] });
         }
 
         resources = _.sortBy(_.filter(resources, (r) => creep.room.storage.store[r.type]), (r) => r.amount);
         let resource = resources[0];
         if(resource) {
-            let actualAmount = (creep.room.storage.store[reactor.compound] || 0) + _.sum(reactor.outputs, (l) => l.mineralAmount);
+            let actualAmount = (creep.room.storage.store[reactor.compound] || 0) + _.sum(reactor.outputs, (l) => l.store[l.mineralType]);
             let neededProduce = reactor.targetAmount - actualAmount;
             let missingInput = Math.max(0, neededProduce - resource.amount);
             let inStore = creep.room.storage.store[resource.type] || 0;

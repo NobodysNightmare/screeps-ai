@@ -11,11 +11,11 @@ module.exports = {
     refresh: function() {
         let stats = Memory.stats;
         stats.avgCpu += Game.cpu.getUsed() / 5;
-        
+
         if(Game.time % 5 !== 0) return;
-        
+
         let myRooms = _.filter(Game.rooms, (r) => r.controller && r.controller.my);
-        
+
         stats.gameTime = Game.time;
         stats.gcl = Game.gcl;
         stats.empire = this.empireStats(myRooms);
@@ -29,7 +29,7 @@ module.exports = {
     },
     empireStats: function(myRooms) {
         myRooms = _.filter(myRooms, (r) => r.storage);
-        
+
         return {
             resources: {
                 energy: _.sum(myRooms, (r) => r.storage.store.energy),
@@ -72,17 +72,17 @@ module.exports = {
                 };
             }
             if(room.terminal) {
-                result[room.name].terminalSpace = room.terminal.storeCapacity - _.sum(room.terminal.store);
+                result[room.name].terminalSpace = room.terminal.store.getFreeCapacity();
             }
         }
         return result;
     },
     draw: function() {
         let visual = new RoomVisual();
-        
+
         let creeps = Memory.stats.empire.creeps.toLocaleString("en");
         let energy = Memory.stats.empire.resources.energy.toLocaleString("en");
-        
+
         visual.text("Creeps: " + creeps, 0, 48, { align: "left", color: "#fff", stroke: "#000" });
         visual.text("Energy: " + energy, 0, 49, { align: "left", color: "#fff", stroke: "#000" });
     }

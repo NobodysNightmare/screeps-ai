@@ -71,6 +71,12 @@ class Reactor {
         return !this.inputs[index].mineralType || this.inputs[index].mineralType === this.baseMinerals[index];
     }
 
+    inputFull(index) {
+        if(!this.inputs[index]) return false;
+        if(!this.inputs[index].mineralType) return false;
+        return this.inputs[index].store.getFreeCapacity(this.inputs[index].mineralType) === 0;
+    }
+
     get rallyPos() {
         if(!this.memory.rally) return null;
         return this.labs.room.getPositionAt(this.memory.rally[0], this.memory.rally[1]);

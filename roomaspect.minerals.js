@@ -93,7 +93,7 @@ module.exports = class MineralsAspect {
 
     storePoisoned() {
         let store = logistic.storeFor(this.mineral);
-        return store && store.structureType === STRUCTURE_CONTAINER && store.store.energy > (store.storeCapacity / 2);
+        return store && store.structureType === STRUCTURE_CONTAINER && store.store.energy > (store.store.getCapacity() / 2);
     }
 
     buildStoreCleaner() {
