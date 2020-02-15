@@ -82,6 +82,8 @@ Depending on the operation, the color of the spawn flag might indicate the stren
 (see below). Having different operation identifiers allows to run multiple operations of the same type
 simultaneously.
 
+Some operations might not require flag to be permanently placed (see description below).
+
 #### Draining hostile rooms
 
 * **Operation name:** `drain`
@@ -126,8 +128,11 @@ all creeps neccessary to farm the power bank.
 * **Operation name:** `deposits`
 * **color:** no effect
 
-Automatically scans the given room for a deposit. If one is detected, this operation will spawn
+Automatically scans the selected rooms for deposits. If one is detected, this operation will spawn
 all creeps neccessary to farm it until the cooldown is unsustainably high.
+
+Placing the flag `depositsX` in a room that has not yet been selected will select the room,
+while placing it in a room that has already been selected will deselect it.
 
 #### Claiming a room
 

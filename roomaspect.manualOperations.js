@@ -24,7 +24,7 @@ module.exports = class ManualOperationsAspect {
             let opId = result.match[2];
             let targetFlag = Game.flags[opName + opId];
             let operation = operations[opName];
-            if(operation && targetFlag) {
+            if(operation && (targetFlag || operation.canSkipFlag)) {
                 new operation(this.roomai, targetFlag, result.flag.color, result.flag.secondaryColor).run();
             }
         }
