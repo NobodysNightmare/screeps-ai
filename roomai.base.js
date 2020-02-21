@@ -10,6 +10,7 @@ const aspects = [
     require("roomaspect.constructions"),
     require("roomaspect.trading"),
     require("roomaspect.labs"),
+    require("roomaspect.factory"),
     require("roomaspect.manualOperations"),
     require("roomaspect.power"),
     require("roomaspect.nuker")
@@ -19,6 +20,7 @@ const structureTower = require("structure.tower");
 
 const Constructions = require("roomservice.constructions");
 const Defense = require("roomservice.defense");
+const Factory = require("roomservice.factory");
 const Intervals = require("roomservice.intervals");
 const Labs = require("roomservice.labs");
 const Links = require("roomservice.links");
@@ -31,6 +33,7 @@ module.exports = class RoomAI {
         this.room = room;
         this.constructions = new Constructions(room);
         this.defense = new Defense(room);
+        this.factory = new Factory(room);
         this.intervals = new Intervals();
         this.links = new Links(room);
         this.labs = new Labs(room);

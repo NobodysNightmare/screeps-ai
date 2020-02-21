@@ -7,6 +7,7 @@ const baseMinerals = [
                         RESOURCE_CATALYST
                     ];
 const rawCommodities = [RESOURCE_MIST, RESOURCE_BIOMASS, RESOURCE_METAL, RESOURCE_SILICON];
+const refinedCommodities = Object.keys(COMMODITIES).filter((r) => r.length > 1 && !rawCommodities.includes(r) && r != "energy");
 
 module.exports = class Trading {
     constructor(room) {
@@ -119,8 +120,20 @@ module.exports = class Trading {
 
         if(baseMinerals.includes(resource)) return 20000;
 
-        // I didn't yet optimize for new factory mechanics. Keep low stocks.
-        if(rawCommodities.includes(resource)) return 5000;
+        if(rawCommodities.includes(resource)) {
+            if(this.room.ai().factory.isAvailable()) {
+                // TODO: keep lower stocks
+                // TODO: only for relevant factory rooms
+                return 28000;
+            } else {
+                return 0;
+            }
+        }
+
+        if(refinedCommodities.includes(resource)) {
+            // TODO: only for relevant factory rooms
+            return 1000;
+        }
 
         return 15000;
     }

@@ -24,6 +24,7 @@ const roles = [
     require("role.powerRefiner"),
     require("role.mason"),
     require("role.scientist"),
+    require("role.factoryWorker"),
     require("role.nukeOperator"),
     require("role.downgrader"),
 ];
@@ -67,11 +68,11 @@ module.exports.loop = function() {
         if(Memory.lastCompletedTick < Game.time - 1) {
             Memory.stats.skippedTicks += 1;
         }
-        
+
         if(Game.time % 10 === 0 && Game.cpu.bucket < 5000) {
             console.log("Bucket at " + Game.cpu.bucket);
         }
-        
+
         if(Game.time % 100 == 50) {
             for(let name in Memory.creeps) {
                 if(!Game.creeps[name]) {
@@ -79,13 +80,13 @@ module.exports.loop = function() {
                 }
             }
         }
-        
+
         if(Game.time % 10000 === 0) {
             logistic.cleanupCaches();
         }
-        
+
         runCreeps();
-        
+
         if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
 
         for(let roomName in Game.rooms) {
@@ -99,7 +100,7 @@ module.exports.loop = function() {
 
         statsVisual.run();
         profitVisual.run();
-        
+
         Memory.lastCompletedTick = Game.time;
     });
 }
