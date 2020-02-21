@@ -6,6 +6,7 @@ module.exports = {
     name: "healer",
     configs: function(options) {
         var configs = [];
+        // TODO: move in front of heal?
         for(var heal = (options.maxHeal || 25); heal >= (options.minHeal || 1); heal -= 1) {
             let config = Array(heal).fill(HEAL).concat(Array(Math.ceil(heal / (options.healRatio || 1))).fill(MOVE));
             if(config.length <= 50) configs.push(config);

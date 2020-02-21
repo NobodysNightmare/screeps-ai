@@ -35,6 +35,7 @@ module.exports = {
         }
     },
     approachRoom: function(creep, roomName) {
+        // TODO: waiting (somewhere) blocks aggressive move... creep does not attack, because healer is out of range
         if(!this.shouldWait(creep)) {
             movement.moveToRoom(creep, roomName);
         }
