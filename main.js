@@ -29,6 +29,10 @@ const roles = [
     require("role.downgrader"),
 ];
 
+const powerRoles = [
+    require("powerRole.factoryOperator")
+];
+
 const ConstructionSitesCleaner = require("cleaner.constructionSites");
 const logistic = require("helper.logistic");
 
@@ -37,6 +41,7 @@ const profitVisual = require("visual.roomProfit");
 
 require("patch.controller");
 require("patch.creep");
+require("patch.powerCreep");
 require("patch.room");
 require("traveler");
 
@@ -56,6 +61,18 @@ function runCreeps() {
         let creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name && creep.ticksToLive !== undefined);
         for(let creep of creeps) {
             suppressErrors(() => role.run(creep));
+        }
+    }
+
+    for(let roleClass of powerRoles) {
+        let creeps = _.filter(Game.powerCreeps, (creep) => creep.memory.role == roleClass.name);
+        for(let creep of creeps) {
+            let role = new roleClass(creep)
+            if(creep.ticksToLive) {
+                suppressErrors(() => role.run());
+            } else {
+                suppressErrors(() => role.runUnspawned());
+            }
         }
     }
 }
