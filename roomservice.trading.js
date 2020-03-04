@@ -122,9 +122,8 @@ module.exports = class Trading {
 
         if(rawCommodities.includes(resource)) {
             if(this.room.ai().factory.isAvailable()) {
-                // TODO: keep lower stocks
                 // TODO: only for relevant factory rooms
-                return 28000;
+                return 5000;
             } else {
                 return 0;
             }
