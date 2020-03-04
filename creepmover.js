@@ -23,6 +23,11 @@ module.exports = class CreepMover {
         if(!this.target) return ERR_INVALID_TARGET;
         if(this.creep.fatigue > 0) return ERR_TIRED;
 
+        if(this.target.shard && this.target.shard !== Game.shard.name) {
+            this.creep.memory.destinationShard = this.target.shard;
+            // TODO: change target to next portal
+        }
+
         let targetRange = this.options.range || this.rangeByTarget();
         let target = { pos: this.target.pos, range: Math.max(1, targetRange) };
         if(this.creep.pos.getRangeTo(target) <= targetRange) return OK;

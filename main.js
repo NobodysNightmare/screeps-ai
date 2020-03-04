@@ -39,6 +39,8 @@ const logistic = require("helper.logistic");
 const statsVisual = require("visual.globalStatistics");
 const profitVisual = require("visual.roomProfit");
 
+const ShardTravel = require("helper.shardTravel");
+
 require("patch.controller");
 require("patch.creep");
 require("patch.powerCreep");
@@ -102,7 +104,11 @@ module.exports.loop = function() {
             logistic.cleanupCaches();
         }
 
+        suppressErrors(() => ShardTravel.loadArrivals());
+
         runCreeps();
+
+        suppressErrors(() => ShardTravel.announceDepartures());
 
         if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
 
