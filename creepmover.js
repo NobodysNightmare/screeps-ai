@@ -23,13 +23,24 @@ module.exports = class CreepMover {
         if(!this.target) return ERR_INVALID_TARGET;
         if(this.creep.fatigue > 0) return ERR_TIRED;
 
-        if(this.target.shard && this.target.shard !== Game.shard.name) {
-            this.creep.memory.destinationShard = this.target.shard;
-            // TODO: change target to next portal
-        }
-
         let targetRange = this.options.range || this.rangeByTarget();
         let target = { pos: this.target.pos, range: Math.max(1, targetRange) };
+
+        // TODO: put target shard somewhere else (e.g. this.options?)
+        if(this.target.shard && this.target.shard !== Game.shard.name) {
+            this.creep.memory.destinationShard = this.target.shard;
+            let crossing = CreepMover.nextCrossing(this.creep.room.name);
+            let pos = new RoomPosition(25, 25, crossing);
+            if(this.creep.room.name === crossing) {
+                let portal = this.creep.room.find(FIND_STRUCTURES, {
+                    filter: (s) => s.structureType === STRUCTURE_PORTAL && s.destination.shard === this.target.shard
+                })[0];
+
+                if(portal) pos = portal.pos;
+            }
+            target = { pos: pos, range: 0 };
+        }
+
         if(this.creep.pos.getRangeTo(target) <= targetRange) return OK;
 
         let data = this.deserializeData();
@@ -192,6 +203,15 @@ module.exports = class CreepMover {
             lastPosition = position;
         }
         return serializedPath;
+    }
+
+    static nextCrossing(roomName) {
+        let match = roomName.match(/^([WE])([0-9]+)([NS])([0-9]+)$/);
+
+        let longitude = Math.round(parseInt(match[2]) / 10) * 10;
+        let latitude = Math.round(parseInt(match[4]) / 10) * 10;
+
+        return match[1] + longitude + match[3] + latitude;
     }
 }
 
