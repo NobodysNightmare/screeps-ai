@@ -3,6 +3,8 @@ const ff = require("helper.friendFoeRecognition");
 const movement = require("helper.movement");
 const spawnHelper = require("helper.spawning");
 
+const prioritizedStructures = [STRUCTURE_SPAWN, STRUCTURE_TOWER];
+
 module.exports = {
     name: "attacker",
     meleeConfigs: function(options) {
@@ -19,6 +21,8 @@ module.exports = {
       return spawnHelper.makeParts(toughness, TOUGH, 40 - toughness, ATTACK, 10, MOVE);
     },
     run: function(creep) {
+        if(creep.ticksToLive == 1499) creep.notifyWhenAttacked(false);
+
         if(creep.body[0].type === TOUGH) {
             if(boosting.accept(creep, "XZHO2", "XUH2O", "XGHO2")) return;
         } else {
@@ -27,7 +31,7 @@ module.exports = {
 
         var flag = Game.flags[creep.memory.flag];
         if(!flag) return;
-        
+
         if(creep.pos.roomName == flag.pos.roomName) {
             this.attackRoom(creep);
         } else {
@@ -48,12 +52,9 @@ module.exports = {
     attackRoom: function(creep) {
         let target = Game.flags[creep.memory.flag].pos.lookFor(LOOK_STRUCTURES)[0];
 
-        if(!target) {
-            target = creep.pos.findClosestByRange(FIND_HOSTILE_SPAWNS);
-        }
-
-        if(!target) {
-            target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_TOWER });
+        for(let structureType of prioritizedStructures) {
+            if(target) break;
+            target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType == structureType });
         }
 
         if(!target) {
@@ -79,8 +80,8 @@ module.exports = {
     aggressiveMove: function(creep, target) {
         if(this.shouldWait(creep)) return;
 
-        if(creep.moveTo(target, { maxRooms: 1 }) === ERR_NO_PATH) {
-            creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 1 });
+        if(creep.moveTo(target, { maxRooms: 1, reusePath: 1500 }) === ERR_NO_PATH) {
+            creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 1, reusePath: 1500 });
         }
 
         if(creep.memory._move.path) {
@@ -112,7 +113,7 @@ module.exports = {
             console.log("Attacker " + creep.name + " waiting for follower to be spawned. (" + creep.room.name + ")");
             return true;
         }
-        
+
         let waitFor = Game.creeps[creep.memory.waitFor];
         if(!waitFor) return false;
 
