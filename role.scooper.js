@@ -1,4 +1,4 @@
-const parkStructures = [STRUCTURE_STORAGE, STRUCTURE_POWER_BANK, STRUCTURE_CONTAINER];
+const parkStructures = [STRUCTURE_STORAGE, STRUCTURE_POWER_BANK, STRUCTURE_CONTAINER, STRUCTURE_TERMINAL];
 
 module.exports = {
     name: "scooper",
