@@ -54,6 +54,7 @@ module.exports = class RoomAI {
 
         this.observer.performObservation();
         this.links.replaceNextContainerByLink();
+        this.labs.selectPrioritizedBoosts();
 
         this.spawns.renderOverlay();
 

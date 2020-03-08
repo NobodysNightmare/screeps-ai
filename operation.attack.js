@@ -13,6 +13,8 @@ module.exports = class AttackOperation {
     }
 
     run() {
+        this.requestBoosts();
+
         if(!this.roomai.canSpawn()) return;
 
         let attackers = _.filter(spawnHelper.globalCreepsWithRole(attacker.name), (c) => c.memory.flag == this.targetFlag.name);
@@ -25,6 +27,15 @@ module.exports = class AttackOperation {
             if(this.useHeal) memory["waitFor"] = true;
             if(this.useTough) parts = attacker.toughConfig(15);
             this.roomai.spawn(parts, memory);
+        }
+    }
+
+    requestBoosts() {
+        this.roomai.labs.requestBoost("XUH2O", 40);
+        if(this.useHeal) this.roomai.labs.requestBoost("XLHO2", 50);
+        if(this.useTough) {
+            this.roomai.labs.requestBoost("XGHO2", 45);
+            this.roomai.labs.requestBoost("XZHO2", 44);
         }
     }
 

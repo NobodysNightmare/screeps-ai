@@ -223,6 +223,7 @@ module.exports = class Labs {
         this.memory = room.memory.labs;
         this.all = room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_LAB });
         this.decompose = decompose;
+        this.boostPriorities = {};
     }
 
     get reactor() {
@@ -243,6 +244,25 @@ module.exports = class Labs {
         }
 
         return this._boosters;
+    }
+
+    requestBoost(compound, priority) {
+        this.boostPriorities[compound] = Math.max(priority, this.boostPriorities[compound] || 0);
+    }
+
+    selectPrioritizedBoosts() {
+        let requestedBoosts = _.map(_.sortBy(_.pairs(this.boostPriorities), (a) => -a[1]), (a) => a[0]);
+        requestedBoosts = _.take(requestedBoosts, this.boosters.length);
+
+        // only change boosters, if request is not fullfilled anywhere already
+        let existingBoosts = _.map(this.boosters, (b) => b.resource);
+        let boosters = _.sortBy(_.filter(this.boosters, (b) => !requestedBoosts.includes(b.resource)), (b) => b.resource ? 1 : 0);
+        requestedBoosts = _.filter(requestedBoosts, (r) => !existingBoosts.includes(r));
+
+        // assertion: there should never be more requests than boosters
+        for(let i = 0; i < requestedBoosts.length; i++) {
+            boosters[i].resource = requestedBoosts[i];
+        }
     }
 
     get deficits() {

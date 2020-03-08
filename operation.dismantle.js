@@ -13,6 +13,7 @@ module.exports = class DismantleOperation {
     }
 
     run() {
+        this.requestBoosts();
         if(!this.roomai.canSpawn()) return;
 
         let dismantlers = _.filter(spawnHelper.globalCreepsWithRole(dismantler.name), (c) => c.memory.flag == this.targetFlag.name);
@@ -25,6 +26,15 @@ module.exports = class DismantleOperation {
             if(this.useHeal) memory["waitFor"] = true;
             if(this.useTough) parts = dismantler.toughConfig(15);
             this.roomai.spawn(parts, memory);
+        }
+    }
+
+    requestBoosts() {
+        this.roomai.labs.requestBoost("XZH2O", 40);
+        if(this.useHeal) this.roomai.labs.requestBoost("XLHO2", 50);
+        if(this.useTough) {
+            this.roomai.labs.requestBoost("XGHO2", 45);
+            this.roomai.labs.requestBoost("XZHO2", 44);
         }
     }
 
