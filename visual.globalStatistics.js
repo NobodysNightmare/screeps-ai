@@ -3,15 +3,15 @@ const refreshInterval = 5;
 module.exports = {
     initialize: function() {
       if(!Memory.stats) Memory.stats = {
-          skippedTicks: 0
-      }
+          skippedTicks: 0,
+          avgCpu: 0
+      };
     },
     run: function() {
         this.refresh();
         this.draw();
     },
     refresh: function() {
-        if(!Memory.stats) Memory.stats = { avgCpu: 0 };
         Memory.stats.avgCpu += Game.cpu.getUsed() / refreshInterval; // TODO: calculate on regular memory
 
         if(Game.time % refreshInterval == refreshInterval - 1) RawMemory.setActiveSegments([99]);
@@ -23,6 +23,7 @@ module.exports = {
 
         stats.gameTime = Game.time;
         stats.gcl = Game.gcl;
+        stats.gpl = Game.gpl;
         stats.empire = this.empireStats(myRooms);
         stats.rooms = this.roomStats(myRooms);
         stats.memory = {
@@ -40,14 +41,14 @@ module.exports = {
         return {
             resources: {
                 energy: _.sum(myRooms, (r) => r.storage.store.energy),
-                H: _.sum(myRooms, (r) => r.storage.store.H || 0),
-                O: _.sum(myRooms, (r) => r.storage.store.O || 0),
-                Z: _.sum(myRooms, (r) => r.storage.store.Z || 0),
-                K: _.sum(myRooms, (r) => r.storage.store.K || 0),
-                L: _.sum(myRooms, (r) => r.storage.store.L || 0),
-                U: _.sum(myRooms, (r) => r.storage.store.U || 0),
-                X: _.sum(myRooms, (r) => r.storage.store.X || 0),
-                power: _.sum(myRooms, (r) => r.storage.store.power || 0)
+                H: _.sum(myRooms, (r) => r.storage.store.H),
+                O: _.sum(myRooms, (r) => r.storage.store.O),
+                Z: _.sum(myRooms, (r) => r.storage.store.Z),
+                K: _.sum(myRooms, (r) => r.storage.store.K),
+                L: _.sum(myRooms, (r) => r.storage.store.L),
+                U: _.sum(myRooms, (r) => r.storage.store.U),
+                X: _.sum(myRooms, (r) => r.storage.store.X),
+                power: _.sum(myRooms, (r) => r.storage.store.power)
             },
             creeps: Object.keys(Game.creeps).length
         };
@@ -68,14 +69,14 @@ module.exports = {
             if(room.storage) {
                 result[room.name].resources = {
                     energy: room.storage.store.energy,
-                    H: room.storage.store.H || 0,
-                    O: room.storage.store.O || 0,
-                    Z: room.storage.store.Z || 0,
-                    K: room.storage.store.K || 0,
-                    L: room.storage.store.L || 0,
-                    U: room.storage.store.U || 0,
-                    X: room.storage.store.X || 0,
-                    power: room.storage.store.power || 0
+                    H: room.storage.store.H,
+                    O: room.storage.store.O,
+                    Z: room.storage.store.Z,
+                    K: room.storage.store.K,
+                    L: room.storage.store.L,
+                    U: room.storage.store.U,
+                    X: room.storage.store.X,
+                    power: room.storage.store.power
                 };
             }
             if(room.terminal) {
