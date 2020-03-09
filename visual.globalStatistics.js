@@ -20,6 +20,7 @@ module.exports = {
         let stats = {}
 
         let myRooms = _.filter(Game.rooms, (r) => r.controller && r.controller.my);
+        let heapStats = Game.cpu.getHeapStatistics();
 
         stats.gameTime = Game.time;
         stats.gcl = Game.gcl;
@@ -27,7 +28,8 @@ module.exports = {
         stats.empire = this.empireStats(myRooms);
         stats.rooms = this.roomStats(myRooms);
         stats.memory = {
-            main_used: RawMemory.get().length
+            main_used: RawMemory.get().length,
+            heap_used: heapStats.used_heap_size
         };
         stats.cpu = Game.cpu;
         stats.cpu.used = Memory.stats.avgCpu;
