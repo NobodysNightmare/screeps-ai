@@ -1,3 +1,5 @@
+const refreshInterval = 5;
+
 module.exports = {
     initialize: function() {
       if(!Memory.stats) Memory.stats = {
@@ -9,10 +11,13 @@ module.exports = {
         this.draw();
     },
     refresh: function() {
-        let stats = Memory.stats;
-        stats.avgCpu += Game.cpu.getUsed() / 5;
+        if(!Memory.stats) Memory.stats = { avgCpu: 0 };
+        Memory.stats.avgCpu += Game.cpu.getUsed() / refreshInterval; // TODO: calculate on regular memory
 
-        if(Game.time % 5 !== 0) return;
+        if(Game.time % refreshInterval == refreshInterval - 1) RawMemory.setActiveSegments([99]);
+        if(Game.time % refreshInterval !== 0) return;
+
+        let stats = {}
 
         let myRooms = _.filter(Game.rooms, (r) => r.controller && r.controller.my);
 
@@ -24,8 +29,10 @@ module.exports = {
             main_used: RawMemory.get().length
         };
         stats.cpu = Game.cpu;
-        stats.cpu.used = stats.avgCpu;
-        stats.avgCpu = 0;
+        stats.cpu.used = Memory.stats.avgCpu;
+        Memory.stats.avgCpu = 0;
+
+        RawMemory.segments[99] = JSON.stringify(stats);
     },
     empireStats: function(myRooms) {
         myRooms = _.filter(myRooms, (r) => r.storage);
