@@ -1,9 +1,61 @@
+const ff = require("helper.friendFoeRecognition");
+
 const gateCache = {};
 const CACHE_TTL = 30;
 
 module.exports = class Defense {
     constructor(room) {
         this.room = room;
+        if(this.room.memory.defense) {
+            this.memory = this.room.memory.defense;
+        } else {
+            this.memory = {};
+            this.room.memory.defense = this.memory;
+        }
+    }
+
+    get hostiles() {
+        if(!this._hostiles) this._hostiles = ff.findHostiles(this.room);
+
+        return this._hostiles;
+    }
+
+    get primaryHostile() {
+        let primaryHostile = Game.getObjectById(this.room.memory.primaryHostile);
+
+        if(!primaryHostile || primaryHostile.pos.roomName != this.room.name) {
+            primaryHostile = null;
+            if(this.hostiles.length > 0) {
+                primaryHostile = this.hostiles[0];
+            }
+
+            this.room.memory.primaryHostile = primaryHostile && primaryHostile.id;
+        }
+
+        return primaryHostile;
+    }
+
+    get attackTime() {
+        return this.memory.attackTime || 0;
+    }
+
+    updateAttackTimes() {
+        if(this.hostiles.length > 0) {
+            if(!this.memory.attackTime) this.memory.attackTime = 0;
+            this.memory.attackTime += 1;
+            this.memory.attackCooldown = 100;
+        } else {
+            if(this.memory.attackCooldown > 0) this.memory.attackCooldown -= 1;
+
+            if(this.memory.attackCooldown == 0) {
+                this.memory.attackTime = 0;
+            }
+        }
+    }
+
+    displayAttackTime() {
+        if(this.attackTime == 0) return;
+        this.room.visual.text("Attack time: " + this.attackTime, 0, 1, { align: "left", color: "#faa", stroke: "#000" });
     }
 
     get gates() {

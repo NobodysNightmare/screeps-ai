@@ -1,4 +1,3 @@
-const ff = require("helper.friendFoeRecognition");
 var spawnHelper = require("helper.spawning");
 var guard = require("role.guard");
 var reloader = require("role.reloader");
@@ -28,30 +27,17 @@ module.exports = class DefenseAspect {
     constructor(roomai) {
         this.roomai = roomai;
         this.room = roomai.room;
-        if(this.room.memory.defense) {
-            this.memory = this.room.memory.defense;
-        } else {
-            this.memory = {};
-            this.room.memory.defense = this.memory;
-        }
+        this.defense = roomai.defense;
     }
 
     run() {
         this.engageSafeMode();
         this.checkNukes();
         this.buildRamparts();
-        this.updateAttackTimes();
-        this.displayAttackTime();
-        var primaryHostile = Game.getObjectById(this.room.memory.primaryHostile);
+        this.defense.updateAttackTimes();
+        this.defense.displayAttackTime();
 
-        if(!primaryHostile || primaryHostile.pos.roomName != this.room.name) {
-            primaryHostile = null;
-            if(this.hostiles.length > 0) {
-                primaryHostile = this.hostiles[0];
-            }
-
-            this.room.memory.primaryHostile = primaryHostile && primaryHostile.id;
-        }
+        let primaryHostile = this.defense.primaryHostile;
 
         if(!this.roomai.canSpawn() || !primaryHostile) {
             return;
@@ -62,7 +48,7 @@ module.exports = class DefenseAspect {
         }
 
         // TODO: new condition?
-        if(this.attackTime <= 50) return;
+        if(this.defense.attackTime <= 50) return;
 
         // TODO: determine number of defenders in a useful way
         if(spawnHelper.localCreepsWithRole(this.roomai, guard.name).length < 2) {
@@ -75,7 +61,7 @@ module.exports = class DefenseAspect {
         let controller = this.room.controller;
         if(controller.safeMode || controller.upgradeBlocked || controller.level < 6) return;
         if(this.room.find(FIND_MY_STRUCTURES, { filter: (s) => keyStructures.includes(s.structureType) && (s.hits / s.hitsMax) < 0.95 }).length == 0) return;
-        if(_.filter(this.hostiles, (c) => c.owner.username !== "Invader").length == 0) return;
+        if(_.filter(this.defense.hostiles, (c) => c.owner.username !== "Invader").length == 0) return;
 
         controller.activateSafeMode();
         Game.notify("Safe mode engaged in room " + this.room.name + " (RCL " + controller.level +")");
@@ -96,35 +82,6 @@ module.exports = class DefenseAspect {
         for(let structure of this.room.find(FIND_STRUCTURES, { filter: (s) => protectedStructures.includes(s.structureType) })) {
             this.room.createConstructionSite(structure.pos, STRUCTURE_RAMPART);
         }
-    }
-
-    updateAttackTimes() {
-        if(this.hostiles.length > 0) {
-            if(!this.memory.attackTime) this.memory.attackTime = 0;
-            this.memory.attackTime += 1;
-            this.memory.attackCooldown = 100;
-        } else {
-            if(this.memory.attackCooldown > 0) this.memory.attackCooldown -= 1;
-
-            if(this.memory.attackCooldown == 0) {
-                this.memory.attackTime = 0;
-            }
-        }
-    }
-
-    displayAttackTime() {
-        if(this.attackTime == 0) return;
-        this.room.visual.text("Attack time: " + this.attackTime, 0, 1, { align: "left", color: "#faa", stroke: "#000" });
-    }
-
-    get hostiles() {
-        if(!this._hostiles) this._hostiles = ff.findHostiles(this.room);
-
-        return this._hostiles;
-    }
-
-    get attackTime() {
-        return this.memory.attackTime || 0;
     }
 }
 
