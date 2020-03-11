@@ -37,6 +37,8 @@ module.exports = class ControllerAspect {
             if(storagePos) roads.buildRoadFromTo(this.room, storagePos, this.controller.pos);
             roads.buildRoadAround(this.room, this.controller.pos);
         }
+
+        this.roomai.labs.requestBoost("XGH2O", 10);
     }
 
     buildUpgraders() {
