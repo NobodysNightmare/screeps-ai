@@ -34,19 +34,18 @@ module.exports = class DefenseAspect {
         this.engageSafeMode();
         this.checkNukes();
         this.buildRamparts();
-        this.defense.updateAttackTimes();
-        this.defense.displayAttackTime();
+        this.defense.updateDefcon();
+        this.defense.displayDefcon();
 
-        let primaryHostile = this.defense.primaryHostile;
+        if(this.defense.defcon < 1) return;
 
-        if(!this.roomai.canSpawn() || this.defense.hostiles.length === 0) return;
+        if(!this.roomai.canSpawn()) return;
 
         if(spawnHelper.localCreepsWithRole(this.roomai, reloader.name).length < 1 && this.room.controller.level >= 5) {
             this.roomai.spawn(reloader.parts, { role: reloader.name });
         }
 
-        // TODO: new condition?
-        if(this.defense.attackTime <= 50) return;
+        if(this.defense.defcon < 2) return;
 
         // TODO: determine number of defenders in a useful way
         if(spawnHelper.localCreepsWithRole(this.roomai, guard.name).length < 2) {

@@ -3,6 +3,47 @@ const ff = require("helper.friendFoeRecognition");
 const gateCache = {};
 const CACHE_TTL = 30;
 
+/* Defcon level is intended to give an indication about the severeness of
+* an attack and can be used to increase response force.
+* Defcon 0: Peace
+* Defcon 1: Short-lived attack (most often NPCs)
+*           * Keep turrets supplied
+* Defcon 2: Attack that wasn't defeated within short time (strong NPCs?)
+*           * Spawn guards
+* ...
+*
+* Fetch the current Defcon level using
+*
+*     defense.defcon;
+*/
+const DEFCONS = [
+    { level: 0, escalateAt: 1, cooldown: 0 },
+    { level: 1, escalateAt: 50, cooldown: 100 },
+    { level: 2, escalateAt: null, cooldown: 100 }
+]
+
+function escalateDefcon(defcon) {
+    defcon.progress += 1;
+
+    let reference = DEFCONS[defcon.level];
+    if(reference.escalateAt && defcon.progress >= reference.escalateAt) {
+        defcon.level += 1;
+        defcon.progress = 0;
+    }
+
+    defcon.cooldown = DEFCONS[defcon.level].cooldown;
+}
+
+function deescalateDefcon(defcon) {
+    if(defcon.level === 0) return;
+    if(defcon.cooldown > 0) defcon.cooldown -= 1;
+    if(defcon.cooldown <= 0) {
+        defcon.level -= 1;
+        defcon.progress = 0;
+        defcon.cooldown = DEFCONS[defcon.level].cooldown;
+    }
+}
+
 module.exports = class Defense {
     constructor(room) {
         this.room = room;
@@ -12,6 +53,14 @@ module.exports = class Defense {
             this.memory = {};
             this.room.memory.defense = this.memory;
         }
+
+        if(!this.memory.defcon) {
+            this.memory.defcon = {
+                level: 0,
+                progress: 0,
+                cooldown: 0
+            };
+        }
     }
 
     get hostiles() {
@@ -20,28 +69,23 @@ module.exports = class Defense {
         return this._hostiles;
     }
 
-
-    get attackTime() {
-        return this.memory.attackTime || 0;
+    get defcon() {
+        return this.memory.defcon.level;
     }
 
-    updateAttackTimes() {
+    updateDefcon() {
+        let defcon = this.memory.defcon;
         if(this.hostiles.length > 0) {
-            if(!this.memory.attackTime) this.memory.attackTime = 0;
-            this.memory.attackTime += 1;
-            this.memory.attackCooldown = 100;
+            escalateDefcon(defcon);
         } else {
-            if(this.memory.attackCooldown > 0) this.memory.attackCooldown -= 1;
-
-            if(this.memory.attackCooldown == 0) {
-                this.memory.attackTime = 0;
-            }
+            deescalateDefcon(defcon);
         }
     }
 
-    displayAttackTime() {
-        if(this.attackTime == 0) return;
-        this.room.visual.text("Attack time: " + this.attackTime, 0, 1, { align: "left", color: "#faa", stroke: "#000" });
+    displayDefcon() {
+        let defcon = this.memory.defcon;
+        if(defcon.level === 0) return;
+        this.room.visual.text("Defcon " + defcon.level + "(" + defcon.progress + " T; CD: " + defcon.cooldown + " T)", 0, 1, { align: "left", color: "#faa", stroke: "#000" });
     }
 
     get gates() {
