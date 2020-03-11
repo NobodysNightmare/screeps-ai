@@ -39,9 +39,7 @@ module.exports = class DefenseAspect {
 
         let primaryHostile = this.defense.primaryHostile;
 
-        if(!this.roomai.canSpawn() || !primaryHostile) {
-            return;
-        }
+        if(!this.roomai.canSpawn() || this.defense.hostiles.length === 0) return;
 
         if(spawnHelper.localCreepsWithRole(this.roomai, reloader.name).length < 1 && this.room.controller.level >= 5) {
             this.roomai.spawn(reloader.parts, { role: reloader.name });

@@ -1,4 +1,5 @@
 const boosting = require("helper.boosting");
+const ff = require("helper.friendFoeRecognition");
 const movement = require("helper.movement");
 const spawnHelper = require("helper.spawning");
 
@@ -20,7 +21,7 @@ module.exports = {
             return;
         }
 
-        var target = Game.getObjectById(creep.room.memory.primaryHostile);
+        var target = ff.findHostiles(creep.room)[0];
         if(target) {
             this.attack(creep, target);
         } else if(movement.isOnExit(creep)) {

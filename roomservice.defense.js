@@ -20,20 +20,6 @@ module.exports = class Defense {
         return this._hostiles;
     }
 
-    get primaryHostile() {
-        let primaryHostile = Game.getObjectById(this.room.memory.primaryHostile);
-
-        if(!primaryHostile || primaryHostile.pos.roomName != this.room.name) {
-            primaryHostile = null;
-            if(this.hostiles.length > 0) {
-                primaryHostile = this.hostiles[0];
-            }
-
-            this.room.memory.primaryHostile = primaryHostile && primaryHostile.id;
-        }
-
-        return primaryHostile;
-    }
 
     get attackTime() {
         return this.memory.attackTime || 0;

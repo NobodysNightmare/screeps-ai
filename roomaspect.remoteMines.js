@@ -40,7 +40,6 @@ module.exports = class RemoteMinesAspect {
     spawnDefender(remoteRoom) {
         let remoteOwner = remoteRoom.controller.owner && remoteRoom.controller.owner.username;
         var hostile = ff.findHostiles(remoteRoom, { filter: (c) => c.owner.username !== remoteOwner })[0];
-        remoteRoom.memory.primaryHostile = hostile && hostile.id;
         if(!hostile) return false;
 
         if(!this.roomai.canSpawn()) return true;
