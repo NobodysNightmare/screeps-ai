@@ -10,6 +10,8 @@ const CACHE_TTL = 30;
 *           * Keep turrets supplied
 * Defcon 2: Attack that wasn't defeated within short time (strong NPCs?)
 *           * Spawn guards
+* Defcon 3: Guards were not able to defeat intruders
+*           * Boost guards
 * ...
 *
 * Fetch the current Defcon level using
@@ -19,7 +21,8 @@ const CACHE_TTL = 30;
 const DEFCONS = [
     { level: 0, escalateAt: 1, cooldown: 0 },
     { level: 1, escalateAt: 50, cooldown: 100 },
-    { level: 2, escalateAt: null, cooldown: 100 }
+    { level: 2, escalateAt: 500, cooldown: 300 },
+    { level: 3, escalateAt: null, cooldown: 500 }
 ]
 
 function escalateDefcon(defcon) {

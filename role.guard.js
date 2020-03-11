@@ -10,11 +10,16 @@ module.exports = {
         for(let parts = 25; parts >= 4; parts -= 1) {
             configs.push(spawnHelper.makeParts(parts, ATTACK, parts, MOVE));
         }
-        
+
         return configs;
     },
     run: function(creep) {
-        if(boosting.accept(creep, "XUH2O")) return;
+        if(creep.room.ai().defense.defcon >= 3) {
+            if(boosting.accept(creep, "XUH2O")) return;
+        } else {
+            // Avoid running back to booster after defcon increases
+            boosting.decline(creep, "XUH2O");
+        }
 
         let hostile = ff.findClosestHostileByRange(creep.pos);
         if(this.isOnRampart(creep)) {
