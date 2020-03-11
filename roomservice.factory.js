@@ -47,6 +47,10 @@ module.exports = class Factory {
         if(!receipe) return null;
         let missingComponents = _.filter(Object.keys(receipe.components), (r) => this.structure.store[r] < receipe.components[r]);
 
+        // TODO:
+        // * produce level-free components, if level-requiring product is not possible due to not being operated
+        // * do not produce level-free components that are only components of items not producible locally
+
         if(missingComponents.length == 0 && (!receipe.level || receipe.level == this.structure.level)) {
             return product;
         } else {
