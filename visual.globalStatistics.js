@@ -66,7 +66,8 @@ module.exports = {
                     progress: room.controller.progress,
                     progressTotal: room.controller.progressTotal
                 },
-                wallStrength: wallHits.length > 0 ? _.min(wallHits) : 0
+                wallStrength: wallHits.length > 0 ? _.min(wallHits) : 0,
+                defcon: room.ai().defense.defcon
             };
             if(room.storage) {
                 result[room.name].resources = {
