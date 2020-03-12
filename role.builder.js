@@ -2,7 +2,7 @@ const logistic = require("helper.logistic");
 const movement = require("helper.movement");
 
 const fullHealthEquiv = 50000;
-var emergencyHitPercent = 0.3;
+const emergencyHitPercent = 0.3;
 
 module.exports = {
     name: "builder",

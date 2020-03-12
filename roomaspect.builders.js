@@ -8,7 +8,7 @@ module.exports = class BuildersAspect {
     }
 
     run() {
-        if(!this.roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(this.roomai, builder.name) >= 2) {
+        if(!this.roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(this.roomai, builder.name) >= this.numberOfBuilders()) {
             return;
         }
 
@@ -17,12 +17,27 @@ module.exports = class BuildersAspect {
     }
 
     numberOfWorkParts() {
-        let constructionMass = _.sum(this.room.find(FIND_MY_CONSTRUCTION_SITES), (cs) => cs.progressTotal - cs.progress);
-        if(constructionMass >= 20000) {
+        if(this.constructionMass >= 20000) {
             return 20;
         } else {
-            return 6;
+            return 8;
         }
+    }
+
+    numberOfBuilders() {
+        if(this.constructionMass >= 5000) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
+
+    get constructionMass() {
+        if(this._constructionMass === undefined) {
+            this._constructionMass = _.sum(this.room.find(FIND_MY_CONSTRUCTION_SITES), (cs) => cs.progressTotal - cs.progress);
+        }
+
+        return this._constructionMass;
     }
 }
 
