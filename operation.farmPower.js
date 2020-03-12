@@ -15,6 +15,7 @@ module.exports = class FarmPowerOperation {
 
     run() {
         if(!this.roomai.canSpawn()) return;
+        if(this.roomai.defense.defcon >= 4) return;
 
         let targetRoom = Game.rooms[this.targetRoomName];
         let powerBank = targetRoom && targetRoom.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_POWER_BANK }).shift();

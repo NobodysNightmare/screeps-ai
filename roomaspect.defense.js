@@ -1,6 +1,6 @@
-var spawnHelper = require("helper.spawning");
-var guard = require("role.guard");
-var reloader = require("role.reloader");
+const spawnHelper = require("helper.spawning");
+const guard = require("role.guard");
+const reloader = require("role.reloader");
 
 const keyStructures = [
     STRUCTURE_SPAWN,
@@ -56,7 +56,7 @@ module.exports = class DefenseAspect {
 
         // TODO: determine number of defenders in a useful way
         if(spawnHelper.localCreepsWithRole(this.roomai, guard.name).length < 2) {
-            var parts = spawnHelper.bestAffordableParts(this.room, guard.configs(), true);
+            let parts = spawnHelper.bestAvailableParts(this.room, guard.configs(), true);
             this.roomai.spawn(parts, { role: guard.name });
         }
     }

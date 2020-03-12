@@ -10,6 +10,8 @@ module.exports = class MasonsAspect {
     }
 
     run() {
+        if(this.defense.defcon >= 4) this.roomai.labs.requestBoost("XLH2O", 60);
+
         if(!this.roomai.canSpawn() || _.filter(spawnHelper.globalCreepsWithRole(mason.name), (c) => c.memory.room == this.room.name).length >= this.masonCount()) {
             return;
         }
@@ -21,7 +23,7 @@ module.exports = class MasonsAspect {
     masonCount() {
         if(!this.room.storage) return 0;
 
-        return Math.max(this.neededForNukes(), this.neededForWalls());
+        return Math.max(this.neededForNukes(), this.neededForWalls(), this.neededForDefense());
     }
 
     neededForNukes() {
@@ -43,6 +45,12 @@ module.exports = class MasonsAspect {
         } else {
             return this.roomai.mode == "walls" ? 3 : 2;
         }
+    }
+
+    neededForDefense() {
+        if(this.roomai.defense.defcon >= 4) return 2;
+
+        return 0;
     }
 }
 

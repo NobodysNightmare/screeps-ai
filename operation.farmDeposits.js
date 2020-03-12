@@ -27,6 +27,8 @@ module.exports = class FarmDepositsOperation {
             this.flag.remove();
         }
 
+        if(this.roomai.defense.defcon >= 4) return;
+
         for(let roomName of this.room.memory.depositFarms) {
             this.performColdObservation(roomName);
 

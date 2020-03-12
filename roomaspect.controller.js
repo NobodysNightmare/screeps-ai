@@ -94,6 +94,8 @@ module.exports = class ControllerAspect {
     }
 
     energyPerTick() {
+        if(this.roomai.defense.defcon >= 4) return 4;
+
         let energy = 10;
 
         if(this.room.storage) {
@@ -118,6 +120,7 @@ module.exports = class ControllerAspect {
 
     upgraderCount() {
         if(this.room.controller.level == 8) return 1;
+        if(this.roomai.defense.defcon >= 4) return 1;
 
         if(this.room.storage) {
             if(this.room.storage.store.energy < this.lowLimit) {

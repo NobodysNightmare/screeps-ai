@@ -32,6 +32,8 @@ module.exports = class RemoteMinesAspect {
                     this.spawnCarrier(source);
                 }
             } else {
+                // TODO: restrict spawning to once every few (500?) ticks
+                //       (avoiding overproduction during siege)
                 this.spawnObserver(roomName);
             }
         }
@@ -43,6 +45,8 @@ module.exports = class RemoteMinesAspect {
         if(!hostile) return false;
 
         if(!this.roomai.canSpawn()) return true;
+        if(this.roomai.defense.defcon >= 3) return true;
+
         var hasDefender = _.any(spawnHelper.globalCreepsWithRole(defender.name), (c) => c.memory.room == remoteRoom.name);
         if(!hasDefender) {
             this.spawn(spawnHelper.bestAvailableParts(this.room, defender.meeleeConfigs()), { role: defender.name, room: remoteRoom.name, originRoom: this.room.name }, remoteRoom.name);

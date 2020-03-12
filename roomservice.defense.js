@@ -12,6 +12,10 @@ const CACHE_TTL = 30;
 *           * Spawn guards
 * Defcon 3: Guards were not able to defeat intruders
 *           * Boost guards
+*           * stop dangerous remote mining
+* Defcon 4: This is going to take a long time...
+*           * Keep walls fortified
+*           * Decrease non-vital spawn and energy load
 * ...
 *
 * Fetch the current Defcon level using
@@ -22,7 +26,8 @@ const DEFCONS = [
     { level: 0, escalateAt: 1, cooldown: 0 },
     { level: 1, escalateAt: 50, cooldown: 100 },
     { level: 2, escalateAt: 500, cooldown: 300 },
-    { level: 3, escalateAt: null, cooldown: 500 }
+    { level: 3, escalateAt: 1000, cooldown: 500 },
+    { level: 4, escalateAt: null, cooldown: 500 }
 ]
 
 function escalateDefcon(defcon) {
