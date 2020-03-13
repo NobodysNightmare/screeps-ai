@@ -15,7 +15,7 @@ module.exports = {
     },
     run: function(creep) {
         if(creep.room.name === creep.memory.room) {
-            if(creep.room.ai().defense.defcon >= 3) {
+            if(creep.room.ai() && creep.room.ai().defense.defcon >= 3) {
                 if(boosting.accept(creep, "XUH2O")) return;
             } else {
                 // Avoid running back to booster after defcon increases

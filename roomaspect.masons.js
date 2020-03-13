@@ -10,7 +10,7 @@ module.exports = class MasonsAspect {
     }
 
     run() {
-        if(this.defense.defcon >= 4) this.roomai.labs.requestBoost("XLH2O", 60);
+        if(this.roomai.defense.defcon >= 4) this.roomai.labs.requestBoost("XLH2O", 60);
 
         if(!this.roomai.canSpawn() || _.filter(spawnHelper.globalCreepsWithRole(mason.name), (c) => c.memory.room == this.room.name).length >= this.masonCount()) {
             return;
