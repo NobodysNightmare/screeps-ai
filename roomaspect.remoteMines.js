@@ -25,6 +25,7 @@ module.exports = class RemoteMinesAspect {
         for(var roomName of this.room.memory.remoteMines) {
             var remoteRoom = Game.rooms[roomName];
             if(remoteRoom) {
+                if(this.isInvaderRoom(remoteRoom)) continue;
                 if(this.spawnDefender(remoteRoom)) continue;
                 this.spawnReserver(remoteRoom);
                 for(let source of remoteRoom.find(FIND_SOURCES)) {
@@ -37,6 +38,11 @@ module.exports = class RemoteMinesAspect {
                 this.spawnObserver(roomName);
             }
         }
+    }
+
+    isInvaderRoom(remoteRoom) {
+        let remoteOwner = remoteRoom.controller.reservation && remoteRoom.controller.reservation.username;
+        return remoteOwner === 'Invader';
     }
 
     spawnDefender(remoteRoom) {
