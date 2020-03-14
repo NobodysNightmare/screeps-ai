@@ -143,7 +143,7 @@ module.exports = {
         return false;
     },
     deliverBoost: function(creep) {
-        let creepMineral = Object.keys(creep.store)[0];
+        let creepMineral = _.find(Object.keys(creep.store), (r) => r !== "energy");
         let target = null;
         if(_.sum(creep.store) > 0) {
             if(creepMineral) {
