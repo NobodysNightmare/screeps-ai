@@ -23,6 +23,9 @@ module.exports = {
     build: function(proxy, wall) {
         if(!wall.end) return;
 
+        // keeping number of construction sites in low-level rooms down
+        if(proxy.room.controller.level < 3) return;
+
         proxy.planConstruction(wall.end.x, wall.end.y, STRUCTURE_RAMPART);
         let lastWasWall = true;
         eachWallPosition(wall, (pos) => {
