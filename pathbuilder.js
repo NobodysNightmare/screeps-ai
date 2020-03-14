@@ -4,6 +4,8 @@ const AVOID_CREEPS_COST = 50;
 const AVOID_HOSTILE_COST = 5;
 const ROAD_COST = 1;
 
+const PORTAL_COST = 10;
+
 const TERRAIN_PLAIN = 0; // for whatever reason this has not been defined...
 
 const matrixCache = {
@@ -98,6 +100,8 @@ module.exports = class PathBuilder {
             blocked = blocked || (structure.structureType === STRUCTURE_RAMPART && !(structure.my || structure.isPublic));
             if(blocked) {
                 matrix.set(structure.pos.x, structure.pos.y, 255);
+            } else if(structure.structureType === STRUCTURE_PORTAL) {
+                matrix.set(structure.pos.x, structure.pos.y, Math.max(matrix.get(structure.pos.x, structure.pos.y), PORTAL_COST));
             }
         }
     }
