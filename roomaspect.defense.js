@@ -37,6 +37,9 @@ module.exports = class DefenseAspect {
         this.defense.updateDefcon();
         this.defense.displayDefcon();
 
+        // low-level rooms can't spawn anything meaningful in defense anyways
+        if(this.room.controller.level < 4) return;
+
         if(this.defense.defcon < 3) {
             // keep a reserve on stock unless boosters are otherwise needed
             this.roomai.labs.requestBoost("XUH2O", 20);
