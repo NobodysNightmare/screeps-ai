@@ -85,10 +85,10 @@ module.exports = {
         }
         let resources = [];
         if(reactor.inputSatisfied(0) && !reactor.inputFull(0)) {
-            resources.push({ type: reactor.baseMinerals[0], amount: reactor.inputs[0].store[reactor.inputs[0].mineralType] });
+            resources.push({ type: reactor.baseMinerals[0], amount: reactor.inputs[0].store[reactor.inputs[0].mineralType] || 0 });
         }
         if(reactor.inputSatisfied(1) && !reactor.inputFull(1)) {
-            resources.push({ type: reactor.baseMinerals[1], amount: reactor.inputs[1].store[reactor.inputs[1].mineralType] });
+            resources.push({ type: reactor.baseMinerals[1], amount: reactor.inputs[1].store[reactor.inputs[1].mineralType] || 0 });
         }
 
         resources = _.sortBy(_.filter(resources, (r) => creep.room.storage.store[r.type]), (r) => r.amount);
