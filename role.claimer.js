@@ -2,12 +2,12 @@ const movement = require("helper.movement");
 
 module.exports = {
     name: "claimer",
-    parts: [CLAIM, MOVE],
+    parts: [CLAIM, MOVE, MOVE],
     run: function(creep) {
         let flag = Game.flags[creep.memory.flag];
         if(!flag) return;
         if(creep.room.name != flag.pos.roomName) {
-            creep.travelTo(flag, { useFindRoute: true }); // Pathing quickfix (replace with goTo soonish)
+            creep.goTo(flag, { newPathing: true });
             return;
         }
 
@@ -18,7 +18,7 @@ module.exports = {
                 creep.signController(target, "Owned by Y Pact.");
             }
         } else if(claimResult == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.goTo(target, { newPathing: true });
         }
     }
 };
