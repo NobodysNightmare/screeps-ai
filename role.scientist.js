@@ -38,13 +38,14 @@ module.exports = {
                 creep.memory.state = "store";
                 return;
             } else {
-                // TODO: move to reactor rally point
-                target = reactor.outputs[0];
+                target = { pos: reactor.rallyPos, isRally: true };
             }
         }
 
-        if(creep.pos.isNearTo(target)) {
-            creep.transfer(target, resource);
+        let range = creep.pos.getRangeTo(target.pos);
+        let expectedRange = target.isRally ? 0 : 1;
+        if(range === expectedRange) {
+            if(!target.isRally) creep.transfer(target, resource);
             creep.memory.state = "pickAtReactor";
             this.pickAtReactor(creep, reactor);
         } else {
