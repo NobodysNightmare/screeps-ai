@@ -31,15 +31,16 @@ const DEFCONS = [
 ]
 
 function escalateDefcon(defcon) {
-    defcon.progress += 1;
-
     let reference = DEFCONS[defcon.level];
+
+    defcon.progress += 1;
+    defcon.cooldown = Math.min(defcon.cooldown + 1, reference.cooldown);
+
     if(reference.escalateAt && defcon.progress >= reference.escalateAt) {
         defcon.level += 1;
         defcon.progress = 0;
+        defcon.cooldown = DEFCONS[defcon.level].cooldown;
     }
-
-    defcon.cooldown = DEFCONS[defcon.level].cooldown;
 }
 
 function deescalateDefcon(defcon) {
