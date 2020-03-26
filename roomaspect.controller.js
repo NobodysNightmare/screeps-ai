@@ -38,7 +38,11 @@ module.exports = class ControllerAspect {
             roads.buildRoadAround(this.room, this.controller.pos);
         }
 
-        this.roomai.labs.requestBoost("XGH2O", 10);
+        if(this.roomai.mode === "gcl") {
+            this.roomai.labs.requestBoost("XGH2O", 20);
+        } else {
+            this.roomai.labs.unloadBoost("XGH2O");
+        }
     }
 
     buildUpgraders() {

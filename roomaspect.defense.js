@@ -42,7 +42,7 @@ module.exports = class DefenseAspect {
 
         if(this.defense.defcon < 3) {
             // keep a reserve on stock unless boosters are otherwise needed
-            this.roomai.labs.requestBoost("XUH2O", 20);
+            this.roomai.labs.requestBoost("XUH2O", 10);
         } else {
             this.roomai.labs.requestBoost("XUH2O", 80);
         }

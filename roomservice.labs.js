@@ -250,6 +250,13 @@ module.exports = class Labs {
         this.boostPriorities[compound] = Math.max(priority, this.boostPriorities[compound] || 0);
     }
 
+    unloadBoost(compound) {
+        let loadedBoosters = _.filter(this.boosters, (b) => b.resource === compound);
+        for(let booster of loadedBoosters) {
+            booster.resource = null;
+        }
+    }
+
     selectPrioritizedBoosts() {
         let requestedBoosts = _.map(_.sortBy(_.pairs(this.boostPriorities), (a) => -a[1]), (a) => a[0]);
         requestedBoosts = _.take(requestedBoosts, this.boosters.length);
