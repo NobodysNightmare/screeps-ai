@@ -36,11 +36,11 @@ const powerRoles = [
 const ConstructionSitesCleaner = require("cleaner.constructionSites");
 const logistic = require("helper.logistic");
 
-const statsVisual = require("visual.globalStatistics");
+const globalStatistics = require("global.statistics");
 const profitVisual = require("visual.roomProfit");
 
-const ShardTravel = require("helper.shardTravel");
-const TradeLogger = require("helper.tradeLogger");
+const ShardTravel = require("global.shardTravel");
+const TradeLogger = require("global.tradeLogger");
 
 require("patch.controller");
 require("patch.creep");
@@ -84,7 +84,7 @@ runCreeps = profiler.registerFN(runCreeps, 'Creep Actions');
 
 module.exports.loop = function() {
     profiler.wrap(function() {
-        statsVisual.initialize();
+        globalStatistics.initialize();
         if(Memory.lastCompletedTick < Game.time - 1) {
             Memory.stats.skippedTicks += 1;
         }
@@ -124,7 +124,7 @@ module.exports.loop = function() {
 
         new TradeLogger().logTrades();
 
-        statsVisual.run();
+        globalStatistics.run();
         profitVisual.run();
 
         Memory.lastCompletedTick = Game.time;
