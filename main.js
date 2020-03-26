@@ -40,6 +40,7 @@ const statsVisual = require("visual.globalStatistics");
 const profitVisual = require("visual.roomProfit");
 
 const ShardTravel = require("helper.shardTravel");
+const TradeLogger = require("helper.tradeLogger");
 
 require("patch.controller");
 require("patch.creep");
@@ -120,6 +121,8 @@ module.exports.loop = function() {
         }
 
         new ConstructionSitesCleaner().run();
+
+        new TradeLogger().logTrades();
 
         statsVisual.run();
         profitVisual.run();

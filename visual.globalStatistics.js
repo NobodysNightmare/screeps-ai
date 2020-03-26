@@ -52,7 +52,8 @@ module.exports = {
                 X: _.sum(myRooms, (r) => r.storage.store.X),
                 power: _.sum(myRooms, (r) => r.storage.store.power)
             },
-            creeps: Object.keys(Game.creeps).length
+            creeps: Object.keys(Game.creeps).length,
+            playerTrades: Memory.tradeLogs && Memory.tradeLogs.players
         };
     },
     roomStats: function(myRooms) {
