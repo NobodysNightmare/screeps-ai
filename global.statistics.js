@@ -25,6 +25,7 @@ module.exports = {
         stats.gameTime = Game.time;
         stats.gcl = Game.gcl;
         stats.gpl = Game.gpl;
+        stats.credits = Game.market.credits;
         stats.empire = this.empireStats(myRooms);
         stats.rooms = this.roomStats(myRooms);
         stats.memory = {
