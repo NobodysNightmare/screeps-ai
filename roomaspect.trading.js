@@ -52,7 +52,7 @@ module.exports = class TradingAspect {
     performManualExport(resource) {
         let exportDescription = this.trading.manualExports[resource];
         if(!exportDescription) return false;
-        
+
         let exportable = Math.min(exportDescription.amount, this.terminal.store[resource] || 0);
         exportable = Math.min(exportable, MAX_TRANSFER);
         if(exportable >= 100) {
@@ -78,15 +78,22 @@ module.exports = class TradingAspect {
 
         return false;
     }
-    
+
     provideSupport(resource, amount) {
-        if(!Memory.resourceSupport || !Memory.resourceSupport[resource]) return false;
-        
-        let target = Memory.resourceSupport[resource].shift();
+        let requests = Memory.tradeRequests;
+        if(!requests || !requests[resource]) return false;
+
+        let target = requests[resource].shift();
         if(!target) return false;
-        Memory.resourceSupport[resource].push(target);
-        
-        this.terminal.send(resource, Math.min(amount, MAX_TRANSFER), target, "Supporting allied forces");
+
+        let sendingAmount = Math.min(amount, target.amount, MAX_TRANSFER);
+        this.terminal.send(resource, sendingAmount, target.room, "Supporting allied forces");
+        target.amount -= sendingAmount;
+
+        if(target.amount > 0) {
+            requests[resource].push(target);
+        }
+
         return true;
     }
 
@@ -95,7 +102,7 @@ module.exports = class TradingAspect {
         if(amount < 100) return;
         let sales = Game.market.getAllOrders((o) => o.type == "sell" && o.resourceType == resource && o.remainingAmount > 100);
         let minPrice = _.min(sales, 'price').price * 0.90;
-        
+
         let buyers = Game.market.getAllOrders((o) => o.type == "buy" && o.resourceType == resource && o.amount > 0 && o.price >= minPrice);
         buyers = _.sortBy(buyers, (b) => Game.map.getRoomLinearDistance(b.roomName, this.room.name, true));
         let buyer = _.sortBy(buyers, (b) => -b.price).shift();
@@ -110,11 +117,11 @@ module.exports = class TradingAspect {
 
         Game.market.deal(buyer.id, dealAmount, this.room.name);
     }
-    
+
     sellToNpcs(resource, amount) {
         amount = _.min([amount, this.terminal.store[resource]]);
         if(amount < 100) return;
-        
+
         let buyers = Game.market.getAllOrders((o) => o.type == "buy" && o.resourceType == resource && o.amount > 0 && npcRoomRegex.exec(o.roomName));
         buyers = _.sortBy(buyers, (b) => Game.map.getRoomLinearDistance(b.roomName, this.room.name, true));
         let buyer = _.sortBy(buyers, (b) => -b.price).shift();
@@ -136,7 +143,7 @@ module.exports = class TradingAspect {
             this.roomai.spawn(trader.parts, { role: trader.name });
         }
     }
-    
+
     drawManualExports() {
         let yOffset = 0;
         for(let resource in this.trading.manualExports) {
