@@ -39,6 +39,7 @@ const logistic = require("helper.logistic");
 const globalStatistics = require("global.statistics");
 const profitVisual = require("visual.roomProfit");
 
+const SegmentScanner = require("global.segmentScanner");
 const ShardTravel = require("global.shardTravel");
 const TradeLogger = require("global.tradeLogger");
 
@@ -112,6 +113,8 @@ module.exports.loop = function() {
         suppressErrors(() => ShardTravel.announceDepartures());
 
         if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
+
+        suppressErrors(() => new SegmentScanner().run());
 
         for(let roomName in Game.rooms) {
             let room = Game.rooms[roomName];
