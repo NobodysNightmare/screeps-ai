@@ -31,7 +31,7 @@ module.exports = class LabsAspect {
         }
 
         this.buildScientists();
-        
+
         for(let booster of this.boosters) {
             booster.renderVisuals();
         }
@@ -39,7 +39,7 @@ module.exports = class LabsAspect {
 
     updateDeficits() {
         for(let compound of targetCompounds) {
-            this.deficits[compound] = Math.max(0, this.roomai.trading.baselineAmount(compound) - this.amount(compound));
+            this.deficits[compound] = Math.max(0, this.roomai.trading.maxStorageAmount(compound) - this.amount(compound));
         }
     }
 
@@ -78,10 +78,11 @@ module.exports = class LabsAspect {
     amount(resource) {
         if(!resource) return 0;
         let storageAmount = this.room.storage.store[resource] || 0;
+        let terminalAmount = (this.room.terminal && this.room.terminal.store[resource]) || 0;
         let labAmount = _.sum(_.filter(this.labs, (l) => l.mineralType == resource), (l) => l.mineralAmount);
         let scientistAmount = _.sum(this.scientists, (c) => c.carry[resource] || 0);
 
-        return storageAmount + labAmount + scientistAmount;
+        return storageAmount + terminalAmount + labAmount + scientistAmount;
     }
 
     buildScientists() {

@@ -7,6 +7,54 @@ const NPC_ONLY_SALES = true;
 
 const npcRoomRegex = /^[WE][0-9]*0[NS][0-9]*0$/;
 
+class DemandCache {
+    constructor(demandCallback) {
+        this.demandCallback = demandCallback;
+        this.resources = {};
+        this.currentTick = 0;
+    }
+
+    // returns an object with :room and :miss, indicating which rooms needs
+    // the resource next and how many.
+    chooseRecipient(resource) {
+        this.ensureValidCache();
+        let targets = this.resources[resource];
+        if(!targets) {
+            targets = _.map(_.filter(Game.rooms, (r) => r.ai() && r.ai().trading.isTradingPossible() && _.sum(r.terminal.store) < TERMINAL_MAX_FILL), (r) => ({ room: r, miss: this.demandCallback(r.ai(), resource) }));
+            this.resources[resource] = targets;
+            targets = this.updateTargetList(resource);
+        }
+
+        return targets[0];
+    }
+
+    reduceMiss(room, resource, amount) {
+        let targets = this.resources[resource];
+        if(!targets) return;
+
+        let target = _.find(targets, (t) => t.room === room);
+        if(target) {
+            target.miss -= amount;
+            this.updateTargetList(resource);
+        }
+    }
+
+    ensureValidCache() {
+        if(Game.time !== this.currentTick) {
+            this.resources = {};
+            this.currentTick = Game.time;
+        }
+    }
+
+    updateTargetList(resource) {
+        this.resources[resource] = _.sortBy(_.filter(this.resources[resource], (t) => t.miss > 0), (t) => -t.miss);
+        return this.resources[resource];
+    }
+}
+
+const possibleImportCache = new DemandCache((ai, resource) => ai.trading.possibleImportToRoom(resource));
+const requiredImportCache = new DemandCache((ai, resource) => ai.trading.requiredImportToRoom(resource));
+
 module.exports = class TradingAspect {
     constructor(roomai) {
         this.roomai = roomai;
@@ -18,35 +66,66 @@ module.exports = class TradingAspect {
 
     run() {
         if(!this.trading.isTradingPossible()) return;
-        this.transferExcessResource();
+        this.transferResources();
         this.buildTrader();
         this.drawManualExports();
     }
 
-    transferExcessResource() {
+    transferResources() {
         if(this.terminal.cooldown) return;
+
         // reversing to avoid selling off energy before transfering mats
         let resources = Object.keys(this.terminal.store).reverse();
+        this.transferManualExports(resources) ||
+            this.transferResourcesAboveMaximum(resources) ||
+            this.transferResourcesAboveMinimum(resources);
+    }
+
+    transferManualExports(resources) {
         for(var resource of resources) {
-            if(this.performManualExport(resource)) return;
-            let exportable = this.trading.possibleExportFromRoom(resource);
+            if(this.performManualExport(resource)) return true;
+        }
+
+        return false;
+    }
+
+    transferResourcesAboveMaximum(resources) {
+        for(var resource of resources) {
+            let exportable = this.trading.requiredExportFromRoom(resource);
             if(exportable >= 100) {
-                if(this.balanceToEmpire(resource, exportable)) {
-                    return;
+                if(this.balanceToEmpire(resource, exportable, possibleImportCache)) {
+                    return true;
                 } else if(this.provideSupport(resource, exportable)) {
-                    return;
+                    return true;
                 } else if(Game.time % 200 === 50) {
                     let sellable = this.trading.sellableAmount(resource);
                     if(sellable >= 100) {
                         if(NPC_ONLY_SALES) {
-                            return this.sellToNpcs(resource, sellable);
+                            this.sellToNpcs(resource, sellable);
+                            return true;
                         } else {
-                            return this.sellToFreeMarket(resource, sellable);
+                            this.sellToFreeMarket(resource, sellable);
+                            return true;
                         }
                     }
                 }
             }
         }
+
+        return false;
+    }
+
+    transferResourcesAboveMinimum(resources) {
+        for(var resource of resources) {
+            let exportable = this.trading.possibleExportFromRoom(resource);
+            if(exportable >= 100) {
+                if(this.balanceToEmpire(resource, exportable, requiredImportCache)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     performManualExport(resource) {
@@ -68,11 +147,12 @@ module.exports = class TradingAspect {
         return false;
     }
 
-    balanceToEmpire(resource, amount) {
-        let targets = _.map(_.filter(Game.rooms, (r) => r.ai() && r.ai().trading.isTradingPossible() && _.sum(r.terminal.store) < TERMINAL_MAX_FILL), (r) => ({ room: r, miss: r.ai().trading.neededImportToRoom(resource) }));
-        let choice = _.sortBy(_.filter(targets, (t) => t.miss > 0), (t) => -t.miss)[0];
+    balanceToEmpire(resource, amount, cache) {
+        let choice = cache.chooseRecipient(resource);
         if(choice) {
-            this.terminal.send(resource, Math.min(amount, MAX_TRANSFER, Math.max(100, choice.miss)), choice.room.name, "empire balancing");
+            let sentAmount = Math.min(amount, MAX_TRANSFER, Math.max(100, choice.miss));
+            this.terminal.send(resource, sentAmount, choice.room.name, "empire balancing");
+            cache.reduceMiss(choice.room, resource, sentAmount);
             return true;
         }
 

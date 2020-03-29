@@ -9,6 +9,9 @@ const baseMinerals = [
 const rawCommodities = [RESOURCE_MIST, RESOURCE_BIOMASS, RESOURCE_METAL, RESOURCE_SILICON];
 const refinedCommodities = Object.keys(COMMODITIES).filter((r) => r.length > 1 && !rawCommodities.includes(r) && r != "energy");
 
+// TODO: remove duplication with labs aspect and selling blacklist
+const producedCompounds = ["XUH2O", "XLH2O", "XLHO2", "XGHO2", "XZHO2", "XZH2O", "XGH2O", "G", "OH"];
+
 const maximumExportBuffer = 2000;
 
 module.exports = class Trading {
@@ -59,7 +62,7 @@ module.exports = class Trading {
     neededImportToStorage(resource) {
         if(resource === RESOURCE_ENERGY && this.terminal.store[resource] <= this.terminalEnergyBuffer) return 0;
 
-        let baselineMiss = this.baselineAmount(resource) - (this.storage.store[resource] || 0);
+        let baselineMiss = this.minNeededAmount(resource) - (this.storage.store[resource] || 0);
         let amountInTerminal = this.terminal.store[resource];
 
         let manualExport = this.manualExports[resource];
@@ -82,62 +85,113 @@ module.exports = class Trading {
             return Math.max(0, manualExport.amount - amountInTerminal);
         }
 
-        return Math.max(0, Math.min(this.storage.store[resource] - this.baselineAmount(resource), maximumExportBuffer - amountInTerminal));
+        return Math.max(0, Math.min(this.storage.store[resource] - this.minNeededAmount(resource), maximumExportBuffer - amountInTerminal));
     }
 
-    possibleExportFromRoom(resource) {
-        let amountInTerminal = this.terminal.store[resource] || 0;
-        let amountInStorage = this.storage.store[resource] || 0;
-        let excessAmount = amountInTerminal + amountInStorage - this.baselineAmount(resource);
+    // amount of the resource that needs to be evicted from the room because it is
+    // over the maximum alloted amount
+    requiredExportFromRoom(resource) {
+        let amountInTerminal = this.terminal.store[resource];
+        let amountInStorage = this.storage.store[resource];
+        let excessAmount = amountInTerminal + amountInStorage - this.maxStorageAmount(resource);
         return Math.min(amountInTerminal, excessAmount);
     }
 
-    neededImportToRoom(resource) {
-        let amountInTerminal = this.terminal.store[resource] || 0;
-        let amountInStorage = this.storage.store[resource] || 0;
-        return Math.max(0, this.baselineAmount(resource) - (amountInTerminal + amountInStorage));
+    // amount that could be exported from the room, if there is demand elsewhere
+    possibleExportFromRoom(resource) {
+        let amountInTerminal = this.terminal.store[resource];
+        let amountInStorage = this.storage.store[resource];
+        let excessAmount = amountInTerminal + amountInStorage - this.minNeededAmount(resource);
+        return Math.min(amountInTerminal, excessAmount);
+    }
+
+    // amount that need to be imported into the room, because it currently has less
+    // than it wants to have
+    requiredImportToRoom(resource) {
+        let amountInTerminal = this.terminal.store[resource];
+        let amountInStorage = this.storage.store[resource];
+        return Math.max(0, this.minNeededAmount(resource) - (amountInTerminal + amountInStorage));
+    }
+
+    // amount that could be imported into the room, because there is capacity for the resource
+    // left
+    possibleImportToRoom(resource) {
+        let amountInTerminal = this.terminal.store[resource];
+        let amountInStorage = this.storage.store[resource];
+        return Math.max(0, this.maxStorageAmount(resource) - (amountInTerminal + amountInStorage));
     }
 
     sellableAmount(resource) {
         if(this.sellingBlacklist.includes(resource)) return 0;
-        return this.possibleExportFromRoom(resource);
+        return this.requiredExportFromRoom(resource);
     }
 
-    baselineAmount(resource) {
-        if(this.room.ai().mode === "unclaim") {
-            if(resource == RESOURCE_ENERGY) return 30000;
+    // The room wants to have at least this much of a resource in stock
+    // (e.g. because it is needed internally).
+    // if it goes above this level, it will start sharing with other rooms that
+    // did not yet fill their minimum need.
+    minNeededAmount(resource) {
+        if(this.room.ai().mode === "unclaim") return 0;
 
-            return 0;
-        }
-
-        if(resource == RESOURCE_ENERGY) {
-            if(this.room.ai().mode === "support") return 350000;
-
-            return 600000;
-        }
+        if(resource == RESOURCE_ENERGY) return 350000;
 
         if(resource == RESOURCE_POWER) {
-            if(this.room.powerSpawn()) return 15000;
+            if(this.room.powerSpawn()) return 1000;
             return 0;
         }
 
-        if(baseMinerals.includes(resource)) return 20000;
-
-        if(rawCommodities.includes(resource)) {
-            if(this.room.ai().factory.isAvailable()) {
-                // TODO: only for relevant factory rooms
-                return 5000;
+        if(baseMinerals.includes(resource)) {
+            if(this.room.ai().labs.reactor && this.room.ai().labs.reactor.isValid()) {
+                return 10000;
             } else {
                 return 0;
             }
         }
 
-        if(refinedCommodities.includes(resource)) {
-            // TODO: only for relevant factory rooms
-            return 1000;
+        if(producedCompounds.includes(resource)) return 10000;
+
+        if(rawCommodities.includes(resource) || refinedCommodities.includes(resource)) {
+            if(this.room.ai().factory.isAvailable()) {
+                return 2000;
+            } else {
+                return 0;
+            }
         }
 
-        return 15000;
+        return 0;
+    }
+
+    // The room can afford keeping this much of a resource in stock, acting
+    // as a reserve.
+    // it really doesn't want to have more than that.
+    maxStorageAmount(resource) {
+        if(resource == RESOURCE_ENERGY) {
+            if(this.room.ai().mode === "unclaim") return 30000;
+            if(this.room.ai().mode === "support") return 350000;
+
+            return 600000;
+        }
+
+        if(this.room.ai().mode === "unclaim") return 0;
+
+        if(resource == RESOURCE_POWER) {
+            if(this.room.powerSpawn()) return 15000;
+            return 5000;
+        }
+
+        if(baseMinerals.includes(resource)) return 20000;
+
+        if(producedCompounds.includes(resource)) return 15000;
+
+        if(rawCommodities.includes(resource) || refinedCommodities.includes(resource)) {
+            if(this.room.ai().factory.isAvailable()) {
+                return 5000;
+            } else {
+                return 1000;
+            }
+        }
+
+        return 5000;
     }
 
     get manualExports() {
