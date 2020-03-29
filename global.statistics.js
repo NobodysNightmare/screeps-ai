@@ -1,5 +1,13 @@
 const refreshInterval = 5;
 
+function totalAmount(room, resource) {
+    if(room.terminal) {
+        return room.storage.store[resource] + room.terminal.store[resource];
+    } else {
+        return room.storage.store[resource];
+    }
+}
+
 module.exports = {
     initialize: function() {
       if(!Memory.stats) Memory.stats = {
@@ -43,15 +51,15 @@ module.exports = {
 
         return {
             resources: {
-                energy: _.sum(myRooms, (r) => r.storage.store.energy),
-                H: _.sum(myRooms, (r) => r.storage.store.H),
-                O: _.sum(myRooms, (r) => r.storage.store.O),
-                Z: _.sum(myRooms, (r) => r.storage.store.Z),
-                K: _.sum(myRooms, (r) => r.storage.store.K),
-                L: _.sum(myRooms, (r) => r.storage.store.L),
-                U: _.sum(myRooms, (r) => r.storage.store.U),
-                X: _.sum(myRooms, (r) => r.storage.store.X),
-                power: _.sum(myRooms, (r) => r.storage.store.power)
+                energy: _.sum(myRooms, (r) => totalAmount(r, "energy")),
+                H: _.sum(myRooms, (r) => totalAmount(r, "H")),
+                O: _.sum(myRooms, (r) => totalAmount(r, "O")),
+                Z: _.sum(myRooms, (r) => totalAmount(r, "Z")),
+                K: _.sum(myRooms, (r) => totalAmount(r, "K")),
+                L: _.sum(myRooms, (r) => totalAmount(r, "L")),
+                U: _.sum(myRooms, (r) => totalAmount(r, "U")),
+                X: _.sum(myRooms, (r) => totalAmount(r, "X")),
+                power: _.sum(myRooms, (r) => totalAmount(r, "power"))
             },
             creeps: Object.keys(Game.creeps).length,
             playerTrades: Memory.tradeLogs && Memory.tradeLogs.players
