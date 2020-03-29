@@ -9,6 +9,8 @@ const baseMinerals = [
 const rawCommodities = [RESOURCE_MIST, RESOURCE_BIOMASS, RESOURCE_METAL, RESOURCE_SILICON];
 const refinedCommodities = Object.keys(COMMODITIES).filter((r) => r.length > 1 && !rawCommodities.includes(r) && r != "energy");
 
+const maximumExportBuffer = 2000;
+
 module.exports = class Trading {
     constructor(room) {
         this.room = room;
@@ -58,14 +60,14 @@ module.exports = class Trading {
         if(resource === RESOURCE_ENERGY && this.terminal.store[resource] <= this.terminalEnergyBuffer) return 0;
 
         let baselineMiss = this.baselineAmount(resource) - (this.storage.store[resource] || 0);
+        let amountInTerminal = this.terminal.store[resource];
 
         let manualExport = this.manualExports[resource];
         if(manualExport) {
-            let amountInTerminal = this.terminal.store[resource] || 0;
             return Math.max(0, Math.min(amountInTerminal - manualExport.amount, baselineMiss));
         }
 
-        return Math.max(0, baselineMiss);
+        return Math.max(0, baselineMiss, amountInTerminal - maximumExportBuffer);
     }
 
     get resourcesExportableFromStorage() {
@@ -73,13 +75,14 @@ module.exports = class Trading {
     }
 
     possibleExportFromStorage(resource) {
+        let amountInTerminal = this.terminal.store[resource];
+
         let manualExport = this.manualExports[resource];
         if(manualExport) {
-            let amountInTerminal = this.terminal.store[resource] || 0;
             return Math.max(0, manualExport.amount - amountInTerminal);
         }
 
-        return Math.max(0, (this.storage.store[resource] || 0) - this.baselineAmount(resource));
+        return Math.max(0, Math.min(this.storage.store[resource] - this.baselineAmount(resource), maximumExportBuffer - amountInTerminal));
     }
 
     possibleExportFromRoom(resource) {
