@@ -110,6 +110,8 @@ module.exports = class Trading {
     // than it wants to have
     requiredImportToRoom(resource) {
         let amountInTerminal = this.terminal.store[resource];
+        if(resource === RESOURCE_ENERGY) amountInTerminal -= this.terminalEnergyBuffer;
+
         let amountInStorage = this.storage.store[resource];
         return Math.max(0, this.minNeededAmount(resource) - (amountInTerminal + amountInStorage));
     }
@@ -134,7 +136,7 @@ module.exports = class Trading {
     minNeededAmount(resource) {
         if(this.room.ai().mode === "unclaim") return 0;
 
-        if(resource == RESOURCE_ENERGY) return 350000;
+        if(resource == RESOURCE_ENERGY) return 250000;
 
         if(resource == RESOURCE_POWER) {
             if(this.room.powerSpawn()) return 1000;
