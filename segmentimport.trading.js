@@ -89,4 +89,4 @@ module.exports = class SegmentTrading {
 }
 
 const profiler = require("screeps-profiler");
-profiler.registerClass(module.exports, 'SegmentTrading');
+profiler.registerClass(module.exports, 'SegmentTradingImport');

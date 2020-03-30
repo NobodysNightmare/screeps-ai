@@ -40,6 +40,7 @@ const globalStatistics = require("global.statistics");
 const profitVisual = require("visual.roomProfit");
 
 const SegmentScanner = require("global.segmentScanner");
+const SegmentExport = require("global.segmentExport");
 const ShardTravel = require("global.shardTravel");
 const TradeLogger = require("global.tradeLogger");
 
@@ -129,6 +130,12 @@ module.exports.loop = function() {
 
         globalStatistics.run();
         profitVisual.run();
+
+        suppressErrors(() => new SegmentExport().run());
+
+        RawMemory.setActiveSegments([98, 99]);
+        RawMemory.setPublicSegments([98]);
+        RawMemory.setDefaultPublicSegment(98);
 
         Memory.lastCompletedTick = Game.time;
     });

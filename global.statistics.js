@@ -22,7 +22,6 @@ module.exports = {
     refresh: function() {
         Memory.stats.avgCpu += Game.cpu.getUsed() / refreshInterval; // TODO: calculate on regular memory
 
-        if(Game.time % refreshInterval == refreshInterval - 1) RawMemory.setActiveSegments([99]);
         if(Game.time % refreshInterval !== 0) return;
 
         let stats = {}
