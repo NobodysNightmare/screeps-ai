@@ -70,7 +70,7 @@ module.exports = class SegmentTrading {
             if(resource === "room") continue;
 
             if(this.basicTrades[resource]) {
-                this.addTradeRequest(resource, 100, this.basicTrades.room);
+                this.addTradeRequest(resource, 250, this.basicTrades.room);
             }
         }
     }
