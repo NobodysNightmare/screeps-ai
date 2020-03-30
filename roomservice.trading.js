@@ -10,8 +10,8 @@ const rawCommodities = [RESOURCE_MIST, RESOURCE_BIOMASS, RESOURCE_METAL, RESOURC
 const refinedCommodities = Object.keys(COMMODITIES).filter((r) => r.length > 1 && !rawCommodities.includes(r) && r != "energy");
 
 // TODO: remove duplication with labs aspect and selling blacklist
-const producedCompounds = ["XUH2O", "XLH2O", "XLHO2", "XGHO2", "XZHO2", "XZH2O", "XGH2O", "XKHO2", "G", "OH"];
-const intermediateCompounds = Object.keys(REACTIONS);
+const t3Boosts = ["XUH2O", "XLH2O", "XLHO2", "XGHO2", "XZHO2", "XZH2O", "XGH2O", "XKHO2"];
+const intermediateCompounds = Object.keys(REACTIONS).filter((c) => !baseMinerals.includes(c));
 
 const maximumExportBuffer = 2000;
 
@@ -149,11 +149,12 @@ module.exports = class Trading {
             }
         }
 
-        if(producedCompounds.includes(resource)) return 10000;
+        if(t3Boosts.includes(resource)) return 10000;
+        if(resource === "G") return 5000;
 
-        // TODO: ensures that compounds don't get stuck in terminal
-        // we should actually consider the current reaction for this,
-        // so that materials are shifted towards the right reactors
+        // ensures that compounds don't get stuck in terminal
+        // TODO: should we actually consider the current reaction for this,
+        // so that materials are shifted towards the right reactors?
         if(intermediateCompounds.includes(resource)) {
             if(this.room.ai().labs.reactor && this.room.ai().labs.reactor.isValid()) {
                 return 2500;
@@ -192,8 +193,8 @@ module.exports = class Trading {
         }
 
         if(baseMinerals.includes(resource)) return 20000;
-
-        if(producedCompounds.includes(resource)) return 15000;
+        if(t3Boosts.includes(resource)) return 15000;
+        if(resource === "G") return 10000;
 
         if(rawCommodities.includes(resource) || refinedCommodities.includes(resource)) {
             if(this.room.ai().factory.isAvailable()) {
