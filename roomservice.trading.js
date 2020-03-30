@@ -10,7 +10,7 @@ const rawCommodities = [RESOURCE_MIST, RESOURCE_BIOMASS, RESOURCE_METAL, RESOURC
 const refinedCommodities = Object.keys(COMMODITIES).filter((r) => r.length > 1 && !rawCommodities.includes(r) && r != "energy");
 
 // TODO: remove duplication with labs aspect and selling blacklist
-const producedCompounds = ["XUH2O", "XLH2O", "XLHO2", "XGHO2", "XZHO2", "XZH2O", "XGH2O", "G", "OH"];
+const producedCompounds = ["XUH2O", "XLH2O", "XLHO2", "XGHO2", "XZHO2", "XZH2O", "XGH2O", "XKHO2", "G", "OH"];
 
 const maximumExportBuffer = 2000;
 

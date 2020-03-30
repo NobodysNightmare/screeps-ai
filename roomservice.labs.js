@@ -10,6 +10,7 @@ const DECOMPOSITIONS = {
     LO: ["L", "O"],
     GH: ["G", "H"],
     GO: ["G", "O"],
+    KO: ["K", "O"],
     UH: ["U", "H"],
     ZH: ["Z", "H"],
     ZO: ["Z", "O"],
@@ -18,6 +19,7 @@ const DECOMPOSITIONS = {
     LHO2: ["LO", "OH"],
     GH2O: ["GH", "OH"],
     GHO2: ["GO", "OH"],
+    KHO2: ["KO", "OH"],
     UH2O: ["UH", "OH"],
     ZH2O: ["ZH", "OH"],
     ZHO2: ["ZO", "OH"],
@@ -26,6 +28,7 @@ const DECOMPOSITIONS = {
     XLHO2: ["X", "LHO2"],
     XGH2O: ["X", "GH2O"],
     XGHO2: ["X", "GHO2"],
+    XKHO2: ["X", "KHO2"],
     XUH2O: ["X", "UH2O"],
     XZH2O: ["X", "ZH2O"],
     XZHO2: ["X", "ZHO2"]
