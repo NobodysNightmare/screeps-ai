@@ -1,3 +1,4 @@
+const boosting = require("helper.boosting");
 const ff = require("helper.friendFoeRecognition");
 const movement = require("helper.movement");
 
@@ -5,8 +6,10 @@ module.exports = {
     name: "ranger",
     configs: function() {
         let configs = [];
+        let maxHeal = 5;
         for(let strength = 25; strength >= 5; strength -= 1) {
-            let config = Array(strength - 2).fill(RANGED_ATTACK).concat(Array(strength).fill(MOVE)).concat(Array(2).fill(HEAL));
+            let heal = Math.min(5, Math.floor(strength / 2));
+            let config = Array(strength - heal).fill(RANGED_ATTACK).concat(Array(strength).fill(MOVE)).concat(Array(heal).fill(HEAL));
             if(config.length <= 50) configs.push(config);
         }
 
@@ -14,7 +17,9 @@ module.exports = {
     },
     run: function(creep) {
         creep.heal(creep);
-        
+
+        if(boosting.accept(creep, "XLHO2", "XKHO2")) return;
+
         var flag = Game.flags[creep.memory.flag];
         if(creep.pos.roomName == flag.pos.roomName) {
             this.attackRoom(creep);
@@ -24,10 +29,10 @@ module.exports = {
     },
     attackRoom: function(creep) {
         let hostiles = ff.findHostiles(creep.room);
-        
+
         hostiles = _.sortBy(_.sortBy(hostiles, (h) => h.pos.getRangeTo(creep)), (h) => _.some(h.body, (p) => p.type === ATTACK || p.type === RANGED_ATTACK) ? 0 : 1);
         let target = hostiles[0];
-        
+
         if(target) {
             this.attack(creep, target);
         } else {
@@ -52,7 +57,7 @@ module.exports = {
                 this.shoot(creep, dangerousHostiles[0] || closeHostiles[0]);
             }
         }
-        
+
         if(dangerousHostiles.length > 0) {
             creep.fleeFrom(dangerousHostiles, 3);
         } else {

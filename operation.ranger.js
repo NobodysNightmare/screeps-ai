@@ -2,14 +2,17 @@ const spawnHelper = require("helper.spawning");
 const ranger = require("role.ranger");
 
 module.exports = class RangerOperation {
-    constructor(roomai, targetFlag, count) {
+    constructor(roomai, targetFlag, count, attackSetup) {
         this.roomai = roomai;
         this.room = roomai.room;
         this.targetFlag = targetFlag;
         this.rangerCount = count;
+        this.useBoost = attackSetup > 1;
     }
 
     run() {
+        if(this.useBoost) this.requestBoosts();
+
         if(!this.roomai.canSpawn()) return;
 
         let parts = spawnHelper.bestAvailableParts(this.room, ranger.configs());
@@ -19,6 +22,11 @@ module.exports = class RangerOperation {
         if(rangers.length < this.rangerCount) {
             this.roomai.spawn(parts, { role: ranger.name, flag: this.targetFlag.name });
         }
+    }
+
+    requestBoosts() {
+        this.roomai.labs.requestBoost("XKHO2", 40);
+        this.roomai.labs.requestBoost("XLHO2", 50);
     }
 }
 
