@@ -47,6 +47,7 @@ module.exports = {
         }
 
         let target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
+        if(!target) target = creep.pos.findClosestByRange(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
         if(!target && (!creep.room.controller || (creep.room.controller && !creep.room.controller.my))) {
             target = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (s) => parkStructures.includes(s.structureType) && _.sum(s.store) > 0 });
         }
@@ -71,7 +72,7 @@ module.exports = {
         }
 
         let result = null;
-        if(target.structureType) {
+        if(target.store) {
             result = creep.withdraw(target, _.last(Object.keys(target.store)));
         } else {
             result = creep.pickup(target);
