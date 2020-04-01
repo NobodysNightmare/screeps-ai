@@ -5,6 +5,7 @@ const aspects = [
     require("roomaspect.controller"),
     require("roomaspect.builders"),
     require("roomaspect.trading"),
+    require("roomaspect.scooper"),
     require("roomaspect.minerals"),
     require("roomaspect.remoteMines"),
     require("roomaspect.masons"),

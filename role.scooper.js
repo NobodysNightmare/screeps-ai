@@ -4,7 +4,7 @@ module.exports = {
     name: "scooper",
     configs:  function(capacity) {
         var configs = [];
-        for(var carries = Math.ceil(capacity / 50); carries >= 2; carries -= 1) {
+        for(var carries = Math.ceil(capacity / CARRY_CAPACITY); carries >= 2; carries -= 1) {
             let config = Array(carries).fill(CARRY).concat(Array(carries).fill(MOVE));
             if(config.length <= 50) configs.push(config);
         }
@@ -28,6 +28,7 @@ module.exports = {
         let target = home && home.storage;
         if(!target) return;
         if(creep.pos.isNearTo(target)) {
+            creep.memory.stopped = true;
             let resource = _.findKey(creep.store, (amount) => amount > 0);
             if(resource) {
                 creep.transfer(target, resource);
@@ -35,6 +36,7 @@ module.exports = {
                 creep.memory.returningHome = false;
             }
         } else {
+            creep.memory.stopped = false;
             creep.goTo(target, { ignoreRoads: true, avoidHostiles: true, newPathing: true });
         }
     },
@@ -53,11 +55,16 @@ module.exports = {
             if(_.sum(creep.store) > 0) {
                 creep.memory.returningHome = true;
             } else {
-                // park and wait
+                // Wait at a parking position.
                 target = creep.pos.findClosestByRange(FIND_STRUCTURES,
                     { filter: (s) => parkStructures.includes(s.structureType) });
                 if(!target) target = { pos: creep.room.getPositionAt(25, 25) };
-                creep.goTo(target, { range: 5, ignoreRoads: true, avoidHostiles: true, newPathing: true });
+                if(creep.pos.getRangeTo(target) <= 5) {
+                    creep.memory.stopped = true;
+                } else {
+                    creep.memory.stopped = false;
+                    creep.goTo(target, { range: 5, ignoreRoads: true, avoidHostiles: true, newPathing: true });
+                }
             }
 
             return;
@@ -71,6 +78,7 @@ module.exports = {
         }
 
         if(result === ERR_NOT_IN_RANGE) {
+            creep.memory.stopped = false;
             creep.goTo(target, { ignoreRoads: true, avoidHostiles: true, newPathing: true });
         }
     }
