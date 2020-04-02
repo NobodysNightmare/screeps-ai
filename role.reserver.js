@@ -14,7 +14,7 @@ module.exports = {
             creep.signController(target, "Owned by Y Pact.");
           }
         } else if(result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.goTo(target);
         }
     }
 };

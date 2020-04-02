@@ -8,7 +8,7 @@ module.exports = {
             console.log("Nuke operator in room " + creep.room.name + " is either missing storage or nuker.");
             return;
         }
-        
+
         if(_.sum(creep.store) > 0) {
             this.carryToNuker(creep);
         } else {
@@ -20,10 +20,10 @@ module.exports = {
         if(creep.pos.isNearTo(creep.room.nuker())) {
             creep.transfer(creep.room.nuker(), _.last(_.keys(creep.store)));
         } else {
-            creep.moveTo(creep.room.nuker());
+            creep.goTo(creep.room.nuker());
         }
     },
-    
+
     pickupResource: function(creep) {
         if(creep.pos.isNearTo(creep.room.storage)) {
             let missingEnergy = creep.room.nuker().energyCapacity - creep.room.nuker().energy;
@@ -36,7 +36,7 @@ module.exports = {
                 creep.suicide();
             }
         } else {
-            creep.moveTo(creep.room.storage);
+            creep.goTo(creep.room.storage);
         }
     }
 };

@@ -48,11 +48,11 @@ module.exports = {
 
             if(withdrawResult == OK) {
                 if(creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(controller);
+                    creep.goTo(controller);
                     creep.memory.stopped = false;
                 }
             } else if(withdrawResult == ERR_NOT_IN_RANGE) {
-                creep.moveTo(container);
+                creep.goTo(container);
                 creep.memory.stopped = false;
             }
 
@@ -68,7 +68,7 @@ module.exports = {
 
         if(creep.memory.upgrading) {
             if(creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(controller);
+                creep.goTo(controller);
                 creep.memory.stopped = false;
             }
         }

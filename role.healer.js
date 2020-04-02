@@ -31,7 +31,7 @@ module.exports = {
                 this.moveWhileNearTarget(creep, target);
             } else {
                 if(!creep.memory.avoidRooms || !creep.memory.avoidRooms.includes(target.room.name)) {
-                    creep.moveTo(target);
+                    creep.goTo(target);
                 }
             }
             return;
@@ -50,7 +50,7 @@ module.exports = {
         } else if(healResult == ERR_NOT_IN_RANGE) {
             creep.rangedHeal(target);
             if(!creep.memory.avoidRooms || !creep.memory.avoidRooms.includes(target.room.name)) {
-                creep.moveTo(target);
+                creep.goTo(target);
             }
         }
     },

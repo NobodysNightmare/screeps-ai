@@ -12,16 +12,16 @@ module.exports = {
     transfer: function(creep, source, target) {
         if(creep.store.energy == 0) {
             if(creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
+                creep.goTo(source);
             }
         }
-        
+
         if(creep.store.energy > 0){
             let transferResult = creep.transfer(target, RESOURCE_ENERGY);
             if(transferResult === OK) {
                 creep.memory.stopped = true;
             } else if(transferResult === ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+                creep.goTo(target);
             }
         }
     }

@@ -25,7 +25,7 @@ module.exports = {
         if(returnDamage >= creep.hits) return;
 
         if(creep.attack(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.goTo(target);
         }
     },
     clearPath: function(creep) {
