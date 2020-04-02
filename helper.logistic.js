@@ -33,7 +33,7 @@ module.exports = {
             if(result == OK) {
                 return this.obtainResults.harvested;
             } else if(result == ERR_NOT_IN_RANGE) {
-                creep.goTo(source, { newPathing: true });
+                creep.goTo(source);
                 return this.obtainResults.moving;
             }
         }
@@ -45,7 +45,7 @@ module.exports = {
             if(result == OK) {
                 return this.obtainResults.withdrawn;
             } else if(result == ERR_NOT_IN_RANGE) {
-                creep.goTo(store, { newPathing: true });
+                creep.goTo(store);
                 return this.obtainResults.moving;
             }
         }
@@ -58,7 +58,7 @@ module.exports = {
         if(resources.length > 0 && resources[0].resourceType == RESOURCE_ENERGY) {
             return creep.pickup(resources[0]) == OK;
         }
-        
+
         return false;
     },
     storeFor: function(target, includeConstructions, structureType) {
@@ -114,10 +114,10 @@ module.exports = {
                 delete Memory.distances[sourceId]
             }
         }
-        
+
         for(let roomMemory of _.values(Memory.rooms)) {
             if(!roomMemory.stores) continue;
-            
+
             for(let storeId in roomMemory.stores) {
                 if(!Game.getObjectById(storeId)) {
                     delete roomMemory.stores[storeId];

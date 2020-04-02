@@ -11,7 +11,7 @@ const inverseDirections = {
 
 module.exports = {
     moveToRoom: function(creep, roomName) {
-        creep.goTo({ pos: new RoomPosition(25, 25, roomName) }, { range: 10, avoidHostiles: true, newPathing: true });
+        creep.goTo({ pos: new RoomPosition(25, 25, roomName) }, { range: 10, avoidHostiles: true });
     },
     calculateRoute: function(startRoom, endRoom) {
         let route = Game.map.findRoute(startRoom, endRoom, { routeCallback: routeCallback });

@@ -49,11 +49,11 @@ module.exports = {
                 let harvestPower = creep.memory.resource === RESOURCE_ENERGY ? HARVEST_POWER : HARVEST_MINERAL_POWER;
                 if(creep.memory.resource === RESOURCE_ENERGY && (store.hits / store.hitsMax) < 0.5) {
                     if(creep.repair(store) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(store);
+                        creep.goTo(store);
                     }
                 } else if(creep.store[creep.memory.resource] >= creep.store.getCapacity() - (harvestPower * creep.getActiveBodyparts(WORK))) {
                     if(creep.transfer(store, creep.memory.resource) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(store);
+                        creep.goTo(store);
                     }
                 }
             } else if(creep.memory.resource === RESOURCE_ENERGY && creep.store.energy >= _.filter(creep.body, (part) => part.type == WORK).length * 5) {
@@ -61,14 +61,14 @@ module.exports = {
             }
         } else if(harvestResult == ERR_NOT_IN_RANGE) {
             // limit maxRooms to 1 if same room
-            creep.goTo(target, { newPathing: true });
+            creep.goTo(target);
         }
     },
     buildContainer: function(creep, source) {
         var constructionSite = logistic.storeFor(source, true);
         if(constructionSite) {
             if(creep.build(constructionSite) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(constructionSite);
+                creep.goTo(constructionSite);
             }
         } else if(creep.memory.selfSustaining) {
             creep.pos.createConstructionSite(STRUCTURE_CONTAINER);

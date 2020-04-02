@@ -30,7 +30,7 @@ module.exports = class FactoryOperator {
         let homeRoom = Game.rooms[this.creep.memory.home];
         if(!homeRoom || this.creep.room.name == homeRoom.name) return false;
 
-        this.creep.goTo(homeRoom.powerSpawn(), { newPathing: true });
+        this.creep.goTo(homeRoom.powerSpawn());
 
         return true;
     }
@@ -41,7 +41,7 @@ module.exports = class FactoryOperator {
             if(this.creep.pos.isNearTo(powerSpawn)) {
                 this.creep.renew(powerSpawn);
             } else {
-                this.creep.goTo(powerSpawn, { newPathing: true });
+                this.creep.goTo(powerSpawn);
             }
 
             return true;
@@ -57,7 +57,7 @@ module.exports = class FactoryOperator {
         if(this.creep.pos.isNearTo(controller)) {
             this.creep.enableRoom(controller);
         } else {
-            this.creep.goTo(controller, { newPathing: true });
+            this.creep.goTo(controller);
         }
 
         return true;
@@ -77,7 +77,7 @@ module.exports = class FactoryOperator {
             if(this.creep.powers[PWR_OPERATE_FACTORY].cooldown > 0) return;
             this.creep.usePower(PWR_OPERATE_FACTORY, factory);
         } else {
-            this.creep.goTo(factory, { newPathing: true, range: powerMetadata.range });
+            this.creep.goTo(factory, { range: powerMetadata.range });
         }
     }
 }

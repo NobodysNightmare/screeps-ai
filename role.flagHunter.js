@@ -5,7 +5,7 @@ module.exports = {
     ],
     run: function(creep) {
         var target = Game.flags[creep.memory.flag];
-        creep.goTo(target, { newPathing: true });
+        creep.goTo(target);
     }
 };
 

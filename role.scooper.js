@@ -17,7 +17,7 @@ module.exports = {
         } else {
             if(creep.room.name !== creep.memory.target) {
                 let target = { pos: new RoomPosition(25, 25, creep.memory.target) };
-                creep.goTo(target, { avoidHostiles: true, newPathing: true });
+                creep.goTo(target, { avoidHostiles: true });
             } else {
                 this.scoopRoom(creep);
             }
@@ -37,7 +37,7 @@ module.exports = {
             }
         } else {
             creep.memory.stopped = false;
-            creep.goTo(target, { ignoreRoads: true, avoidHostiles: true, newPathing: true });
+            creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
         }
     },
     scoopRoom: function(creep) {
@@ -64,7 +64,7 @@ module.exports = {
                     creep.memory.stopped = true;
                 } else {
                     creep.memory.stopped = false;
-                    creep.goTo(target, { range: 5, ignoreRoads: true, avoidHostiles: true, newPathing: true });
+                    creep.goTo(target, { range: 5, ignoreRoads: true, avoidHostiles: true });
                 }
             }
 
@@ -80,7 +80,7 @@ module.exports = {
 
         if(result === ERR_NOT_IN_RANGE) {
             creep.memory.stopped = false;
-            creep.goTo(target, { ignoreRoads: true, avoidHostiles: true, newPathing: true });
+            creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
         }
     }
 };

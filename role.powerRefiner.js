@@ -14,14 +14,14 @@ module.exports = {
         let spawner = this.spawner(creep);
         if(creep.store[RESOURCE_POWER]) {
             if(creep.transfer(spawner, RESOURCE_POWER) == ERR_NOT_IN_RANGE) {
-                creep.goTo(spawner, { newPathing: true });
+                creep.goTo(spawner);
             }
         } else if(creep.store.energy) {
             let result = creep.transfer(spawner, RESOURCE_ENERGY);
             if(result == OK) {
                 creep.memory.delivering = false;
             } else if(result == ERR_NOT_IN_RANGE) {
-                creep.goTo(spawner, { newPathing: true });
+                creep.goTo(spawner);
             }
         } else {
             creep.memory.delivering = false;
@@ -34,14 +34,14 @@ module.exports = {
         if(!creep.store[RESOURCE_POWER] && neededPower > 0) {
             let result = creep.withdraw(creep.room.storage, RESOURCE_POWER, neededPower);
             if(result == ERR_NOT_IN_RANGE) {
-                creep.goTo(creep.room.storage, { newPathing: true });
+                creep.goTo(creep.room.storage);
             }
         } else {
             let result = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
             if(result == OK || result == ERR_FULL) {
                 creep.memory.delivering = true;
             } else if(result == ERR_NOT_IN_RANGE) {
-                creep.goTo(creep.room.storage, { newPathing: true });
+                creep.goTo(creep.room.storage);
             }
         }
     },

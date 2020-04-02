@@ -52,7 +52,8 @@ module.exports = {
         return _.sortBy(gates, (g) => g.pos.getRangeTo(target))[0];
     },
     moveTo: function(creep, target) {
-        return creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
+        // TODO: figure out whether we can use newPathing
+        return creep.goTo(target, { ignoreRoads: true, avoidHostiles: true, newPathing: false });
     }
 };
 

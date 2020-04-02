@@ -125,7 +125,7 @@ module.exports = {
             creep.memory.lastTarget = target.id;
             creep.memory.stopped = true;
         } else if(result == ERR_NOT_IN_RANGE) {
-            creep.goTo(target, { newPathing: true, range: 3 });
+            creep.goTo(target, { range: 3 });
             creep.memory.stopped = false;
         }
     },

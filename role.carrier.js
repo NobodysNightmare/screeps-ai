@@ -56,7 +56,7 @@ module.exports = {
 
             return true;
         } else if(transferResult == ERR_NOT_IN_RANGE) {
-            creep.goTo(target, { newPathing: true });
+            creep.goTo(target);
         }
     },
     pickup: function(creep) {
@@ -70,7 +70,7 @@ module.exports = {
                 return this.startWait(creep);
             }
         } else {
-            creep.goTo(target, { newPathing: true });
+            creep.goTo(target);
         }
     },
     buildRoad: function(creep) {

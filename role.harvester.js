@@ -55,11 +55,11 @@ module.exports = {
             creep.memory.stopped = false;
             let transferResult = creep.transfer(target, RESOURCE_ENERGY);
             if(transferResult == ERR_NOT_IN_RANGE) {
-                creep.goTo(target, { newPathing: true });
+                creep.goTo(target);
             } else if(transferResult == OK) {
                 target = targets.shift();
                 if(target && !creep.pos.isNearTo(target)) {
-                    creep.goTo(target, { newPathing: true });
+                    creep.goTo(target);
                 }
             }
         } else {

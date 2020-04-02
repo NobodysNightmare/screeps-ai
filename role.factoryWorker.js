@@ -32,7 +32,7 @@ module.exports = {
             if(_.sum(creep.store) == 0) return false;
             creep.transfer(target, _.last(_.keys(creep.store)))
         } else {
-            creep.goTo(target, { newPathing: true });
+            creep.goTo(target);
         }
 
         return true;

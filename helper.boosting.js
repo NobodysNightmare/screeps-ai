@@ -16,7 +16,7 @@ module.exports = {
                     // TODO: verify that we get no problems when two boosters are in range
                     // or we move out of range because of a second boost
                 } else {
-                    creep.moveTo(booster.lab);
+                    creep.goTo(booster.lab);
                     return true;
                 }
             } else {

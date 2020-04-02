@@ -16,7 +16,7 @@ module.exports = {
     run: function(creep) {
         let flag = Game.flags[creep.memory.flag];
         if(creep.room.name !== flag.pos.roomName) {
-            creep.goTo(flag, { newPathing: true });
+            creep.goTo(flag);
             return;
         }
 
@@ -45,7 +45,7 @@ module.exports = {
         var target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.structureType == STRUCTURE_SPAWN });
         if(target) {
             if(creep.build(target) == ERR_NOT_IN_RANGE) {
-                creep.goTo(target, { newPathing: true });
+                creep.goTo(target);
             }
         }
         return target;

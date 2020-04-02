@@ -21,7 +21,7 @@ module.exports = {
         if(boosting.accept(creep, "XLH2O")) {
             return;
         }
-        
+
         if(creep.memory.room && creep.room.name !== creep.memory.room) {
             movement.moveToRoom(creep, creep.memory.room);
             return;
@@ -52,7 +52,7 @@ module.exports = {
                 return lastTarget;
             }
         }
-        
+
         let nukes = creep.room.find(FIND_NUKES);
         for(let nuke of _.sortBy(nukes, (n) => n.timeToLand)) {
             let x = nuke.pos.x;
@@ -63,10 +63,10 @@ module.exports = {
                     let range = r.pos.getRangeTo(n);
                     return range <= 2 ? (range === 0 ? 10000000 : 5000000) : 0;
                 })
-                
+
                 return r.hits < Math.min(neededHits + NUKE_MARGIN, r.hitsMax);
             });
-            
+
             targets = _.sortBy(targets, (r) => r.pos.getRangeTo(nuke));
             if(targets[0]) return targets[0];
         }
@@ -86,7 +86,7 @@ module.exports = {
             // lock onto target as soon as actual work is happening
             creep.memory.lastTarget = target.id;
         } else if(result == ERR_NOT_IN_RANGE) {
-            creep.goTo(target, { range: 3, newPathing: true });
+            creep.goTo(target, { range: 3 });
         }
     },
     harvestEnergy: function(creep) {
