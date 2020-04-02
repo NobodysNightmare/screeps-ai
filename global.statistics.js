@@ -61,7 +61,7 @@ module.exports = {
                 power: _.sum(myRooms, (r) => totalAmount(r, "power"))
             },
             creeps: Object.keys(Game.creeps).length,
-            creepRoles: _.mapValues(_.groupBy(Memory.creeps, (m) => m.role), (creeps) => creeps.length),
+            creepRoles: _.mapValues(_.groupBy(Game.creeps, (c) => c.memory.role), (creeps) => creeps.length),
             playerTrades: Memory.tradeLogs && Memory.tradeLogs.players
         };
     },
