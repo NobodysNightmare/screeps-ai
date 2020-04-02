@@ -4,7 +4,7 @@ const ff = require("helper.friendFoeRecognition");
 
 Creep.prototype.goTo = function(target, options) {
     // TODO: stop using anything else than newPathing
-    if(options && options.newPathing !== false) {
+    if(!options || options.newPathing !== false) {
         let mover = new CreepMover(this, target, options);
         return mover.move();
     }
