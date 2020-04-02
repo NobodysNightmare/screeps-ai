@@ -134,7 +134,7 @@ module.exports = class Trading {
     minNeededAmount(resource) {
         if(this.room.ai().mode === "unclaim") return 0;
 
-        if(resource == RESOURCE_ENERGY) return 350000;
+        if(resource == RESOURCE_ENERGY) return 400000;
 
         if(resource == RESOURCE_POWER) {
             if(this.room.powerSpawn()) return 1000;
@@ -180,7 +180,7 @@ module.exports = class Trading {
     maxStorageAmount(resource) {
         if(resource == RESOURCE_ENERGY) {
             if(this.room.ai().mode === "unclaim") return 30000;
-            if(this.room.ai().mode === "support") return 350000;
+            if(this.room.ai().mode === "support") return 400000;
 
             return 600000;
         }
