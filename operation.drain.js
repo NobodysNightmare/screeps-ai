@@ -1,18 +1,19 @@
-const boosting = require("helper.boosting");
 const spawnHelper = require("helper.spawning");
 
 const healer = require("role.healer");
 const hopper = require("role.hopper");
 
 module.exports = class DrainOperation {
-    constructor(roomai, targetFlag, count) {
+    constructor(roomai, targetFlag, count, drainSetup) {
         this.roomai = roomai;
         this.room = roomai.room;
         this.targetRoom = targetFlag.pos.roomName;
         this.hopperCount = count;
+        this.useBoosts = drainSetup > 1;
     }
 
     run() {
+        if(this.useBoosts) this.requestBoosts();
         if(!this.roomai.canSpawn()) return;
 
         let healers = spawnHelper.globalCreepsWithRole(healer.name);
@@ -26,13 +27,18 @@ module.exports = class DrainOperation {
                 } else {
                     healerParts = spawnHelper.bestAffordableParts(this.room, healer.configs({ minHeal: 5, maxHeal: 25, healRatio: 1 }));
                 }
-                this.roomai.spawn(healerParts, boosting.disable({ role: healer.name, target: hopperCreep.name, avoidRooms: [this.targetRoom] }));
+                this.roomai.spawn(healerParts, { role: healer.name, target: hopperCreep.name, avoidRooms: [this.targetRoom] });
             }
         }
 
         if(hoppers.length < this.hopperCount) {
             this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, hopper.configs()), { role: hopper.name, room: this.targetRoom });
         }
+    }
+
+    requestBoosts() {
+        // TODO: also support TOUGH boost on hopper
+        this.roomai.labs.requestBoost("XLHO2", 30);
     }
 }
 
