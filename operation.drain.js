@@ -17,7 +17,7 @@ module.exports = class DrainOperation {
         if(!this.roomai.canSpawn()) return;
 
         let healers = spawnHelper.globalCreepsWithRole(healer.name);
-        let hoppers = _.filter(spawnHelper.globalCreepsWithRole(hopper.name), (c) => c.memory.room == this.targetRoom);
+        let hoppers = _.filter(spawnHelper.globalCreepsWithRole(hopper.name), (c) => c.memory.room == this.targetRoom && (c.ticksToLive > this.creepRenewDuration() || !c.ticksToLive));
 
         for(let hopperCreep of hoppers) {
             if(!_.any(healers, (c) => c.memory.target == hopperCreep.name)) {
@@ -39,6 +39,12 @@ module.exports = class DrainOperation {
     requestBoosts() {
         // TODO: also support TOUGH boost on hopper
         this.roomai.labs.requestBoost("XLHO2", 30);
+    }
+
+    creepRenewDuration() {
+        const spawnDuration = 150;
+        let travelTime = Game.map.getRoomLinearDistance(this.room.name, this.targetRoom) * 50;
+        return spawnDuration + travelTime;
     }
 }
 

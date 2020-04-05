@@ -96,11 +96,11 @@ module.exports = {
         let resource = resources[0];
         if(resource) {
             let actualAmount = (creep.room.storage.store[reactor.compound] || 0) + _.sum(reactor.outputs, (l) => l.store[l.mineralType]);
-            let neededProduce = reactor.targetAmount - actualAmount;
+            let neededProduce = Math.max(reactor.targetAmount - actualAmount, LAB_REACTION_AMOUNT);
             let missingInput = Math.max(0, neededProduce - resource.amount);
             let inStore = creep.room.storage.store[resource.type] || 0;
             if(missingInput > 0 && inStore > 0) {
-                missingInput = Math.max(5, missingInput);
+                missingInput = Math.max(missingInput, LAB_REACTION_AMOUNT);
                 creep.withdraw(creep.room.storage, resource.type, Math.min(creep.store.getCapacity(), missingInput, inStore));
             } else {
                 if(this.pickupBoost(creep)) {
