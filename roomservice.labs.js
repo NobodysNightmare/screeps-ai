@@ -179,7 +179,7 @@ class Booster {
     needEnergy() {
         if(!this.lab) return false;
 
-        return this.lab.energy < this.lab.energyCapacity;
+        return this.lab.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
     }
 
     needMineral() {

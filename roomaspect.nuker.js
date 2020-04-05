@@ -13,10 +13,10 @@ module.exports = class NukerAspect {
         if(this.nuker.cooldown > 10000) return;
 
         if(!this.roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(this.roomai, nukeOperator.name) >= 1) return;
-        
-        let missingEnergy = this.nuker.energyCapacity - this.nuker.energy;
-        let missingGhodium = this.nuker.ghodiumCapacity - this.nuker.ghodium;
-        
+
+        let missingEnergy = this.nuker.store.getFreeCapacity(RESOURCE_ENERGY);
+        let missingGhodium = this.nuker.store.getFreeCapacity(RESOURCE_GHODIUM);
+
         if(missingEnergy === 0 && missingGhodium === 0) return;
 
         this.roomai.spawn(nukeOperator.parts, { role: nukeOperator.name });

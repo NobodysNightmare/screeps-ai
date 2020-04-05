@@ -21,7 +21,7 @@ module.exports = {
             creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
         }
 
-        let towers = _.sortBy(_.sortBy(creep.room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_TOWER && s.energy < s.energyCapacity }), (s) => s.pos.getRangeTo(creep)), (s) => s.energy);
+        let towers = _.sortBy(_.sortBy(creep.room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_TOWER && s.store.getFreeCapacity(RESOURCE_ENERGY) > 0 }), (s) => s.pos.getRangeTo(creep)), (s) => s.energy);
         let target = towers[0];
         if(!target) return;
         if(creep.pos.isNearTo(target)) {

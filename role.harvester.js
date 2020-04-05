@@ -31,7 +31,7 @@ module.exports = {
             creep.memory.delivering = true;
         }
 
-        if(creep.store.energy < creep.store.getCapacity() && creep.pos.isNearTo(creep.room.storage)) {
+        if(creep.store.getFreeCapacity() > 0 && creep.pos.isNearTo(creep.room.storage)) {
             // Safety valve: protect storage from overflowing with anything but energy
             if(creep.room.storage.my &&(creep.room.storage.store.getFreeCapacity() < 10000)) {
                 let excessResource = _.invert(creep.room.storage.store)[_.sortBy(creep.room.storage.store, (r) => -r)[0]];
@@ -73,7 +73,7 @@ module.exports = {
         var targets = creep.room.find(FIND_MY_STRUCTURES, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
-                        structure.energy < structure.energyCapacity;
+                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
                 }
         });
 
@@ -81,7 +81,7 @@ module.exports = {
             targets = creep.room.find(FIND_MY_STRUCTURES, {
                 filter: (structure) => {
                     return structure.structureType == STRUCTURE_TOWER &&
-                        structure.energy < structure.energyCapacity;
+                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
                 }
             });
         }
@@ -98,7 +98,7 @@ module.exports = {
                 targets = creep.room.find(FIND_MY_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_NUKER || structure.structureType == STRUCTURE_POWER_SPAWN) &&
-                            structure.energy < structure.energyCapacity;
+                            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
                     }
                 });
             }

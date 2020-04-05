@@ -26,8 +26,8 @@ module.exports = {
 
     pickupResource: function(creep) {
         if(creep.pos.isNearTo(creep.room.storage)) {
-            let missingEnergy = creep.room.nuker().energyCapacity - creep.room.nuker().energy;
-            let missingGhodium = creep.room.nuker().ghodiumCapacity - creep.room.nuker().ghodium;
+            let missingEnergy = creep.room.nuker().store.getFreeCapacity(RESOURCE_ENERGY);
+            let missingGhodium = creep.room.nuker().store.getFreeCapacity(RESOURCE_GHODIUM);
             let resource = missingGhodium > 0 ? RESOURCE_GHODIUM : RESOURCE_ENERGY;
             if(missingEnergy > 0 || missingGhodium > 0) {
                 let amount = Math.min(creep.store.getCapacity(), creep.room.storage.store[resource], resource === RESOURCE_GHODIUM ? missingGhodium : missingEnergy);

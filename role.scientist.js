@@ -118,9 +118,9 @@ module.exports = {
         creep.memory.state = "deliver";
     },
     pickupBoost: function(creep) {
-        let target = _.sortBy(_.filter(creep.room.ai().labs.boosters, (b) => b.lab.energy < b.lab.energyCapacity), (b) => b.lab.energy)[0];
+        let target = _.sortBy(_.filter(creep.room.ai().labs.boosters, (b) => b.lab.store.getFreeCapacity(RESOURCE_ENERGY) > 0), (b) => b.lab.store.energy)[0];
         if(target) {
-            creep.withdraw(creep.room.storage, RESOURCE_ENERGY, Math.min(target.lab.energyCapacity - target.lab.energy, creep.store.getCapacity()));
+            creep.withdraw(creep.room.storage, RESOURCE_ENERGY, Math.min(target.lab.store.getFreeCapacity(RESOURCE_ENERGY), creep.store.getCapacity()));
             return true;
         } else {
             target = _.sortBy(_.filter(creep.room.ai().labs.boosters, (b) => b.resource && creep.room.storage.store[b.resource] && (!b.lab.mineralType || b.resource === b.lab.mineralType) && b.lab.mineralAmount < b.lab.mineralCapacity), (b) => b.lab.mineralAmount)[0];
