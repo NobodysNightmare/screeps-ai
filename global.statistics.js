@@ -17,7 +17,6 @@ module.exports = {
     },
     run: function() {
         this.refresh();
-        this.draw();
     },
     refresh: function() {
         Memory.stats.avgCpu += Game.cpu.getUsed() / refreshInterval; // TODO: calculate on regular memory
@@ -97,15 +96,6 @@ module.exports = {
             }
         }
         return result;
-    },
-    draw: function() {
-        let visual = new RoomVisual();
-
-        let creeps = Memory.stats.empire.creeps.toLocaleString("en");
-        let energy = Memory.stats.empire.resources.energy.toLocaleString("en");
-
-        visual.text("Creeps: " + creeps, 0, 48, { align: "left", color: "#fff", stroke: "#000" });
-        visual.text("Energy: " + energy, 0, 49, { align: "left", color: "#fff", stroke: "#000" });
     }
 };
 
