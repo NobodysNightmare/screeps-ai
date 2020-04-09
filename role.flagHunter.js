@@ -4,8 +4,16 @@ module.exports = {
         [ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE]
     ],
     run: function(creep) {
-        var target = Game.flags[creep.memory.flag];
-        creep.goTo(target);
+        let target = Game.flags[creep.memory.flag];
+        if(creep.memory.targetPosition) {
+            target = AbsolutePosition.deserialize(creep.memory.targetPosition);
+        }
+
+        if(target) {
+            creep.goTo(target);
+        } else {
+            console.log(`FlagHunter ${creep.name} has no target!`)
+        }
     }
 };
 

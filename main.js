@@ -44,6 +44,8 @@ const SegmentExport = require("global.segmentExport");
 const ShardTravel = require("global.shardTravel");
 const TradeLogger = require("global.tradeLogger");
 
+global.AbsolutePosition = require("absolutePosition");
+
 require("patch.controller");
 require("patch.creep");
 require("patch.powerCreep");

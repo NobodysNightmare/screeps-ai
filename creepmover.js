@@ -26,7 +26,6 @@ module.exports = class CreepMover {
         let targetRange = this.options.range || this.rangeByTarget();
         let target = { pos: this.target.pos, range: Math.max(1, targetRange) };
 
-        // TODO: put target shard somewhere else (e.g. this.options?)
         if(this.target.shard && this.target.shard !== Game.shard.name) {
             this.creep.memory.destinationShard = this.target.shard;
             let crossing = CreepMover.nextCrossing(this.creep.room.name);
