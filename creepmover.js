@@ -38,6 +38,7 @@ module.exports = class CreepMover {
                 if(portal) pos = portal.pos;
             }
             target = { pos: pos, range: 0 };
+            this.routeFinder.destinationRoom = crossing;
         }
 
         if(this.creep.pos.getRangeTo(target) <= targetRange) return OK;
@@ -96,7 +97,7 @@ module.exports = class CreepMover {
                 options = Object.assign({}, this.options, options);
                 let result = PathFinder.search(this.creep.pos, target, options);
                 if(result.incomplete) {
-                    this.log("Could not find complete path from " + this.creep.pos + " to " +  this.target.pos + ".");
+                    this.log("Could not find complete path from " + this.creep.pos + " to " +  target.pos + ".");
                 }
                 data.path = CreepMover.serializePath(this.creep.pos, result.path);
             }
