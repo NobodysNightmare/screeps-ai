@@ -50,7 +50,6 @@ require("patch.controller");
 require("patch.creep");
 require("patch.powerCreep");
 require("patch.room");
-require("traveler");
 
 const profiler = require('screeps-profiler');
 profiler.enable();
