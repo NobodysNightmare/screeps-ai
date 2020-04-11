@@ -38,13 +38,14 @@ module.exports = class SegmentTrading {
             if(_.sum(roomRequest) > 0) result.advancedTrading[room.name] = roomRequest;
         }
 
-        // TODO: improve polyfill to select "good" room (or collect more requests)
+        // polyfilling basicTrading: collecting requests from all the rooms and routing
+        // them to one room (randomly selecting that, so incoming resources are spread)
         result.basicTrading = {};
-        let polyfillRoom = Object.keys(result.advancedTrading)[0];
+        let polyfillRoom = _.sample(Object.keys(result.advancedTrading));
+        let polyfillResources = _.uniq(_.flatten(_.map(result.advancedTrading, (req) => Object.keys(req))));
         if(polyfillRoom) {
-            let polyfillData = result.advancedTrading[polyfillRoom];
             result.basicTrading.room = polyfillRoom;
-            for(let resource in polyfillData) {
+            for(let resource of polyfillResources) {
                 result.basicTrading[resource] = true;
             }
         }
