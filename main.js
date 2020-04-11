@@ -46,6 +46,8 @@ const TradeLogger = require("global.tradeLogger");
 
 global.AbsolutePosition = require("absolutePosition");
 
+require("operation");
+
 require("patch.controller");
 require("patch.creep");
 require("patch.powerCreep");
@@ -118,6 +120,10 @@ module.exports.loop = function() {
 
         suppressErrors(() => new SegmentScanner().run());
 
+        for(let operation of Operation.operations) {
+            suppressErrors(() => operation.run());
+        }
+
         for(let roomName in Game.rooms) {
             let room = Game.rooms[roomName];
             if(room.ai()) {
@@ -129,10 +135,14 @@ module.exports.loop = function() {
 
         new TradeLogger().logTrades();
 
-        globalStatistics.run();
-        profitVisual.run();
+        for(let operation of Operation.operations) {
+            suppressErrors(() => operation.drawVisuals());
+        }
 
         suppressErrors(() => new SegmentExport().run());
+
+        globalStatistics.run();
+        profitVisual.run();
 
         RawMemory.setActiveSegments([98, 99]);
         RawMemory.setPublicSegments([98]);

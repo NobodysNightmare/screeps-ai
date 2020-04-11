@@ -12,6 +12,7 @@ const aspects = [
     require("roomaspect.constructions"),
     require("roomaspect.labs"),
     require("roomaspect.factory"),
+    require("roomaspect.operations"),
     require("roomaspect.manualOperations"),
     require("roomaspect.power"),
     require("roomaspect.nuker")
