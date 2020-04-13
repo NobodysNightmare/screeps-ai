@@ -134,33 +134,28 @@ all creeps neccessary to farm it until the cooldown is unsustainably high.
 Placing the flag `depositsX` in a room that has not yet been selected will select the room,
 while placing it in a room that has already been selected will deselect it.
 
-#### Claiming a room
+## Modern operations
 
-* **Operation name:** `claim`
-* **color:** meaningless
+"Modern" operations are intended to be created through code (i.e. automatically).
+However, as long as that code doesn't exist they can still be used manually as well.
+
+It usually goes like this
+
+    Operation.createOperation("opType", { some: "memory" })
+
+### Claiming a room
 
 Spawns a claimer followed by conquerors to build up the first spawn. The spawn will be built
 at the location of the claim flag in the target room.
 
-After the spawn was built, the source room will continue to support the target room by sending
+After the spawn was built, the support room will continue to support the target room by sending
 fully upgraded miners into it, until the target room can take care of that by itself.
 
-### Misc
+    Operation.createOperation("claim", { supportRoom: "roomName", spawnPosition: new AbsolutePosition(new RoomPosition(x, y, roomName)) })
 
-#### Supporting other players with excess resources
+Optional parameters (in memory):
 
-Using `Memory.resourceSupport` foreign rooms can be setup for support with overflowing resources:
-
-````json
-{
-    "resourceSupport": {
-        "energy": ["W0S0", "W1S1"],
-        "X": ["W0S0"]
-    }
-}
-````
-
-Multiple rooms in a resource array will be supported round robin.
+* `spawnBuilders`: Support room will also send builders to the target room to speed up building stuff
 
 ## TODOs
 

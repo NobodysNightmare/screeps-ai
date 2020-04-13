@@ -30,13 +30,20 @@ global.Operation = class Operation {
     constructor(memory) {
         this.memory = memory;
 
-        this.name = memory.name;
+        this.id = memory.id;
         this.type = memory.type;
-        this.supportRoom = Game.rooms[memory.supportRoom];
+    }
 
-        if(!this.supportRoom || !this.supportRoom.ai()) {
-            console.log(`Operation ${this.name} should be supported by ${memory.supportRoom}, which does not seem to belong to the empire.`);
-        }
+    get supportRoom() {
+        return Game.rooms[this.memory.supportRoom];
+    }
+
+    set supportRoom(room) {
+        this.memory.supportRoom = room ? room.name : null;
+    }
+
+    isValid() {
+        return this.supportRoom && this.supportRoom.ai();
     }
 
     run() {
@@ -66,20 +73,21 @@ global.Operation = class Operation {
         return _.filter(Operation.operations, (op) => op.supportRoom === room);
     }
 
-    static createOperation(type) {
+    static createOperation(type, initMemory) {
         if(!Memory.operations) Memory.operations = [];
 
         let subclass = operationSubclasses[type];
         if(!subclass) throw `Tried to create unknown operation type ${type}`;
 
-        let memory = { type: type, name: Operation.generateName(type) };
+        if(!initMemory) initMemory = {};
+        let memory = { type: type, id: Operation.generateId(), ...initMemory };
         let instance = new subclass(memory);
         Memory.operations.push(memory);
         return instance;
     }
 
     static removeOperation(operation) {
-        Memory.operations = _.filter(Memory.operations, (o) => o.name !== operation.name);
+        Memory.operations = _.filter(Memory.operations, (o) => o.id !== operation.id);
         operationsCache.remove(operation);
     }
 
@@ -87,23 +95,23 @@ global.Operation = class Operation {
     static loadOperation(memory) {
         let subclass = operationSubclasses[memory.type];
         if(!subclass) {
-            console.log(`Tried to load unknown operation type ${type} from ${memory.name}.`);
+            console.log(`Tried to load unknown operation type ${type} from operation ${memory.id}.`);
             return null;
         }
 
         return new subclass(memory);
     }
 
-    static generateName(type) {
-        let name = null;
+    static generateId() {
+        let id = 0;
         do {
-            name = `${type}-${Math.floor(Math.random() * 10000)}R`
-        } while(_.any(Memory.operations, (op) => op.name === name));
+            id = Math.floor(Math.random() * 100000);
+        } while(_.any(Memory.operations, (op) => op.id === id));
 
-        return name;
+        return id;
     }
 }
 
 const operationSubclasses = {
-    // "type": require("operation.subclass") // TODO: real implementation
+    "claim": require("operation.claim")
 };

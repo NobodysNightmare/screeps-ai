@@ -14,9 +14,9 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
-        let flag = Game.flags[creep.memory.flag];
-        if(creep.room.name !== flag.pos.roomName) {
-            creep.goTo(flag);
+        let target = AbsolutePosition.deserialize(creep.memory.target);
+        if(creep.room.name !== target.roomName) {
+            creep.goTo(target);
             return;
         }
 

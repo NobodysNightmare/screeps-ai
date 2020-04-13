@@ -21,7 +21,11 @@ module.exports = class AbsolutePosition {
         return this.pos.roomName;
     }
 
-    serializable() {
+    get room() {
+        return Game.rooms[this.roomName];
+    }
+
+    toJSON() {
         return {
             x: this.x,
             y: this.y,
