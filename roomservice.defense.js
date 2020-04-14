@@ -94,7 +94,7 @@ module.exports = class Defense {
     displayDefcon() {
         let defcon = this.memory.defcon;
         if(defcon.level === 0) return;
-        this.room.visual.text("Defcon " + defcon.level + "(" + defcon.progress + " T; CD: " + defcon.cooldown + " T)", 0, 1, { align: "left", color: "#faa", stroke: "#000" });
+        RoomUI.forRoom(this.room).addRoomCaption(`Defcon ${defcon.level} (${defcon.progress} T; CD ${defcon.cooldown} T)`, { color: "#faa"});
     }
 
     get gates() {

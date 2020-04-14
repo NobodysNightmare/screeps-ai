@@ -57,7 +57,7 @@ module.exports = class DismantleOperation extends Operation {
             let visual = new RoomVisual(targetPos.roomName);
 
             visual.text(`X`, targetPos.x, targetPos.y, { align: "center", color: "#f00", stroke: "#000" });
-            visual.text(`Dismantling from ${this.memory.supportRoom}`, 49, 0, { align: "right", color: "#fff", stroke: "#000" });
+            RoomUI.forRoom(targetPos.roomName).addRoomCaption(`Dismantling from ${this.memory.supportRoom}`);
         }
     }
 

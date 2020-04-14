@@ -72,7 +72,7 @@ module.exports = class RoomAI {
     }
 
     renderModeOverlay() {
-        this.room.visual.text("Mode: " + this.mode, 0, 0, { align: "left", color: "#fff", stroke: "#000" });
+        RoomUI.forRoom(this.room).addRoomCaption(`Mode: ${this.mode}`);
     }
 
     toString() {

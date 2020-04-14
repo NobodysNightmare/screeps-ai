@@ -47,6 +47,7 @@ const TradeLogger = require("global.tradeLogger");
 global.AbsolutePosition = require("absolutePosition");
 
 require("operation");
+require("roomui");
 
 require("patch.controller");
 require("patch.creep");
@@ -140,6 +141,10 @@ module.exports.loop = function() {
         }
 
         suppressErrors(() => new SegmentExport().run());
+
+        for(let ui of RoomUI.all) {
+            suppressErrors(() => ui.render());
+        }
 
         globalStatistics.run();
         profitVisual.run();

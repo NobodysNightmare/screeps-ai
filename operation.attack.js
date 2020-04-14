@@ -57,7 +57,7 @@ module.exports = class AttackOperation extends Operation {
             let visual = new RoomVisual(targetPos.roomName);
 
             visual.text(`X`, targetPos.x, targetPos.y, { align: "center", color: "#f00", stroke: "#000" });
-            visual.text(`Attacking from ${this.memory.supportRoom}`, 49, 0, { align: "right", color: "#fff", stroke: "#000" });
+            RoomUI.forRoom(targetPos.roomName).addRoomCaption(`Attacking from ${this.memory.supportRoom}`);
         }
     }
 
