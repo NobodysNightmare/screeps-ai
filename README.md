@@ -137,13 +137,23 @@ It usually goes like this
 
 #### Attacking hostile rooms
 
-* **Operation name:** `attack`
-* **color:** Controls number of attackers being spawned
-* **secondary color:** Also spawn a healer per attacker if color greater than 1 (Red) is chosen.
-
 Spawns some creeps that attack a hostile room.
 
     Operation.createOperation("attack", { supportRoom: "roomName", targetPosition: new AbsolutePosition(new RoomPosition(x, y, roomName)) })
+
+Optional parameters (in memory):
+
+* `useHeal`: Spawn a healer for each attacker.
+* `useTough`: Use configurations on attackers and healers that include tough parts to make healing more efficient.
+* `timeout`: If specified, the operation will be terminated after the given amount of ticks
+* `terminateAfter`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
+
+#### Dismantling hostile rooms
+
+Spawns some creeps that dismantle buildings of a hostile room. Very similar to `attack`, but unable to
+attack any creeps.
+
+    Operation.createOperation("dismantle", { supportRoom: "roomName", targetPosition: new AbsolutePosition(new RoomPosition(x, y, roomName)) })
 
 Optional parameters (in memory):
 

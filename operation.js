@@ -65,6 +65,10 @@ global.Operation = class Operation {
         // is doing
     }
 
+    toString() {
+        return `[Operation ${this.type}#${this.id} from ${this.supportRoom}]`;
+    }
+
     static get operations() {
         return operationsCache.operations();
     }
@@ -117,5 +121,6 @@ global.Operation = class Operation {
 
 const operationSubclasses = {
     attack: require("operation.attack"),
-    claim: require("operation.claim")
+    claim: require("operation.claim"),
+    dismantle: require("operation.dismantle")
 };

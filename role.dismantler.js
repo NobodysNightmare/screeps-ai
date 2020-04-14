@@ -30,20 +30,21 @@ module.exports = {
             if(boosting.accept(creep, "XZH2O")) return;
         }
 
-        var flag = Game.flags[creep.memory.flag];
-        if(creep.pos.roomName == flag.pos.roomName) {
-            this.attackRoom(creep);
+        let target = AbsolutePosition.deserialize(creep.memory.target);
+
+        if(creep.pos.roomName == target.roomName) {
+            this.attackRoom(creep, target);
         } else {
-            this.approachRoom(creep, flag.pos.roomName);
+            this.approachRoom(creep, target);
         }
     },
-    approachRoom: function(creep, roomName) {
+    approachRoom: function(creep, position) {
         if(!this.shouldWait(creep)) {
-            movement.moveToRoom(creep, roomName);
+            creep.goTo(position);
         }
     },
-    attackRoom: function(creep) {
-        let target = Game.flags[creep.memory.flag].pos.lookFor(LOOK_STRUCTURES)[0];
+    attackRoom: function(creep, position) {
+        let target = position.pos.lookFor(LOOK_STRUCTURES)[0];
 
         for(let structureType of prioritizedStructures) {
             if(target) break;
@@ -61,7 +62,7 @@ module.exports = {
         if(target) {
             this.attack(creep, target);
         } else {
-            this.aggressiveMove(creep, Game.flags[creep.memory.flag]);
+            this.aggressiveMove(creep, position);
         }
     },
     attack: function(creep, target) {
