@@ -23,6 +23,7 @@ module.exports = {
         if(creep.room.find(FIND_MY_SPAWNS).length > 0) {
             creep.memory.role = "harvester";
             creep.memory.source = creep.pos.findClosestByRange(FIND_SOURCES).id;
+            // TODO: move that into the operation? turning one into harvester and the other into upgrader?
             creep.say("Spawn is there. Becoming a harvester...");
             return;
         }
