@@ -2,50 +2,79 @@ const spawnHelper = require("helper.spawning");
 const attacker = require("role.attacker");
 const healer = require("role.healer");
 
-module.exports = class AttackOperation {
-    constructor(roomai, targetFlag, count, attackSetup) {
-        this.roomai = roomai;
-        this.room = roomai.room;
-        this.targetFlag = targetFlag;
-        this.attackerCount = count;
-        this.useHeal = attackSetup > 1;
-        this.useTough = attackSetup > 2;
+module.exports = class AttackOperation extends Operation {
+    constructor(memory) {
+        super(memory);
+
+        if(!this.memory.attackerCount) this.memory.attackerCount = 1;
+        if(this.memory.timeout) {
+            this.memory.terminateAfter = Game.time + this.memory.timeout;
+            delete this.memory.timeout;
+        }
+    }
+
+    get targetPosition() {
+        if(!this.memory.targetPosition) return null;
+        return AbsolutePosition.deserialize(this.memory.targetPosition);
+    }
+
+    set targetPosition(pos) {
+        this.memory.targetPosition = pos.toJSON();
     }
 
     run() {
-        this.requestBoosts();
+        if(this.memory.terminateAfter && Game.time > this.memory.terminateAfter) {
+            Operation.removeOperation(this);
+        }
 
-        if(!this.roomai.canSpawn()) return;
+        this.attackers = _.filter(spawnHelper.globalCreepsWithRole(attacker.name), (c) => c.memory.operation === this.id);
+    }
 
-        let attackers = _.filter(spawnHelper.globalCreepsWithRole(attacker.name), (c) => c.memory.flag == this.targetFlag.name);
+    supportRoomCallback(room) {
+        if(!this.isValid()) return;
 
-        if(this.useHeal) this.spawnHealers(attackers);
+        let roomai = room.ai();
 
-        if(attackers.length < this.attackerCount) {
-            let memory = { role: attacker.name, flag: this.targetFlag.name };
-            let parts = spawnHelper.bestAvailableParts(this.room, attacker.meleeConfigs());
-            if(this.useHeal) memory["waitFor"] = true;
-            if(this.useTough) parts = attacker.toughConfig(15);
-            this.roomai.spawn(parts, memory);
+        this.requestBoosts(roomai);
+
+        if(this.memory.useHeal) this.spawnHealers(roomai);
+
+        if(this.attackers.length < this.memory.attackerCount) {
+            let memory = { role: attacker.name, target: this.targetPosition, operation: this.id };
+            let configs = attacker.meleeConfigs();
+            if(this.memory.useHeal) memory["waitFor"] = true;
+            if(this.memory.useTough) configs = [attacker.toughConfig(15)];
+
+            roomai.spawn(spawnHelper.bestAvailableParts(roomai.room, configs), memory);
         }
     }
 
-    requestBoosts() {
-        this.roomai.labs.requestBoost("XUH2O", 40);
-        if(this.useHeal) this.roomai.labs.requestBoost("XLHO2", 50);
-        if(this.useTough) {
-            this.roomai.labs.requestBoost("XGHO2", 45);
-            this.roomai.labs.requestBoost("XZHO2", 44);
+    drawVisuals() {
+        let targetPos = this.targetPosition;
+        if(targetPos) {
+            let visual = new RoomVisual(targetPos.roomName);
+
+            visual.text(`X`, targetPos.x, targetPos.y, { align: "center", color: "#f00", stroke: "#000" });
+            visual.text(`Attacking from ${this.memory.supportRoom}`, 49, 0, { align: "right", color: "#fff", stroke: "#000" });
         }
     }
 
-    spawnHealers(attackers) {
+    requestBoosts(roomai) {
+        roomai.labs.requestBoost("XUH2O", 40);
+        if(this.memory.useHeal) roomai.labs.requestBoost("XLHO2", 50);
+        if(this.memory.useTough) {
+            roomai.labs.requestBoost("XGHO2", 45);
+            roomai.labs.requestBoost("XZHO2", 44);
+        }
+    }
+
+    spawnHealers(roomai) {
         let healers = spawnHelper.globalCreepsWithRole(healer.name);
-        for(let attackerCreep of attackers) {
+        for(let attackerCreep of this.attackers) {
             if(!_.any(healers, (c) => c.memory.target === attackerCreep.name)) {
-                let healerParts = spawnHelper.bestAvailableParts(this.room, healer.configs({ minHeal: 5, maxHeal: 25, healRatio: 1 }));
-                if(this.useTough) healerParts = healer.toughConfig(15);
-                let spawnResult = this.roomai.spawn(healerParts, { role: healer.name, target: attackerCreep.name });
+                let healerParts = spawnHelper.bestAvailableParts(roomai.room, healer.configs({ minHeal: 5, maxHeal: 25, healRatio: 1 }));
+                if(this.memory.useTough) healerParts = healer.toughConfig(15);
+                let spawnResult = roomai.spawn(healerParts, { role: healer.name, target: attackerCreep.name, operation: this.id });
                 if(_.isString(spawnResult)) {
                     attackerCreep.memory.waitFor = spawnResult;
                 }

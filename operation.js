@@ -77,7 +77,10 @@ global.Operation = class Operation {
         if(!Memory.operations) Memory.operations = [];
 
         let subclass = operationSubclasses[type];
-        if(!subclass) throw `Tried to create unknown operation type ${type}`;
+        if(!subclass) {
+            console.log(`Tried to create unknown operation type ${type}`);
+            return;
+        }
 
         if(!initMemory) initMemory = {};
         let memory = { type: type, id: Operation.generateId(), ...initMemory };
@@ -113,5 +116,6 @@ global.Operation = class Operation {
 }
 
 const operationSubclasses = {
-    "claim": require("operation.claim")
+    attack: require("operation.attack"),
+    claim: require("operation.claim")
 };

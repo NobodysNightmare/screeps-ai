@@ -92,14 +92,6 @@ Some operations might not require flag to be permanently placed (see description
 Spawns some creeps that drain a hostile room by attracting the towers
 fire.
 
-#### Attacking hostile rooms
-
-* **Operation name:** `attack`
-* **color:** Controls number of attackers being spawned
-* **secondary color:** Also spawn a healer per attacker if color greater than 1 (Red) is chosen.
-
-Spawns some creeps that attack a hostile room.
-
 #### Stealing resources
 
 * **Operation name:** `scoop`
@@ -142,6 +134,23 @@ However, as long as that code doesn't exist they can still be used manually as w
 It usually goes like this
 
     Operation.createOperation("opType", { some: "memory" })
+
+#### Attacking hostile rooms
+
+* **Operation name:** `attack`
+* **color:** Controls number of attackers being spawned
+* **secondary color:** Also spawn a healer per attacker if color greater than 1 (Red) is chosen.
+
+Spawns some creeps that attack a hostile room.
+
+    Operation.createOperation("attack", { supportRoom: "roomName", targetPosition: new AbsolutePosition(new RoomPosition(x, y, roomName)) })
+
+Optional parameters (in memory):
+
+* `useHeal`: Spawn a healer for each attacker.
+* `useTough`: Use configurations on attackers and healers that include tough parts to make healing more efficient.
+* `timeout`: If specified, the operation will be terminated after the given amount of ticks
+* `terminateAfter`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
 
 ### Claiming a room
 
