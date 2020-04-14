@@ -23,7 +23,7 @@ module.exports = class AttackOperation extends Operation {
     }
 
     run() {
-        if(this.memory.terminateAfter && Game.time > this.memory.terminateAfter) {
+        if(this.memory.terminateAfter && Game.time > this.memory.terminateAfter + CREEP_LIFE_TIME) {
             Operation.removeOperation(this);
         }
 
@@ -36,6 +36,8 @@ module.exports = class AttackOperation extends Operation {
         let roomai = room.ai();
 
         this.requestBoosts(roomai);
+
+        if(this.memory.terminateAfter && Game.time > this.memory.terminateAfter) return;
 
         if(this.memory.useHeal) this.spawnHealers(roomai);
 

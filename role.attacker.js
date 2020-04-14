@@ -21,7 +21,7 @@ module.exports = {
       return spawnHelper.makeParts(toughness, TOUGH, 40 - toughness, ATTACK, 10, MOVE);
     },
     run: function(creep) {
-        if(creep.ticksToLive == 1499) creep.notifyWhenAttacked(false);
+        if(creep.ticksToLive == CREEP_LIFE_TIME - 1) creep.notifyWhenAttacked(false);
 
         if(creep.body[0].type === TOUGH) {
             if(boosting.accept(creep, "XZHO2", "XUH2O", "XGHO2")) return;
@@ -79,8 +79,8 @@ module.exports = {
     aggressiveMove: function(creep, target) {
         if(this.shouldWait(creep)) return;
 
-        if(creep.moveTo(target, { maxRooms: 1, reusePath: 1500 }) === ERR_NO_PATH) {
-            creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 1, reusePath: 1500 });
+        if(creep.moveTo(target, { maxRooms: 1, reusePath: CREEP_LIFE_TIME }) === ERR_NO_PATH) {
+            creep.moveTo(target, { ignoreDestructibleStructures: true, maxRooms: 1, reusePath: CREEP_LIFE_TIME });
         }
 
         if(creep.memory._move.path) {

@@ -14,7 +14,7 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
-        if(creep.ticksToLive == 1499) creep.notifyWhenAttacked(false);
+        if(creep.ticksToLive == CREEP_LIFE_TIME - 1) creep.notifyWhenAttacked(false);
 
         let targetName = creep.memory.room;
         if(creep.room.name !== targetName) {
