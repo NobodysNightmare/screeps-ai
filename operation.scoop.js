@@ -1,3 +1,4 @@
+const ff = require("helper.friendFoeRecognition");
 const spawnHelper = require("helper.spawning");
 const scooper = require("role.scooper");
 
@@ -12,14 +13,18 @@ module.exports = class ScoopOperation extends Operation {
         }
     }
 
+    get targetRoom() {
+        return Game.rooms[this.memory.targetRoom];
+    }
+
     run() {
         if(this.memory.terminateAfterTick && Game.time > this.memory.terminateAfterTick) {
             Operation.removeOperation(this);
         }
 
         if(this.memory.terminateWhenEmpty) {
-            let targetRoom = Game.rooms[this.memory.targetRoom];
-            if(targetRoom) {
+            if(this.targetRoom) {
+                let targetRoom = this.targetRoom;
                 let storageEmpty = targetRoom.storage && _.sum(targetRoom.storage.store) === 0;
                 let terminalEmpty = targetRoom.terminal && _.sum(targetRoom.terminal.store) === 0;
                 let noStores = !targetRoom.storage && !targetRoom.terminal;
@@ -28,12 +33,27 @@ module.exports = class ScoopOperation extends Operation {
                 }
             }
         }
+
+        if(this.memory.waitForClear) {
+            this.wait = true;
+            if(this.targetRoom) {
+                let hostilesPresent = ff.findHostiles(this.targetRoom).length > 0;
+                let towersPresent = this.targetRoom.find(FIND_HOSTILE_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_TOWER }).length > 0;
+
+                if(!hostilesPresent && !towersPresent) this.wait = false;
+            }
+        }
     }
 
     supportRoomCallback(room) {
         let roomai = room.ai();
 
+        if(this.memory.waitForClear && roomai.observer.isAvailable()) {
+            if(Game.time % 10 === 0) roomai.observer.observeLater(this.memory.targetRoom);
+        }
+
         if(!roomai.canSpawn()) return;
+        if(this.wait) return;
 
         let scoopers = _.filter(spawnHelper.globalCreepsWithRole(scooper.name), (c) => c.memory.operation === this.id);
 
@@ -45,7 +65,14 @@ module.exports = class ScoopOperation extends Operation {
     drawVisuals() {
         let targetRoom = this.memory.targetRoom;
         if(targetRoom) {
-            RoomUI.forRoom(targetRoom).addRoomCaption(`Scooping room from ${this.memory.supportRoom} with ${this.memory.scooperCount} scoopers`);
+            let caption = `Scooping room from ${this.memory.supportRoom} with ${this.memory.scooperCount} scoopers`;
+            let options = {};
+            if(this.wait) {
+                caption = `${caption} (waiting)`;
+                options = { color: "#ccc" };
+            }
+            
+            RoomUI.forRoom(targetRoom).addRoomCaption(caption, options);
         }
     }
 }

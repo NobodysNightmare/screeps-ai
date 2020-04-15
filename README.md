@@ -126,6 +126,7 @@ Optional parameters (in memory):
 * `timeout`: If specified, the operation will be terminated after the given amount of ticks
 * `terminateAfterTick`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
 * `terminateAfterSuccess`: Terminate the operation once all key structures have been destroyed.
+* `waitForClear`: Do not start spawning scoopers, before the room is considered safe (no towers or creeps).
 
 #### Dismantling hostile rooms
 
