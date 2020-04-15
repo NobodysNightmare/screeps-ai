@@ -122,6 +122,7 @@ global.Operation = class Operation {
 const operationSubclasses = {
     attack: require("operation.attack"),
     claim: require("operation.claim"),
+    dismantle: require("operation.dismantle"),
     downgrade: require("operation.downgrade"),
-    dismantle: require("operation.dismantle")
+    drain: require("operation.drain")
 };

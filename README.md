@@ -84,14 +84,6 @@ simultaneously.
 
 Some operations might not require flag to be permanently placed (see description below).
 
-#### Draining hostile rooms
-
-* **Operation name:** `drain`
-* **color:** Controls number of hopper/healer pairs being spawned
-
-Spawns some creeps that drain a hostile room by attracting the towers
-fire.
-
 #### Stealing resources
 
 * **Operation name:** `scoop`
@@ -162,6 +154,19 @@ Optional parameters (in memory):
 Spawns a creep to attack a controller.
 
     Operation.createOperation("downgrade", { supportRoom: "roomName", targetRoom: "roomName" })
+
+#### Draining a room
+
+Spawns a pair of hopper and healer. The hopper will try to drain energy from the target room by being
+attacked by towers.
+
+    Operation.createOperation("drain", { supportRoom: "roomName", targetRoom: "roomName" })
+
+Optional parameters (in memory):
+
+* `useBoosts`: Whether to boost the healer.
+* `timeout`: If specified, the operation will be terminated after the given amount of ticks
+* `terminateAfter`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
 
 ### Claiming a room
 
