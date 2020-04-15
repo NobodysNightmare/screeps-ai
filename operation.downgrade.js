@@ -1,21 +1,25 @@
 const spawnHelper = require("helper.spawning");
 const downgrader = require("role.downgrader");
 
-module.exports = class DowngradeOperation {
-    constructor(roomai, targetFlag) {
-        this.roomai = roomai;
-        this.room = roomai.room;
-        this.targetFlag = targetFlag;
-    }
+module.exports = class DowngradeOperation extends Operation {
+    supportRoomCallback(room) {
+        if(!this.isValid()) return;
 
-    run() {
-        if(!this.roomai.canSpawn()) return;
-        
-        let targetRoom = this.targetFlag.room;
-        let downgraders = _.filter(spawnHelper.globalCreepsWithRole(downgrader.name), (c) => c.memory.flag == this.targetFlag.name);
+        let roomai = room.ai();
+
+        if(!roomai.canSpawn()) return;
+
+        let downgraders = _.filter(spawnHelper.globalCreepsWithRole(downgrader.name), (c) => c.memory.operation === this.id);
 
         if(downgraders.length === 0) {
-            this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, downgrader.configs()), { role: downgrader.name, flag: this.targetFlag.name });
+            roomai.spawn(spawnHelper.bestAvailableParts(roomai.room, downgrader.configs()), { role: downgrader.name, room: this.memory.targetRoom, operation: this.id });
+        }
+    }
+
+    drawVisuals() {
+        let targetRoom = this.memory.targetRoom;
+        if(targetRoom) {
+            RoomUI.forRoom(targetRoom).addRoomCaption(`Downgrading controller from ${this.memory.supportRoom}`);
         }
     }
 }

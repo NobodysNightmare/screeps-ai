@@ -12,17 +12,17 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
-        let flag = Game.flags[creep.memory.flag];
-        if(!flag) return;
-        if(creep.room.name != flag.pos.roomName) {
-            movement.moveToRoom(creep, flag.pos.roomName);
+        let roomName = creep.memory.room;
+        if(!roomName) return;
+        if(creep.room.name !== roomName) {
+            movement.moveToRoom(creep, roomName);
             return;
         }
 
         let target = creep.room.controller;
         let result = creep.attackController(target);
         if(result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.goTo(target);
         }
     }
 };

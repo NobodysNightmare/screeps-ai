@@ -100,13 +100,6 @@ fire.
 Spawns creeps to scoop resources from a room.
 They will pickup resources on the ground and in containers.
 
-#### Attacking a controller
-
-* **Operation name:** `downgrade`
-* **color:** No effect
-
-Spawns a creep to attack a controller.
-
 #### Farming Power Banks
 
 * **Operation name:** `power`
@@ -143,6 +136,7 @@ Spawns some creeps that attack a hostile room.
 
 Optional parameters (in memory):
 
+* `attackerCount`: Number of attacker creeps to spawn (default 1)
 * `useHeal`: Spawn a healer for each attacker.
 * `useTough`: Use configurations on attackers and healers that include tough parts to make healing more efficient.
 * `timeout`: If specified, the operation will be terminated after the given amount of ticks
@@ -157,10 +151,17 @@ attack any creeps.
 
 Optional parameters (in memory):
 
+* `dismantlerCount`: Number of dismantler creeps to spawn (default 1)
 * `useHeal`: Spawn a healer for each attacker.
 * `useTough`: Use configurations on attackers and healers that include tough parts to make healing more efficient.
 * `timeout`: If specified, the operation will be terminated after the given amount of ticks
 * `terminateAfter`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
+
+#### Attacking a controller
+
+Spawns a creep to attack a controller.
+
+    Operation.createOperation("downgrade", { supportRoom: "roomName", targetRoom: "roomName" })
 
 ### Claiming a room
 
