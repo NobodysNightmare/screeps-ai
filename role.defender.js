@@ -14,6 +14,7 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        creep.memory.stopped = false;
         if(creep.room.name === creep.memory.room) {
             if(creep.room.ai() && creep.room.ai().defense.defcon >= 3) {
                 if(boosting.accept(creep, "XUH2O")) return;
@@ -29,8 +30,13 @@ module.exports = {
         var target = ff.findHostiles(creep.room)[0];
         if(target) {
             this.attack(creep, target);
-        } else if(movement.isOnExit(creep)) {
-            movement.leaveExit(creep);
+        } else {
+            let center = creep.room.getPositionAt(25, 25);
+            if(creep.pos.getRangeTo(center) > 10) {
+                creep.goTo({ pos: center }, { range: 10 });
+            } else {
+                creep.memory.stopped = true;
+            }
         }
     },
     attack: function(creep, target) {
