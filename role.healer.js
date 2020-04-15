@@ -18,6 +18,8 @@ module.exports = {
       return spawnHelper.makeParts(toughness, TOUGH, 40 - toughness, HEAL, 10, MOVE);
     },
     run: function(creep) {
+        if(creep.ticksToLive == CREEP_LIFE_TIME - 1) creep.notifyWhenAttacked(false);
+
         if(creep.body[0].type === TOUGH) {
             if(boosting.accept(creep, "XZHO2", "XLHO2", "XGHO2")) return;
         } else {
