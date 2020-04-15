@@ -124,5 +124,6 @@ const operationSubclasses = {
     claim: require("operation.claim"),
     dismantle: require("operation.dismantle"),
     downgrade: require("operation.downgrade"),
-    drain: require("operation.drain")
+    drain: require("operation.drain"),
+    scoop: require("operation.scoop")
 };

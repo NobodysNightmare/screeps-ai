@@ -84,14 +84,6 @@ simultaneously.
 
 Some operations might not require flag to be permanently placed (see description below).
 
-#### Stealing resources
-
-* **Operation name:** `scoop`
-* **color:** Controls number of scoopers being spawned
-
-Spawns creeps to scoop resources from a room.
-They will pickup resources on the ground and in containers.
-
 #### Farming Power Banks
 
 * **Operation name:** `power`
@@ -168,6 +160,20 @@ Optional parameters (in memory):
 * `useBoosts`: Whether to boost the healer.
 * `timeout`: If specified, the operation will be terminated after the given amount of ticks
 * `terminateAfterTick`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
+
+#### Stealing resources
+
+Spawns creeps to scoop resources from a room.
+They will pickup resources on the ground and in containers.
+
+    Operation.createOperation("scoop", { supportRoom: "roomName", targetRoom: "roomName" })
+
+Optional parameters (in memory):
+
+* `scooperCount`: Number of scooper creeps to spawn (default 1)
+* `timeout`: If specified, the operation will be terminated after the given amount of ticks
+* `terminateAfterTick`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
+* `terminateWhenEmpty`: Terminates the operation, once the main storage and terminal of a room are depleted.
 
 ### Claiming a room
 
