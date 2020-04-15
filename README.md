@@ -132,7 +132,8 @@ Optional parameters (in memory):
 * `useHeal`: Spawn a healer for each attacker.
 * `useTough`: Use configurations on attackers and healers that include tough parts to make healing more efficient.
 * `timeout`: If specified, the operation will be terminated after the given amount of ticks
-* `terminateAfter`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
+* `terminateAfterTick`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
+* `terminateAfterSuccess`: Terminate the operation once all key structures have been destroyed.
 
 #### Dismantling hostile rooms
 
@@ -147,7 +148,7 @@ Optional parameters (in memory):
 * `useHeal`: Spawn a healer for each attacker.
 * `useTough`: Use configurations on attackers and healers that include tough parts to make healing more efficient.
 * `timeout`: If specified, the operation will be terminated after the given amount of ticks
-* `terminateAfter`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
+* `terminateAfterTick`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
 
 #### Attacking a controller
 
@@ -166,7 +167,7 @@ Optional parameters (in memory):
 
 * `useBoosts`: Whether to boost the healer.
 * `timeout`: If specified, the operation will be terminated after the given amount of ticks
-* `terminateAfter`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
+* `terminateAfterTick`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
 
 ### Claiming a room
 

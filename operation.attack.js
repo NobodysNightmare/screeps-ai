@@ -2,13 +2,15 @@ const spawnHelper = require("helper.spawning");
 const attacker = require("role.attacker");
 const healer = require("role.healer");
 
+const keyStructures = [STRUCTURE_SPAWN, STRUCTURE_TOWER];
+
 module.exports = class AttackOperation extends Operation {
     constructor(memory) {
         super(memory);
 
         if(!this.memory.attackerCount) this.memory.attackerCount = 1;
         if(this.memory.timeout) {
-            this.memory.terminateAfter = Game.time + this.memory.timeout;
+            this.memory.terminateAfterTick = Game.time + this.memory.timeout;
             delete this.memory.timeout;
         }
     }
@@ -23,8 +25,14 @@ module.exports = class AttackOperation extends Operation {
     }
 
     run() {
-        if(this.memory.terminateAfter && Game.time > this.memory.terminateAfter + CREEP_LIFE_TIME) {
+        if(this.memory.terminateAfterTick && Game.time > this.memory.terminateAfterTick + CREEP_LIFE_TIME) {
             Operation.removeOperation(this);
+        }
+
+        if(this.memory.terminateAfterSuccess && this.targetPosition.room) {
+            if(this.targetPosition.room.find(FIND_HOSTILE_STRUCTURES, { filter: (s) => keyStructures.includes(s.structureType) }).length === 0) {
+                Operation.removeOperation(this);
+            }
         }
 
         this.attackers = _.filter(spawnHelper.globalCreepsWithRole(attacker.name), (c) => c.memory.operation === this.id);
@@ -37,7 +45,7 @@ module.exports = class AttackOperation extends Operation {
 
         this.requestBoosts(roomai);
 
-        if(this.memory.terminateAfter && Game.time > this.memory.terminateAfter) return;
+        if(this.memory.terminateAfterTick && Game.time > this.memory.terminateAfterTick) return;
 
         if(this.memory.useHeal) this.spawnHealers(roomai);
 

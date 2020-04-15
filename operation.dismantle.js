@@ -8,7 +8,7 @@ module.exports = class DismantleOperation extends Operation {
 
         if(!this.memory.dismantlerCount) this.memory.dismantlerCount = 1;
         if(this.memory.timeout) {
-            this.memory.terminateAfter = Game.time + this.memory.timeout;
+            this.memory.terminateAfterTick = Game.time + this.memory.timeout;
             delete this.memory.timeout;
         }
     }
@@ -23,7 +23,7 @@ module.exports = class DismantleOperation extends Operation {
     }
 
     run() {
-        if(this.memory.terminateAfter && Game.time > this.memory.terminateAfter + CREEP_LIFE_TIME) {
+        if(this.memory.terminateAfterTick && Game.time > this.memory.terminateAfterTick + CREEP_LIFE_TIME) {
             Operation.removeOperation(this);
         }
 
@@ -37,7 +37,7 @@ module.exports = class DismantleOperation extends Operation {
 
         this.requestBoosts(roomai);
 
-        if(this.memory.terminateAfter && Game.time > this.memory.terminateAfter) return;
+        if(this.memory.terminateAfterTick && Game.time > this.memory.terminateAfterTick) return;
 
         if(this.memory.useHeal) this.spawnHealers(roomai);
 

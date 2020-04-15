@@ -8,13 +8,13 @@ module.exports = class DrainOperation extends Operation {
         super(memory);
 
         if(this.memory.timeout) {
-            this.memory.terminateAfter = Game.time + this.memory.timeout;
+            this.memory.terminateAfterTick = Game.time + this.memory.timeout;
             delete this.memory.timeout;
         }
     }
 
     run() {
-        if(this.memory.terminateAfter && Game.time > this.memory.terminateAfter) {
+        if(this.memory.terminateAfterTick && Game.time > this.memory.terminateAfterTick) {
             Operation.removeOperation(this);
         }
     }
