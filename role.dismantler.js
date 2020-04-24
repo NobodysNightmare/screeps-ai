@@ -8,6 +8,7 @@ const blacklistedStructures = [STRUCTURE_STORAGE];
 
 module.exports = {
     name: "dismantler",
+    mainBoost: "XZH2O",
     configs: function(options) {
         options = options || {};
         var configs = [];

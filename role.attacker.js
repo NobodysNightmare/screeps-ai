@@ -7,7 +7,8 @@ const prioritizedStructures = [STRUCTURE_SPAWN, STRUCTURE_TOWER];
 
 module.exports = {
     name: "attacker",
-    meleeConfigs: function(options) {
+    mainBoost: "XUH2O",
+    configs: function(options) {
         options = options || {};
         var configs = [];
         for(var attack = (options.maxAttack || 25); attack >= (options.minAttack || 1); attack -= 1) {

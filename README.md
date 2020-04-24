@@ -114,34 +114,20 @@ It usually goes like this
 
 #### Attacking hostile rooms
 
-Spawns some creeps that attack a hostile room.
+Spawns some creeps that attack a hostile room. Either `attackers`, which can engage creeps and structures
+or `dismantlers`, which can only engage structures, but are more effective at that.
 
     Operation.createOperation("attack", { supportRoom: "roomName", targetPosition: new AbsolutePosition(new RoomPosition(x, y, roomName)) })
 
 Optional parameters (in memory):
 
+* `attackRole`: Either `attacker` or `dismantler`
 * `attackerCount`: Number of attacker creeps to spawn (default 1)
 * `useHeal`: Spawn a healer for each attacker.
 * `useTough`: Use configurations on attackers and healers that include tough parts to make healing more efficient.
 * `timeout`: If specified, the operation will be terminated after the given amount of ticks
 * `terminateAfterTick`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
 * `terminateAfterSuccess`: Terminate the operation once all key structures have been destroyed.
-* `waitForClear`: Do not start spawning scoopers, before the room is considered safe (no towers or creeps).
-
-#### Dismantling hostile rooms
-
-Spawns some creeps that dismantle buildings of a hostile room. Very similar to `attack`, but unable to
-attack any creeps.
-
-    Operation.createOperation("dismantle", { supportRoom: "roomName", targetPosition: new AbsolutePosition(new RoomPosition(x, y, roomName)) })
-
-Optional parameters (in memory):
-
-* `dismantlerCount`: Number of dismantler creeps to spawn (default 1)
-* `useHeal`: Spawn a healer for each attacker.
-* `useTough`: Use configurations on attackers and healers that include tough parts to make healing more efficient.
-* `timeout`: If specified, the operation will be terminated after the given amount of ticks
-* `terminateAfterTick`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
 
 #### Attacking a controller
 
@@ -175,6 +161,7 @@ Optional parameters (in memory):
 * `timeout`: If specified, the operation will be terminated after the given amount of ticks
 * `terminateAfterTick`: Same as `timeout`, but specifying an absolute tick number after which to terminate the operation
 * `terminateWhenEmpty`: Terminates the operation, once the main storage and terminal of a room are depleted.
+* `waitForClear`: Do not start spawning scoopers, before the room is considered safe (no towers or creeps).
 
 ### Claiming a room
 

@@ -1,5 +1,6 @@
 const spawnHelper = require("helper.spawning");
 const attacker = require("role.attacker");
+const dismantler = require("role.dismantler");
 const healer = require("role.healer");
 
 const keyStructures = [STRUCTURE_SPAWN, STRUCTURE_TOWER];
@@ -9,6 +10,7 @@ module.exports = class AttackOperation extends Operation {
         super(memory);
 
         if(!this.memory.attackerCount) this.memory.attackerCount = 1;
+        if(this.memory.attackRole !== "dismantler") this.memory.attackRole = "attacker";
         if(this.memory.timeout) {
             this.memory.terminateAfterTick = Game.time + this.memory.timeout;
             delete this.memory.timeout;
@@ -24,6 +26,10 @@ module.exports = class AttackOperation extends Operation {
         this.memory.targetPosition = pos.toJSON();
     }
 
+    get attackRole() {
+        return this.memory.attackRole === "attacker" ? attacker : dismantler;
+    }
+
     run() {
         if(this.memory.terminateAfterTick && Game.time > this.memory.terminateAfterTick + CREEP_LIFE_TIME) {
             Operation.removeOperation(this);
@@ -35,7 +41,7 @@ module.exports = class AttackOperation extends Operation {
             }
         }
 
-        this.attackers = _.filter(spawnHelper.globalCreepsWithRole(attacker.name), (c) => c.memory.operation === this.id);
+        this.attackers = _.filter(spawnHelper.globalCreepsWithRole(this.attackRole.name), (c) => c.memory.operation === this.id);
     }
 
     supportRoomCallback(room) {
@@ -50,10 +56,10 @@ module.exports = class AttackOperation extends Operation {
         if(this.memory.useHeal) this.spawnHealers(roomai);
 
         if(this.attackers.length < this.memory.attackerCount) {
-            let memory = { role: attacker.name, target: this.targetPosition, operation: this.id };
-            let configs = attacker.meleeConfigs();
+            let memory = { role: this.attackRole.name, target: this.targetPosition, operation: this.id };
+            let configs = this.attackRole.configs();
             if(this.memory.useHeal) memory["waitFor"] = true;
-            if(this.memory.useTough) configs = [attacker.toughConfig(15)];
+            if(this.memory.useTough) configs = [this.attackRole.toughConfig(15)];
 
             roomai.spawn(spawnHelper.bestAvailableParts(roomai.room, configs), memory);
         }
@@ -65,12 +71,12 @@ module.exports = class AttackOperation extends Operation {
             let visual = new RoomVisual(targetPos.roomName);
 
             visual.text(`X`, targetPos.x, targetPos.y, { align: "center", color: "#f00", stroke: "#000" });
-            RoomUI.forRoom(targetPos.roomName).addRoomCaption(`Attacking from ${this.memory.supportRoom}`);
+            RoomUI.forRoom(targetPos.roomName).addRoomCaption(`Attacking from ${this.memory.supportRoom} with ${this.memory.attackerCount} ${this.attackRole.name}s`);
         }
     }
 
     requestBoosts(roomai) {
-        roomai.labs.requestBoost("XUH2O", 40);
+        roomai.labs.requestBoost(this.attackRole.mainBoost, 40);
         if(this.memory.useHeal) roomai.labs.requestBoost("XLHO2", 50);
         if(this.memory.useTough) {
             roomai.labs.requestBoost("XGHO2", 45);
