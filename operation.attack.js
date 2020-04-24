@@ -42,6 +42,10 @@ module.exports = class AttackOperation extends Operation {
         }
 
         this.attackers = _.filter(spawnHelper.globalCreepsWithRole(this.attackRole.name), (c) => c.memory.operation === this.id);
+        if(!this.memory.nextWaveAt || this.memory.nextWaveAt < Game.time) {
+            this.memory.nextWaveAt = Game.time + CREEP_LIFE_TIME;
+            this.memory.missingAttackers = this.memory.attackerCount;
+        }
     }
 
     supportRoomCallback(room) {
@@ -55,13 +59,16 @@ module.exports = class AttackOperation extends Operation {
 
         if(this.memory.useHeal) this.spawnHealers(roomai);
 
-        if(this.attackers.length < this.memory.attackerCount) {
+        if(this.memory.missingAttackers > 0) {
             let memory = { role: this.attackRole.name, target: this.targetPosition, operation: this.id };
             let configs = this.attackRole.configs();
             if(this.memory.useHeal) memory["waitFor"] = true;
             if(this.memory.useTough) configs = [this.attackRole.toughConfig(15)];
 
-            roomai.spawn(spawnHelper.bestAvailableParts(roomai.room, configs), memory);
+            let spawnResult = roomai.spawn(spawnHelper.bestAvailableParts(roomai.room, configs), memory);
+            if(_.isString(spawnResult)) {
+                this.memory.missingAttackers -= 1;
+            }
         }
     }
 
@@ -72,6 +79,7 @@ module.exports = class AttackOperation extends Operation {
 
             visual.text(`X`, targetPos.x, targetPos.y, { align: "center", color: "#f00", stroke: "#000" });
             RoomUI.forRoom(targetPos.roomName).addRoomCaption(`Attacking from ${this.memory.supportRoom} with ${this.memory.attackerCount} ${this.attackRole.name}s`);
+            RoomUI.forRoom(this.memory.supportRoom).addRoomCaption(`Attacking ${targetPos.roomName} with ${this.memory.attackerCount} ${this.attackRole.name}s (next wave in ${this.memory.nextWaveAt - Game.time})`);
         }
     }
 
