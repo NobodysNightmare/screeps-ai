@@ -14,6 +14,9 @@ module.exports = {
 
         return configs;
     },
+    // 6 towers at point blank: 3600 damage / tick
+    // 25 heal parts: 300 heal / tick (boosted 1200 heal / tick)
+    // boosted tough: 0.3 dmg taken => 4000 heal / tick (effective)
     toughConfig: function(toughness) {
       return spawnHelper.makeParts(toughness, TOUGH, 40 - toughness, HEAL, 10, MOVE);
     },
@@ -27,13 +30,15 @@ module.exports = {
         }
 
         let target = Game.creeps[creep.memory.target];
-        if(creep.hits < creep.hitsMax && creep.hits < target.hits) {
+        if(!target || (creep.hits < creep.hitsMax && creep.hits < target.hits)) {
             this.heal(creep, creep);
-            if(creep.pos.isNearTo(target)) {
-                this.moveWhileNearTarget(creep, target);
-            } else {
-                if(!creep.memory.avoidRooms || !creep.memory.avoidRooms.includes(target.room.name)) {
-                    creep.goTo(target);
+            if(target) {
+                if(creep.pos.isNearTo(target)) {
+                    this.moveWhileNearTarget(creep, target);
+                } else {
+                    if(!creep.memory.avoidRooms || !creep.memory.avoidRooms.includes(target.room.name)) {
+                        creep.goTo(target);
+                    }
                 }
             }
             return;
