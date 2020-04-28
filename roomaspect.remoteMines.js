@@ -22,6 +22,9 @@ module.exports = class RemoteMinesAspect {
         if(!this.room.storage) return;
         if(!this.room.memory.remoteMines) return;
 
+        // TODO: only disable endangered remote mines
+        if(this.roomai.defense.defcon >= 3) return;
+
         for(var roomName of this.room.memory.remoteMines) {
             var remoteRoom = Game.rooms[roomName];
             if(remoteRoom) {
