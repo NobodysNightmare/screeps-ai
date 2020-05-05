@@ -5,6 +5,7 @@ const constructions = new Map([
     ["storage", require("construction.storage")],
     ["terminal", require("construction.terminal")],
     ["tower", require("construction.tower")],
+    ["towerStack", require("construction.towerStack")],
     ["wall", require("construction.wall")],
 
     // building extensions last, so that they are processed
