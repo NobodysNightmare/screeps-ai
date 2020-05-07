@@ -24,11 +24,6 @@ module.exports = class SuppliesAspect {
             if(!collector) {
                 this.buildLinkCollector();
             }
-
-            this.runLinks();
-            if(this.roomai.links.checkOpenRequests()) {
-                this.roomai.links.fullfillRequests();
-            }
         }
 
         this.buildCollectors();
@@ -94,16 +89,6 @@ module.exports = class SuppliesAspect {
         }
 
         this.roomai.spawn(linkCollector.parts, { role: linkCollector.name });
-    }
-
-    runLinks() {
-        for(let link of this.roomai.links.sources()) {
-            let threshold = 0.5;
-            if(link === this.roomai.links.controller()) threshold = 1.0;
-            if(link.store.energy / link.store.getCapacity(RESOURCE_ENERGY) >= threshold) {
-                link.transferEnergy(this.roomai.links.storage());
-            }
-        }
     }
 }
 

@@ -17,12 +17,7 @@ module.exports = class ControllerAspect {
         let link = this.roomai.links.controller();
         if(link && this.roomai.links.storage()) {
             if(link.store.energy / link.store.getCapacity(RESOURCE_ENERGY) <= 0.5) {
-                this.roomai.links.requestEnergy(link);
-            } else {
-                // always canceling pending requests, in case we
-                // accidentially requested too much (which happens because of
-                // bad timing -.-)
-                this.roomai.links.cancelRequest(link);
+                this.roomai.links.requestEnergy(link, 1);
             }
         } else if(logistic.storeFor(this.controller)) {
             this.buildCarriers();

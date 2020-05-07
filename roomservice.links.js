@@ -5,11 +5,12 @@ module.exports = class Links {
     constructor(room) {
         if(!room.memory.links) {
             room.memory.links = {
-                cache: {},
-                requests: []
+                cache: {}
             };
         }
         this.room = room;
+        this.memory = room.memory;
+        this.requests = [];
     }
 
     storage() {
@@ -26,8 +27,15 @@ module.exports = class Links {
         return _.compact(_.map(sources, (s) => this.linkAt(s)));
     }
 
+    availableSenderLinks() {
+        let result = this.sources();
+        if(this.storage()) result.push(this.storage());
+
+        return _.sortBy(_.filter(result, (l) => l.cooldown === 0), (l) => -l.store.energy);
+    }
+
     linkAt(target) {
-        let linkId = this.room.memory.links.cache[target.id];
+        let linkId = this.memory.links.cache[target.id];
         if(_.isNumber(linkId) && Game.time < linkId) return;
 
         let link = Game.getObjectById(linkId);
@@ -35,40 +43,45 @@ module.exports = class Links {
 
         link = logistic.storeFor(target, false, STRUCTURE_LINK);
         if(link) {
-            this.room.memory.links.cache[target.id] = link.id;
+            this.memory.links.cache[target.id] = link.id;
         } else {
-            this.room.memory.links.cache[target.id] = Game.time + 40;
+            this.memory.links.cache[target.id] = Game.time + 40;
         }
 
         return link;
     }
 
-    requestEnergy(link) {
-        if(this.room.memory.links.requests.indexOf(link.id) === -1) {
-           this.room.memory.links.requests.push(link.id);
-        }
-    }
-
-    cancelRequest(link) {
-        let index = this.room.memory.links.requests.indexOf(link.id);
-        if(index > -1) {
-           this.room.memory.links.requests.splice(index, 1);
-        }
+    requestEnergy(link, priority) {
+        this.requests.push({ link: link, priority: priority });
     }
 
     checkOpenRequests() {
-        return this.room.memory.links.requests.length > 0;
+        return this.memory.pendingRequests;
     }
 
+    // FIXME: when controller and source share a link, there is a lot of ping pong
+    // happening between controller and storage
     fullfillRequests() {
-        if(this.storage().energy >= 500) {
-            let target = Game.getObjectById(this.room.memory.links.requests.shift());
-            if(target) {
-                let result = this.storage().transferEnergy(target);
-                if(result !== OK) {
-                    this.room.memory.links.requests.unshift(target.id);
-                }
+        let receiver = _.sortBy(this.requests, (req) => -req.priority)[0];
+        if(receiver) {
+            receiver = receiver.link;
+            this.memory.pendingRequests = true;
+        } else {
+            // if there are no other requests, we transfer to the storage
+            // avoiding minuscle transfers, to keep cooldown pressure low
+            if(this.storage().store.getFreeCapacity(RESOURCE_ENERGY) >= 400) {
+                receiver = this.storage();
             }
+            this.memory.pendingRequests = false;
+        }
+
+        if(!receiver) return;
+
+        let sender = _.filter(this.availableSenderLinks(), (l) => l !== receiver)[0];
+        if(!sender) return;
+
+        if(sender.store.energy >= receiver.store.getFreeCapacity(RESOURCE_ENERGY)) {
+            sender.transferEnergy(receiver);
         }
     }
 
