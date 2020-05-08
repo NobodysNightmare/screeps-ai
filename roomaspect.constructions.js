@@ -21,6 +21,8 @@ module.exports = class ConstructionsAspect {
         if(this.roomai.intervals.buildComplexStructure.isActive()) {
             buildProxy.commit();
         }
+
+        this.roomai.constructions.drawDebugMarkers();
     }
 }
 

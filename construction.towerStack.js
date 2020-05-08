@@ -72,6 +72,10 @@ module.exports = {
     },
     removeBuilding: function(memory, flag) {
         memory.pop();
+    },
+    plan: function() {
+        // TODO: replace this stub
+        return [];
     }
 };
 

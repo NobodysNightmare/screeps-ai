@@ -1,9 +1,6 @@
 const roomWidth = 50;
 const roomHeight = 50;
 
-const minWidthDefault = 3;
-const minHeightDefault = 3;
-
 class Rectangle {
     constructor(x, y, width, height) {
         this.x = x;
@@ -11,6 +8,10 @@ class Rectangle {
         this.width = width;
         this.height = height;
         this.area = width * height;
+    }
+
+    get center() {
+        return { x: this.x + Math.floor(this.width / 2), y: this.y + Math.floor(this.height / 2) };
     }
 
     intersects(other) {
@@ -27,16 +28,13 @@ module.exports = class ConstructionSpaceFinder {
     constructor(roomName, buildProxy) {
         this.terrain = Game.map.getRoomTerrain(roomName);
         this.buildProxy = buildProxy;
-
-        this.minWidth = minWidthDefault;
-        this.minHeight = minHeightDefault;
     }
 
     // Finds rectangular spaces inside the room that are neither blocked by walls
     // or existing buildings (as of planning state in a build proxy)
     // finding rectangles is derived from algorithm presented at
     // https://www.drdobbs.com/database/the-maximal-rectangle-problem/184410529
-    findSpaces() {
+    findSpaces(minEdge1, minEdge2) {
         let widthCache = Array(roomHeight + 1).fill(0);
         let candidates = [];
 
@@ -55,7 +53,7 @@ module.exports = class ConstructionSpaceFinder {
                     do {
                         priorOpening = openings.pop();
                         let currentHeight = y - priorOpening.y;
-                        if(currentWidth >= this.minWidth && currentHeight >= this.minHeight) {
+                        if((currentWidth >= minEdge1 && currentHeight >= minEdge2) || (currentWidth >= minEdge2 && currentHeight >= minEdge1)) {
                             let rect = new Rectangle(x, priorOpening.y, currentWidth, currentHeight);
                             candidates.push(rect);
                         }
@@ -74,12 +72,16 @@ module.exports = class ConstructionSpaceFinder {
         return this.selectBest(candidates);
     }
 
+    isFreeSpace(x, y) {
+        return x > 0 && x < 49 && y > 0 && y < 49 && this.terrain.get(x, y) !== TERRAIN_MASK_WALL && !this.buildProxy.get(x, y);
+    }
+
     updateWidthCache(cache, x) {
         for(let y = 0; y < roomHeight; y++) {
-            if(x === 0 || x === 49 || y === 0 || y === 49 || this.terrain.get(x, y) === TERRAIN_MASK_WALL || this.buildProxy.get(x, y)) {
-                cache[y] = 0;
-            } else {
+            if(this.isFreeSpace(x, y)) {
                 cache[y] += 1;
+            } else {
+                cache[y] = 0;
             }
         }
     }

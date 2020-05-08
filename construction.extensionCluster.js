@@ -27,6 +27,7 @@ module.exports = {
         { x: 2, y: 4 },
         { x: 3, y: 4 },
     ],
+    type: "extensionCluster",
     outline: function(room, cluster) {
         let x = cluster.x,
             y = cluster.y;
@@ -58,6 +59,26 @@ module.exports = {
     removeBuilding: function(memory, flag) {
         let index = _.findIndex(memory, (p) => p.x == flag.pos.x && p.y == flag.pos.y);
         if(index >= 0) memory.splice(index, 1);
+    },
+    // TODO: planning those efficiently is pretty hard... maybe a smaller alternative would be better?
+    // Idea: something that can be "scaled" into a given rectangle via parameters
+    plan: function(spaceFinder, buildings) {
+        let requiredClusters = 5 - _.filter(buildings, (b) => b.type === this.type).length;
+        if(requiredClusters <= 0) return [];
+
+        let plannedClusters = [];
+        let spaces = spaceFinder.findSpaces(6, 6);
+        // preferring spaces close to map center, TODO: is there any better fitness function?
+        spaces = _.sortBy(spaces, (s) => (s.center.x - 25)**2 + (s.center.y - 25)**2);
+        for(let space of spaces) {
+            for(let delta = 0; delta + 6 <= space.width && delta + 6 <= space.height; delta += 3) {
+                plannedClusters.push({ x: space.x + delta, y: space.y + delta });
+                requiredClusters--;
+                if(requiredClusters <= 0) return plannedClusters;
+            }
+        }
+
+        return plannedClusters;
     }
 };
 

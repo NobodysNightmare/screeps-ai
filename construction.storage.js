@@ -12,6 +12,7 @@ module.exports = {
         { x: -0.5, y: 0.5 },
         { x: -0.5, y: -0.5 },
     ],
+    type: "storage",
     outline: function(room, storage) {
         let x = storage.x,
             y = storage.y;
@@ -46,6 +47,18 @@ module.exports = {
     },
     removeBuilding: function(memory, flag) {
         memory.pop();
+    },
+    plan: function(spaceFinder, buildings) {
+        if(_.filter(buildings, (b) => b.type === this.type).length > 0) return [];
+
+        let spaces = spaceFinder.findSpaces(3, 3);
+        // preferring spaces close to map center, TODO: is there any better fitness function?
+        let space = _.sortBy(spaces, (s) => (s.center.x - 25)**2 + (s.center.y - 25)**2)[0];
+        if(space) {
+            return [{ x: space.x + 1, y: space.y + 1, dir: 1 }];
+        }
+
+        return [];
     }
 };
 

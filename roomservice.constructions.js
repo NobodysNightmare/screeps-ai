@@ -1,3 +1,6 @@
+const BuildProxy = require("construction.buildproxy");
+const ConstructionSpaceFinder = require("constructionSpaceFinder");
+
 const constructions = new Map([
     ["booster", require("construction.booster")],
     ["reactor", require("construction.reactor")],
@@ -12,6 +15,13 @@ const constructions = new Map([
     // after spawns, allowing them to be built inside the cluster
     ["extensionCluster", require("construction.extensionCluster")],
 ]);
+
+const planningOrder = [
+    "extensionCluster",
+    "spawn",
+    "storage",
+    "towerStack"
+];
 
 const buildFlagRegex = /^build([A-Za-z]+)$/;
 const removeFlagRegex = /^remove([A-Za-z]+)$/;
@@ -34,6 +44,16 @@ class Building {
     updateCostMatrix(matrix) {
         this.builder.updateCostMatrix(matrix, this.memory);
     }
+
+    get type() {
+        return this.builder.type;
+    }
+
+    get pos() {
+        if(this.memory.x && this.memory.y) return { x: this.memory.x, y: this.memory.y };
+
+        return null;
+    }
 }
 
 module.exports = class Constructions {
@@ -51,6 +71,42 @@ module.exports = class Constructions {
         this.memory = this.room.memory.constructions;
         for(let type of constructions.keys()) {
             if(!this.memory[type]) this.memory[type] = [];
+        }
+    }
+
+    planRoomLayout() {
+        let startTime = Game.cpu.getUsed();
+        let proxy = new BuildProxy(this.room);
+        let spaceFinder = new ConstructionSpaceFinder(this.room.name, proxy);
+        for(let building of this.buildings) {
+            building.build(proxy);
+        }
+
+        for(let type of planningOrder) {
+            let builder = constructions.get(type);
+            let plannedBuildings = builder.plan(spaceFinder, this.buildings);
+
+            if(!this.memory[type]) this.memory[type] = [];
+            for(let memory of plannedBuildings) {
+                this.memory[type].push(memory);
+
+                let plannedInstance = new Building(builder, memory, this.room);
+                this.buildings.push(plannedInstance);
+                plannedInstance.build(proxy);
+            }
+        }
+
+        let endTime = Game.cpu.getUsed();
+        console.log(`Planning took ${Math.round((endTime - startTime) * 10) / 10} ms.`);
+    }
+
+    drawDebugMarkers() {
+        if(!this.memory.debugRectangles) return;
+
+        let index = 1;
+        for(let rect of this.memory.debugRectangles) {
+            this.room.visual.rect(rect.x - 0.5, rect.y - 0.5, rect.width, rect.height, { stroke: "#0f0", fill: null });
+            this.room.visual.text(index++, rect.x, rect.y, { align: "center", color: "#0f0", stroke: "#000" });
         }
     }
 
