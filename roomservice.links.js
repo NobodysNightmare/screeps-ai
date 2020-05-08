@@ -69,7 +69,7 @@ module.exports = class Links {
         } else {
             // if there are no other requests, we transfer to the storage
             // avoiding minuscle transfers, to keep cooldown pressure low
-            if(this.storage().store.getFreeCapacity(RESOURCE_ENERGY) >= 400) {
+            if(this.storage() && this.storage().store.getFreeCapacity(RESOURCE_ENERGY) >= 400) {
                 receiver = this.storage();
             }
             this.memory.pendingRequests = false;
