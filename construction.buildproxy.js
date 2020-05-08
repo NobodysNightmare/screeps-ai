@@ -24,6 +24,10 @@ module.exports = class BuildProxy {
         return true;
     }
 
+    get(x, y) {
+        return this.plan.get(serializePos({ x: x, y: y }));
+    }
+
     commit() {
         for(let posValueAndType of this.plan) {
             let pos = deserializePos(posValueAndType[0]);
