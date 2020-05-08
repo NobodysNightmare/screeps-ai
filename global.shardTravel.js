@@ -1,5 +1,9 @@
 const sourceShardRegex = /-([A-Za-z0-9]+)$/;
 
+// used to test whether we are on the public MMO server
+// or (e.g.) a private server
+const publicShardRegex = /^shard[0-9]+$/;
+
 // TODO: proper caching:
 // * only load remote shard memory once per Tick
 // * only load local shard memory once per Tick
@@ -20,8 +24,14 @@ function storeLocalTravelMemory(memory) {
     InterShardMemory.setLocal(JSON.stringify(segment));
 }
 
+function interShardAvailable() {
+    return publicShardRegex.exec(Game.shard.name);
+}
+
 module.exports = class ShardTravel {
     static loadArrivals() {
+        if(!interShardAvailable()) return;
+
         let arrivals = _.filter(Game.creeps, (c) => !c.memory.role);
         for(let creep of arrivals) {
             let sourceShard = (sourceShardRegex.exec(creep.name) || [])[1];
@@ -36,6 +46,8 @@ module.exports = class ShardTravel {
     }
 
     static announceDepartures() {
+        if(!interShardAvailable()) return;
+
         let travels = loadLocalTravelMemory();
         let departingCreeps = _.filter(Game.creeps, (c) => c.memory.destinationShard && c.memory.destinationShard !== Game.shard.name);
 
