@@ -20,6 +20,7 @@ const planningOrder = [
     "extensionCluster",
     "spawn",
     "storage",
+    "terminal",
     "towerStack"
 ];
 
