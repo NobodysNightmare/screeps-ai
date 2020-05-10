@@ -4,6 +4,8 @@ const claimer = require("role.claimer");
 const conqueror = require("role.conqueror");
 const miner = require("role.miner");
 
+const BuildProxy = require("construction.buildproxy");
+
 const cleanableStructures = [
     STRUCTURE_SPAWN,
     STRUCTURE_EXTENSION,
@@ -96,7 +98,20 @@ module.exports = class ClaimOperation extends Operation {
         }
 
         if(myRoom) {
-            remoteRoom.createConstructionSite(this.spawnPosition, STRUCTURE_SPAWN);
+            if(this.memory.autoPlanRoom && !this.memory.roomPlanned) {
+                remoteRoom.ai().constructions.planRoomLayout();
+                this.memory.roomPlanned = true;
+
+                let spawn = _.find(remoteRoom.ai().constructions.buildings, (b) => b.type === "spawn");
+                if(spawn) {
+                    let buildProxy = new BuildProxy(remoteRoom);
+                    spawn.build(buildProxy);
+                    buildProxy.commit();
+                }
+            } else {
+                remoteRoom.createConstructionSite(this.spawnPosition, STRUCTURE_SPAWN);
+            }
+
             this.cleanHostileStructures(remoteRoom);
         }
     }

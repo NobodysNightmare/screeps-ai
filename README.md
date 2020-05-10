@@ -176,6 +176,7 @@ fully upgraded miners into it, until the target room can take care of that by it
 Optional parameters (in memory):
 
 * `spawnBuilders`: Support room will also send builders to the target room to speed up building stuff
+* `autoPlanRoom`: Set to true, to let the layout of the room be automatically planned once captured (**experimental**)
 
 ## TODOs
 
