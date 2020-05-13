@@ -66,7 +66,7 @@ module.exports = class ClaimOperation extends Operation {
         if(spawnPos) {
             let visual = new RoomVisual(spawnPos.roomName);
 
-            visual.circle(spawnPos.x, spawnPos.y, { stroke: "#77f", fill: null, radius: 0.5 });
+            visual.circle(spawnPos.x, spawnPos.y, { stroke: "#f77", fill: null, radius: 0.5 });
             RoomUI.forRoom(spawnPos.roomName).addRoomCaption(`Claiming from ${this.memory.supportRoom}`);
         }
     }
