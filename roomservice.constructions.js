@@ -13,11 +13,12 @@ const constructions = new Map([
 
     // building extensions last, so that they are processed
     // after spawns, allowing them to be built inside the cluster
+    ["scalableExtensions", require("construction.scalableExtensions")],
     ["extensionCluster", require("construction.extensionCluster")],
 ]);
 
 const planningOrder = [
-    "extensionCluster",
+    "scalableExtensions",
     "spawn",
     "storage",
     "terminal",
@@ -99,6 +100,15 @@ module.exports = class Constructions {
 
         let endTime = Game.cpu.getUsed();
         console.log(`Planning took ${Math.round((endTime - startTime) * 10) / 10} ms.`);
+    }
+
+    // This method is mostly intended for debugging room layouting code
+    replanRoomLayout() {
+        for(let key in this.memory) delete this.memory[key];
+        this._buildings = null;
+        this.initializeMemory();
+        _.forEach(this.room.find(FIND_MY_CONSTRUCTION_SITES, { filter: (cs) => cs.progress === 0 }), (cs) => cs.remove());
+        this.planRoomLayout();
     }
 
     drawDebugMarkers() {

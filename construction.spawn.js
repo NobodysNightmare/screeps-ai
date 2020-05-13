@@ -21,14 +21,16 @@ module.exports = {
         if(index >= 0) memory.splice(index, 1);
     },
     plan: function(spaceFinder, buildings) {
+        // TODO: properly rewrite towards scalable extensions, without overwriting them
+        // current solution is just a hack to place spawns anywhere
         let requiredSpawns = 3 - _.filter(buildings, (b) => b.type === this.type).length;
         if(requiredSpawns <= 0) return [];
-        let extensionClusters = _.filter(buildings, (b) => b.type === "extensionCluster");
+        let extensionClusters = _.filter(buildings, (b) => b.type === "scalableExtensions");
         let plannedSpawns = [];
 
         for(let cluster of extensionClusters) {
-            for(let dx of [0, 5]) {
-                for(let dy of [0, 5]) {
+            for(let dx of [1, 2, 3]) {
+                for(let dy of [2]) {
                     let x = cluster.pos.x + dx;
                     let y = cluster.pos.y + dy;
                     if(spaceFinder.isFreeSpace(x, y)) {
