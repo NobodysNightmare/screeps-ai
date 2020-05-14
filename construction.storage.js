@@ -1,3 +1,5 @@
+const layout = require("helper.layout");
+
 module.exports = {
     directions: {
         1: { x: 0, y: -1 },
@@ -48,17 +50,20 @@ module.exports = {
     removeBuilding: function(memory, flag) {
         memory.pop();
     },
-    plan: function(spaceFinder, buildings) {
+    plan: function(spaceFinder, buildings, room) {
         if(_.filter(buildings, (b) => b.type === this.type).length > 0) return [];
 
         let spaces = spaceFinder.findSpaces(3, 3);
-        // preferring spaces close to map center, TODO: is there any better fitness function?
-        let space = _.sortBy(spaces, (s) => (s.center.x - 25)**2 + (s.center.y - 25)**2)[0];
-        if(space) {
-            return [{ x: space.x + 1, y: space.y + 1, dir: 1 }];
-        }
+        if(spaces.length === 0) return [];
+        let sourcesPos = layout.averagePos(_.map(room.find(FIND_SOURCES), (s) => s.pos));
+        let extensions = _.filter(buildings, (b) => b.type === "scalableExtensions");
+        let extensionsPos = layout.averagePos(_.map(extensions, (e) => layout.centerPos(e.memory)));
 
-        return [];
+        let preferredPos = layout.averagePos([sourcesPos, extensionsPos]);
+
+        let space = _.sortBy(spaces, (s) => layout.distanceFromSpace(preferredPos, s))[0];
+        let pos = layout.alignInSpace(preferredPos, space, { x: 1, y: 1, width: 3, height: 3 });
+        return [{ x: pos.x, y: pos.y, dir: 1 }];
     }
 };
 

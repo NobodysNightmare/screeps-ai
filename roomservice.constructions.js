@@ -86,7 +86,7 @@ module.exports = class Constructions {
 
         for(let type of planningOrder) {
             let builder = constructions.get(type);
-            let plannedBuildings = builder.plan(spaceFinder, this.buildings);
+            let plannedBuildings = builder.plan(spaceFinder, this.buildings, this.room);
 
             if(!this.memory[type]) this.memory[type] = [];
             for(let memory of plannedBuildings) {

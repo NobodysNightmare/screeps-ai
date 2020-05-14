@@ -1,3 +1,5 @@
+const layout = require("helper.layout");
+
 // oo-oo
 // o-o-o
 // -ooo-
@@ -83,18 +85,20 @@ module.exports = {
         let index = _.findIndex(memory, (p) => p.x == flag.pos.x && p.y == flag.pos.y);
         if(index >= 0) memory.splice(index, 1);
     },
-    plan: function(spaceFinder, buildings) {
+    plan: function(spaceFinder, buildings, room) {
         let missingExtensions = neededExtensions - _.sum(buildings, (b) => (b.type === this.type) ? clusterSize(b.memory) : 0);
         if(missingExtensions <= 0) return [];
 
         let spaces = spaceFinder.findSpaces(minSize, minSize);
-        // preferring spaces close to map center, TODO: is there any better fitness function?
-        spaces = _.sortBy(spaces, (s) => (s.center.x - 25)**2 + (s.center.y - 25)**2);
+        let preferredPos = layout.averagePos(_.map(room.find(FIND_SOURCES), (s) => s.pos).concat([room.controller.pos]));
+        spaces = _.sortBy(spaces, (s) => layout.distanceFromSpace(preferredPos, s));
 
         let plannedClusters = [];
+        room.memory.constructions.debugRectangles = spaces;
         for(let space of spaces) {
-            let cluster = { x: space.x, y:space.y, width: space.width, height: space.height };
+            let cluster = { x: space.x, y: space.y, width: space.width, height: space.height };
             cluster = shrinkCluster(cluster, missingExtensions);
+            cluster = { ...cluster, ...layout.alignInSpace(preferredPos, space, { width: cluster.width, height: cluster.height }) };
 
             plannedClusters.push(cluster);
 

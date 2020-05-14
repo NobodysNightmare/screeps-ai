@@ -33,11 +33,10 @@ module.exports = {
                 for(let dy of [2]) {
                     let x = cluster.pos.x + dx;
                     let y = cluster.pos.y + dy;
-                    if(spaceFinder.isFreeSpace(x, y)) {
-                        plannedSpawns.push({ x: x, y: y });
-                        requiredSpawns--;
-                        if(requiredSpawns <= 0) return plannedSpawns;
-                    }
+
+                    plannedSpawns.push({ x: x, y: y });
+                    requiredSpawns--;
+                    if(requiredSpawns <= 0) return plannedSpawns;
                 }
             }
         }
