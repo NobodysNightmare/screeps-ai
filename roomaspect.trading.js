@@ -3,7 +3,7 @@ const trader = require("role.trader");
 
 const MAX_TRANSFER = 20000;
 const TERMINAL_MAX_FILL = 270000;
-const NPC_ONLY_SALES = true;
+const NPC_ONLY_SALES = false;
 
 const npcRoomRegex = /^[WE][0-9]*0[NS][0-9]*0$/;
 

@@ -32,7 +32,6 @@ module.exports = class Trading {
     get sellingBlacklist() {
         return [
             RESOURCE_ENERGY,
-            RESOURCE_POWER,
             "XGHO2",
             "XGH2O",
             "XKHO2",
@@ -124,6 +123,8 @@ module.exports = class Trading {
 
     sellableAmount(resource) {
         if(this.sellingBlacklist.includes(resource)) return 0;
+        if(resource === RESOURCE_POWER && !Memory.sellPower) return 0;
+
         return this.requiredExportFromRoom(resource);
     }
 
@@ -137,7 +138,7 @@ module.exports = class Trading {
         if(resource == RESOURCE_ENERGY) return 400000;
 
         if(resource == RESOURCE_POWER) {
-            if(this.room.powerSpawn()) return 1000;
+            if(this.room.powerSpawn() && !Memory.sellPower) return 1000;
             return 0;
         }
 
@@ -188,6 +189,7 @@ module.exports = class Trading {
         if(this.room.ai().mode === "unclaim") return 0;
 
         if(resource == RESOURCE_POWER) {
+            if(Memory.sellPower) return 0;
             if(this.room.powerSpawn()) return 15000;
             return 5000;
         }
