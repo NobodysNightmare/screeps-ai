@@ -202,7 +202,7 @@ module.exports = class Trading {
             if(this.room.ai().factory.isAvailable()) {
                 return 5000;
             } else {
-                return 1000;
+                return 0;
             }
         }
 
