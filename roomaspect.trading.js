@@ -5,6 +5,9 @@ const MAX_TRANSFER = 20000;
 const TERMINAL_MAX_FILL = 270000;
 const NPC_ONLY_SALES = false;
 
+const allowedSalesHistoryDeviation = 0.5;
+const allowedBuySellPriceRatio = 0.9;
+
 const npcRoomRegex = /^[WE][0-9]*0[NS][0-9]*0$/;
 
 class DemandCache {
@@ -98,7 +101,7 @@ module.exports = class TradingAspect {
                     return true;
                 } else if(this.provideSupport(resource, exportable)) {
                     return true;
-                } else if(Game.time % 200 === 50) {
+                } else if(Game.time % 100 === 50) {
                     let sellable = this.trading.sellableAmount(resource);
                     if(sellable >= 100) {
                         if(NPC_ONLY_SALES) {
@@ -181,10 +184,24 @@ module.exports = class TradingAspect {
     sellToFreeMarket(resource, amount) {
         amount = _.min([amount, this.terminal.store[resource]]);
         if(amount < 100) return;
-        let sales = Game.market.getAllOrders((o) => o.type == "sell" && o.resourceType == resource && o.remainingAmount > 100);
-        let minPrice = _.min(sales, 'price').price * 0.90;
+        let minPrice = null;
+        let history = Game.market.getHistory(resource);
+        let lastDay = history[history.length - 1];
+        if(lastDay) {
+            minPrice = lastDay.avgPrice - (allowedSalesHistoryDeviation * lastDay.stddevPrice);
+        } else {
+            let sales = Game.market.getAllOrders((o) => o.type == "sell" && o.resourceType == resource && o.remainingAmount > 100);
+            if(sales.length > 0) {
+                minPrice = _.min(sales, 'price').price * allowedBuySellPriceRatio;
+            }
+        }
 
-        let buyers = Game.market.getAllOrders((o) => o.type == "buy" && o.resourceType == resource && o.amount > 0 && o.price >= minPrice);
+        if(!minPrice) {
+            console.log(`Could not determine minimum price for ${resource}. Giving up.`);
+            return;
+        }
+
+        let buyers = _.filter(Game.market.getAllOrders({ type: "buy", resourceType: resource }), (o) => o.amount > 0 && o.price >= minPrice);
         buyers = _.sortBy(buyers, (b) => Game.map.getRoomLinearDistance(b.roomName, this.room.name, true));
         let buyer = _.sortBy(buyers, (b) => -b.price).shift();
         if(!buyer) return;
@@ -203,7 +220,7 @@ module.exports = class TradingAspect {
         amount = _.min([amount, this.terminal.store[resource]]);
         if(amount < 100) return;
 
-        let buyers = Game.market.getAllOrders((o) => o.type == "buy" && o.resourceType == resource && o.amount > 0 && npcRoomRegex.exec(o.roomName));
+        let buyers = _.filter(Game.market.getAllOrders({ type: "buy", resourceType: resource }), (o) => o.amount > 0 && npcRoomRegex.exec(o.roomName));
         buyers = _.sortBy(buyers, (b) => Game.map.getRoomLinearDistance(b.roomName, this.room.name, true));
         let buyer = _.sortBy(buyers, (b) => -b.price).shift();
         if(!buyer) return;
