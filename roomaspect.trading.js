@@ -105,11 +105,9 @@ module.exports = class TradingAspect {
                     let sellable = this.trading.sellableAmount(resource);
                     if(sellable >= 100) {
                         if(NPC_ONLY_SALES) {
-                            this.sellToNpcs(resource, sellable);
-                            return true;
+                            if(this.sellToNpcs(resource, sellable)) return true;
                         } else {
-                            this.sellToFreeMarket(resource, sellable);
-                            return true;
+                            if(this.sellToFreeMarket(resource, sellable)) return true;
                         }
                     }
                 }
@@ -183,10 +181,11 @@ module.exports = class TradingAspect {
 
     sellToFreeMarket(resource, amount) {
         amount = _.min([amount, this.terminal.store[resource]]);
-        if(amount < 100) return;
+        if(amount < 100) return false;
         let minPrice = null;
         let history = Game.market.getHistory(resource);
         let lastDay = history[history.length - 1];
+
         if(lastDay) {
             minPrice = lastDay.avgPrice - (allowedSalesHistoryDeviation * lastDay.stddevPrice);
         } else {
@@ -198,13 +197,13 @@ module.exports = class TradingAspect {
 
         if(!minPrice) {
             console.log(`Could not determine minimum price for ${resource}. Giving up.`);
-            return;
+            return false;
         }
 
         let buyers = _.filter(Game.market.getAllOrders({ type: "buy", resourceType: resource }), (o) => o.amount > 0 && o.price >= minPrice);
         buyers = _.sortBy(buyers, (b) => Game.map.getRoomLinearDistance(b.roomName, this.room.name, true));
         let buyer = _.sortBy(buyers, (b) => -b.price).shift();
-        if(!buyer) return;
+        if(!buyer) return false;
 
         let dealAmount = Math.min(amount, buyer.amount);
         let dealCost = Game.market.calcTransactionCost(dealAmount, this.room.name, buyer.roomName);
@@ -214,16 +213,17 @@ module.exports = class TradingAspect {
         }
 
         Game.market.deal(buyer.id, dealAmount, this.room.name);
+        return true;
     }
 
     sellToNpcs(resource, amount) {
         amount = _.min([amount, this.terminal.store[resource]]);
-        if(amount < 100) return;
+        if(amount < 100) return false;
 
         let buyers = _.filter(Game.market.getAllOrders({ type: "buy", resourceType: resource }), (o) => o.amount > 0 && npcRoomRegex.exec(o.roomName));
         buyers = _.sortBy(buyers, (b) => Game.map.getRoomLinearDistance(b.roomName, this.room.name, true));
         let buyer = _.sortBy(buyers, (b) => -b.price).shift();
-        if(!buyer) return;
+        if(!buyer) return false;
 
         let dealAmount = Math.min(amount, buyer.amount);
         let dealCost = Game.market.calcTransactionCost(dealAmount, this.room.name, buyer.roomName);
@@ -233,6 +233,7 @@ module.exports = class TradingAspect {
         }
 
         Game.market.deal(buyer.id, dealAmount, this.room.name);
+        return true;
     }
 
     buildTrader() {
