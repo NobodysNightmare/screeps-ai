@@ -209,6 +209,17 @@ module.exports = class Trading {
         return 5000;
     }
 
+    // Not considering resources with an excess of less than that amount for export
+    // This is mostly a protection from micro transactions that might block terminal
+    // time for other resources
+    minimumExportAmount(resource) {
+        if(resource === RESOURCE_ENERGY) return 500;
+        if(resource === RESOURCE_POWER) return 10;
+        if(refinedCommodities.includes(resource)) return 10;
+
+        return 100;
+    }
+
     get manualExports() {
         return this.memory.manualExports;
     }

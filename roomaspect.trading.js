@@ -96,14 +96,14 @@ module.exports = class TradingAspect {
     transferResourcesAboveMaximum(resources) {
         for(var resource of resources) {
             let exportable = this.trading.requiredExportFromRoom(resource);
-            if(exportable >= 100) {
+            if(exportable >= this.trading.minimumExportAmount(resource)) {
                 if(this.balanceToEmpire(resource, exportable, possibleImportCache)) {
                     return true;
                 } else if(this.provideSupport(resource, exportable)) {
                     return true;
-                } else if(Game.time % 100 === 50) {
+                } else if(Game.time % 25 === 10) {
                     let sellable = this.trading.sellableAmount(resource);
-                    if(sellable >= 100) {
+                    if(sellable >= this.trading.minimumExportAmount(resource)) {
                         if(NPC_ONLY_SALES) {
                             if(this.sellToNpcs(resource, sellable)) return true;
                         } else {
@@ -120,7 +120,7 @@ module.exports = class TradingAspect {
     transferResourcesAboveMinimum(resources) {
         for(var resource of resources) {
             let exportable = this.trading.possibleExportFromRoom(resource);
-            if(exportable >= 100) {
+            if(exportable >= this.trading.minimumExportAmount(resource)) {
                 if(this.balanceToEmpire(resource, exportable, requiredImportCache)) {
                     return true;
                 }
@@ -136,11 +136,11 @@ module.exports = class TradingAspect {
 
         let exportable = Math.min(exportDescription.amount, this.terminal.store[resource] || 0);
         exportable = Math.min(exportable, MAX_TRANSFER);
-        if(exportable >= 100) {
+        if(exportable >= this.trading.minimumExportAmount(resource)) {
             let result = this.terminal.send(resource, exportable, exportDescription.room, "Manual export");
             if(result === OK) {
                 exportDescription.amount -= exportable;
-                if(exportDescription.amount < 100) {
+                if(exportDescription.amount < this.trading.minimumExportAmount(resource)) {
                     delete this.trading.manualExports[resource];
                 }
                 return true;
@@ -181,7 +181,7 @@ module.exports = class TradingAspect {
 
     sellToFreeMarket(resource, amount) {
         amount = _.min([amount, this.terminal.store[resource]]);
-        if(amount < 100) return false;
+        if(amount < this.trading.minimumExportAmount(resource)) return false;
         let minPrice = null;
         let history = Game.market.getHistory(resource);
         let lastDay = history[history.length - 1];
@@ -218,7 +218,7 @@ module.exports = class TradingAspect {
 
     sellToNpcs(resource, amount) {
         amount = _.min([amount, this.terminal.store[resource]]);
-        if(amount < 100) return false;
+        if(amount < this.trading.minimumExportAmount(resource)) return false;
 
         let buyers = _.filter(Game.market.getAllOrders({ type: "buy", resourceType: resource }), (o) => o.amount > 0 && npcRoomRegex.exec(o.roomName));
         buyers = _.sortBy(buyers, (b) => Game.map.getRoomLinearDistance(b.roomName, this.room.name, true));
