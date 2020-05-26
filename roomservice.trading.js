@@ -165,7 +165,7 @@ module.exports = class Trading {
         }
 
         if(rawCommodities.includes(resource) || refinedCommodities.includes(resource)) {
-            if(this.room.ai().factory.isAvailable()) {
+            if(this.room.ai().factory.isAvailable() && this.room.ai().factory.usableResources.includes(resource)) {
                 return 2000;
             } else {
                 return 0;
@@ -199,7 +199,7 @@ module.exports = class Trading {
         if(resource === "G") return 10000;
 
         if(rawCommodities.includes(resource) || refinedCommodities.includes(resource)) {
-            if(this.room.ai().factory.isAvailable()) {
+            if(this.room.ai().factory.isAvailable() && this.room.ai().factory.usableResources.includes(resource)) {
                 return 5000;
             } else {
                 return 0;

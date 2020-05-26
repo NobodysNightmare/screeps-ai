@@ -11,7 +11,7 @@ function allComponents(product) {
         }
     }
 
-    return result;
+    return _.uniq(result);
 }
 
 module.exports = class Factory {
@@ -29,10 +29,17 @@ module.exports = class Factory {
 
     set product(product) {
         this.memory.product = product;
+        this.updateUsableResources();
     }
 
     get product() {
         return this.memory.product;
+    }
+
+    get usableResources() {
+        if(!this.memory.usableResources) this.updateUsableResources();
+
+        return this.memory.usableResources;
     }
 
     isAvailable() {
@@ -66,14 +73,23 @@ module.exports = class Factory {
     importableResources() {
         if(!this.product) return [];
 
-        return _.filter(_.uniq(allComponents(this.product)), (r) => this.structure.store[r] < INPUT_BUFFER);
+        return _.filter(this.usableResources, (r) => this.structure.store[r] < INPUT_BUFFER);
     }
 
     exportableResources() {
         if(!this.product) return Object.keys(this.structure.store);
 
-        let neededResources = allComponents(this.product);
+        let neededResources = this.usableResources;
         return _.filter(Object.keys(this.structure.store), (r) => !neededResources.includes(r));
+    }
+
+    updateUsableResources() {
+        if(!this.product) {
+            this.memory.usableResources = [];
+            return;
+        }
+
+        this.memory.usableResources = allComponents(this.product);
     }
 }
 
