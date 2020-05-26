@@ -79,6 +79,7 @@ module.exports = {
                 defcon: room.ai().defense.defcon
             };
             if(room.storage) {
+                result[room.name].storageSpace = room.storage.store.getFreeCapacity();
                 result[room.name].resources = {
                     energy: room.storage.store.energy,
                     H: room.storage.store.H,
