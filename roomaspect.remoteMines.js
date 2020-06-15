@@ -10,6 +10,7 @@ const ff = require("helper.friendFoeRecognition");
 
 const profitVisual = require("visual.roomProfit");
 
+const energyExcessThreshold = 20000;
 const secondCarrierMinCapacity = 400;
 
 module.exports = class RemoteMinesAspect {
@@ -25,12 +26,18 @@ module.exports = class RemoteMinesAspect {
         // TODO: only disable endangered remote mines
         if(this.roomai.defense.defcon >= 3) return;
 
+        let hasExcessEnergy = this.roomai.trading.requiredExportFromRoom(RESOURCE_ENERGY) >= energyExcessThreshold;
+
         for(var roomName of this.room.memory.remoteMines) {
             var remoteRoom = Game.rooms[roomName];
             if(remoteRoom) {
                 if(this.isInvaderRoom(remoteRoom)) continue;
                 if(this.spawnDefender(remoteRoom)) continue;
+
                 this.spawnReserver(remoteRoom);
+
+                if(hasExcessEnergy) continue;
+
                 for(let source of remoteRoom.find(FIND_SOURCES)) {
                     this.spawnMiner(source);
                     this.spawnCarrier(source);
