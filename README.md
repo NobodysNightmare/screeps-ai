@@ -4,6 +4,19 @@ This is my personal AI for the computer game [Screeps](https://screeps.com).
 
 ## Manual control
 
+### Memory Overrides
+
+#### `Memory.hibernateGclFarming`
+
+If `true`, RCL 8 rooms will only perform a minimal amount of upgrading,
+but not upgrade at the maximum possible rate. This is intended to significantly
+reduce the amount of energy spent, which in turn can shut down a larger part of
+CPU consumption, since fewer remote mines should be necessary.
+
+#### `Memory.sellPower`
+
+If `true`, power is sold on the market rather than being refined.
+
 ### Constructions
 
 Multiple structures and structure groups can be pre-planned.

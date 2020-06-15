@@ -93,7 +93,7 @@ module.exports = class ControllerAspect {
     }
 
     energyPerTick() {
-        if(this.roomai.defense.defcon >= 4) return 4;
+        if(this.roomai.defense.defcon >= 4) return 1;
 
         let energy = 10;
 
@@ -111,6 +111,7 @@ module.exports = class ControllerAspect {
             let maxOutput = 15;
             // TODO: provide different prebuilt configurations depending on mode
             if(this.roomai.mode !== "normal" && this.roomai.mode !== "gcl") maxOutput = 4;
+            if(this.roomai.mode !== "gcl" && Memory.hibernateGclFarming) maxOutput = 1;
             return _.min([maxOutput, energy]);
         } else {
             return energy;
