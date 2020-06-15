@@ -17,6 +17,11 @@ CPU consumption, since fewer remote mines should be necessary.
 
 If `true`, power is sold on the market rather than being refined.
 
+#### `Memory.onlySellToNpcs`
+
+If `true`, no trading will be performed with other players. Market code will
+only consider NPC traders to sell resources.
+
 ### Constructions
 
 Multiple structures and structure groups can be pre-planned.

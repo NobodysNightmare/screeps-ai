@@ -3,7 +3,6 @@ const trader = require("role.trader");
 
 const MAX_TRANSFER = 20000;
 const TERMINAL_MAX_FILL = 270000;
-const NPC_ONLY_SALES = false;
 
 const allowedSalesHistoryDeviation = 0.5;
 const allowedBuySellPriceRatio = 0.9;
@@ -104,7 +103,7 @@ module.exports = class TradingAspect {
                 } else if(Game.time % 25 === 10) {
                     let sellable = this.trading.sellableAmount(resource);
                     if(sellable >= this.trading.minimumExportAmount(resource)) {
-                        if(NPC_ONLY_SALES) {
+                        if(Memory.onlySellToNpcs) {
                             if(this.sellToNpcs(resource, sellable)) return true;
                         } else {
                             if(this.sellToFreeMarket(resource, sellable)) return true;
