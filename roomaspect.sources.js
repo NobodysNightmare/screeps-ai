@@ -4,6 +4,8 @@ const roads = require("construction.roads");
 const spawnHelper = require("helper.spawning");
 const store = require("construction.stores");
 
+const energyExcessThreshold = 50000;
+
 module.exports = class SourcesAspect {
     constructor(roomai) {
         this.roomai = roomai;
@@ -46,6 +48,9 @@ module.exports = class SourcesAspect {
         if(!this.roomai.canSpawn()) {
             return;
         }
+
+        let hasExcessEnergy = this.roomai.trading.requiredExportFromRoom(RESOURCE_ENERGY) >= energyExcessThreshold;
+        if(hasExcessEnergy) return;
 
         let parts = spawnHelper.bestAffordableParts(this.room, miner.energyConfigs, true);
         let spawnDuration = spawnHelper.spawnDuration(parts);
