@@ -12,7 +12,7 @@ module.exports = class FactoryAspect {
     run() {
         if(!this.room.storage || !this.factory.isAvailable()) return;
         if(this.roomai.defense.defcon >= 4) return;
-        if(Game.cpu.bucket < 5000) {
+        if(Game.cpu.bucket < 3000) {
             return;
         }
 

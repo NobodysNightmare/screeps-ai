@@ -19,7 +19,7 @@ module.exports = class LabsAspect {
 
     run() {
         if(!this.room.storage || !((this.reactor && this.reactor.isValid()) || this.boosters.length > 0)) return;
-        if(Game.cpu.bucket < 5000) {
+        if(Game.cpu.bucket < 3000) {
             return;
         }
 

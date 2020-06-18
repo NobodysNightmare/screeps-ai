@@ -96,7 +96,7 @@ module.exports.loop = function() {
             Memory.stats.skippedTicks += 1;
         }
 
-        if(Game.time % 10 === 0 && Game.cpu.bucket < 5000) {
+        if(Game.time % 10 === 0 && Game.cpu.bucket < 3000) {
             console.log("Bucket at " + Game.cpu.bucket);
         }
 
@@ -146,6 +146,10 @@ module.exports.loop = function() {
 
         for(let ui of RoomUI.all) {
             suppressErrors(() => ui.render());
+        }
+
+        if(Game.cpu.bucket >= 9999) {
+            Game.cpu.generatePixel();
         }
 
         globalStatistics.run();
