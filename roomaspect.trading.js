@@ -163,6 +163,7 @@ module.exports = class TradingAspect {
     provideSupport(resource, amount) {
         let requests = Memory.tradeRequests;
         if(!requests || !requests[resource]) return false;
+        if(resource === RESOURCE_POWER && Memory.sellPower) return false;
 
         let target = requests[resource].shift();
         if(!target) return false;
