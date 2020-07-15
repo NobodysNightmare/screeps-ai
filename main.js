@@ -43,7 +43,7 @@ const SegmentScanner = require("global.segmentScanner");
 const SegmentExport = require("global.segmentExport");
 const ShardTravel = require("global.shardTravel");
 const TradeLogger = require("global.tradeLogger");
-const TokenTrader = require("global.tokenTrader");
+const PixelTrader = require("global.pixelTrader");
 
 global.AbsolutePosition = require("absolutePosition");
 
@@ -136,7 +136,7 @@ module.exports.loop = function() {
         new ConstructionSitesCleaner().run();
 
         suppressErrors(() => new TradeLogger().logTrades());
-        suppressErrors(() => new TokenTrader().run());
+        suppressErrors(() => new PixelTrader().run());
 
         for(let operation of Operation.operations) {
             suppressErrors(() => operation.drawVisuals());
