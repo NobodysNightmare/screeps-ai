@@ -14,6 +14,8 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        if(creep.ticksToLive == CREEP_LIFE_TIME - 1) creep.notifyWhenAttacked(false);
+
         creep.memory.stopped = false;
         if(creep.room.name === creep.memory.room) {
             if(creep.room.ai() && creep.room.ai().defense.defcon >= 3) {
