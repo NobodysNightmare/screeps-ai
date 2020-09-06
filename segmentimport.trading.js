@@ -7,12 +7,15 @@ Imports trades from shared segments
         X: false,
         ...
     },
-    advancedTrading: {
-        E1S1: {
-            energy: 100,
-            ...
-        },
-        ...
+    "advancedTrading": {
+        "W6S9": [
+          {
+            "resource": "XGHO2",
+            "priority": 1
+          },
+          ...
+        ]
+      }
     }
 
 And maps them into a local memory structure for access by remaining code:
@@ -25,6 +28,8 @@ And maps them into a local memory structure for access by remaining code:
         ...
     }
 */
+
+const DEFAULT_TRADE_AMOUNT = 250;
 
 module.exports = class SegmentTrading {
     constructor(data, username) {
@@ -54,11 +59,10 @@ module.exports = class SegmentTrading {
     importAdvancedTrades() {
         if(!this.advancedTrades) return;
 
-        // TODO: more error handling for unexpected format?
         for(let room in this.advancedTrades) {
             let roomRequests = this.advancedTrades[room];
-            for(let resource in roomRequests) {
-                this.addTradeRequest(resource, roomRequests[resource], room);
+            for(let request of roomRequests) {
+                this.addTradeRequest(request.resource, request.amount || DEFAULT_TRADE_AMOUNT, room);
             }
         }
     }
@@ -70,7 +74,7 @@ module.exports = class SegmentTrading {
             if(resource === "room") continue;
 
             if(this.basicTrades[resource]) {
-                this.addTradeRequest(resource, 250, this.basicTrades.room);
+                this.addTradeRequest(resource, DEFAULT_TRADE_AMOUNT, this.basicTrades.room);
             }
         }
     }

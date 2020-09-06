@@ -4,7 +4,7 @@ const segmentExports = [
 
 module.exports = class SegmentExport {
     run() {
-        let data = {};
+        let data = { updated: Game.time };
         for(let exporter of segmentExports) {
             let exported = new exporter().run();
             data = { ...data, ...exported };

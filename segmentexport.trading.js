@@ -7,12 +7,15 @@ Exports trades to public segment
         X: false,
         ...
     },
-    advancedTrading: {
-        E1S1: {
-            energy: 100,
-            ...
-        },
-        ...
+    "advancedTrading": {
+        "W6S9": [
+          {
+            "resource": "XGHO2",
+            "priority": 1
+          },
+          ...
+        ]
+      }
     }
 
 Basic trading is a polyfill from advanced trading
@@ -29,20 +32,20 @@ module.exports = class SegmentTrading {
         let rooms = _.filter(Game.rooms, (r) => r.ai() && r.ai().trading.isTradingPossible());
 
         for(let room of rooms) {
-            let roomRequest = {};
+            let roomRequests = [];
             for(let resource of announcedResources) {
                 let request = room.ai().trading.requiredImportToRoom(resource);
-                if(request > 0) roomRequest[resource] = request;
+                if(request > 0) roomRequests.push({ resource: resource, amount: request, priority: 0.5 });
             }
 
-            if(_.sum(roomRequest) > 0) result.advancedTrading[room.name] = roomRequest;
+            if(roomRequests.length > 0) result.advancedTrading[room.name] = roomRequests;
         }
 
         // polyfilling basicTrading: collecting requests from all the rooms and routing
         // them to one room (randomly selecting that, so incoming resources are spread)
         result.basicTrading = {};
         let polyfillRoom = _.sample(Object.keys(result.advancedTrading));
-        let polyfillResources = _.uniq(_.flatten(_.map(result.advancedTrading, (req) => Object.keys(req))));
+        let polyfillResources = _.uniq(_.flatten(_.map(result.advancedTrading, (requests) => _.map(requests, (r) => r.resource))));
         if(polyfillRoom) {
             result.basicTrading.room = polyfillRoom;
             for(let resource of polyfillResources) {
