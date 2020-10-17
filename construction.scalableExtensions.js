@@ -94,7 +94,6 @@ module.exports = {
         spaces = _.sortBy(spaces, (s) => layout.distanceFromSpace(preferredPos, s));
 
         let plannedClusters = [];
-        room.memory.constructions.debugRectangles = spaces;
         for(let space of spaces) {
             let cluster = { x: space.x, y: space.y, width: space.width, height: space.height };
             cluster = shrinkCluster(cluster, missingExtensions);

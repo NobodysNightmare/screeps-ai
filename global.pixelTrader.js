@@ -26,4 +26,4 @@ module.exports = class PixelTrader {
 }
 
 const profiler = require("screeps-profiler");
-profiler.registerClass(module.exports, 'TradeLogger');
+profiler.registerClass(module.exports, 'PixelTrader');
