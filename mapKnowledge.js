@@ -34,7 +34,7 @@ module.exports = class MapKnowledge {
         knowledge.plainTiles = 0;
         knowledge.swampTiles = 0;
         knowledge.wallTiles = 0;
-        let terrain = new Room.Terrain(room.name);
+        let terrain = Game.map.getRoomTerrain(room.name);
         for(let x = 0; x < 50; x++) {
             for(let y = 0; y < 50; y++) {
                 if(terrain.get(x, y) === TERRAIN_MASK_SWAMP) {
