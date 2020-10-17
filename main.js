@@ -148,7 +148,7 @@ module.exports.loop = function() {
             suppressErrors(() => ui.render());
         }
 
-        if(Game.cpu.bucket >= 9999) {
+        if(Game.cpu.bucket >= 9999 && Game.cpu.generatePixel) {
             Game.cpu.generatePixel();
         }
 

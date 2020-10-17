@@ -6,6 +6,7 @@ module.exports = class PixelTrader {
     }
 
     run() {
+        if(!Game.resources.pixel) return;
         if(Game.resources.pixel < minPixelAmount) return;
 
         let bestOrder = _.sortBy(Game.market.getAllOrders({ type: "buy", resourceType: PIXEL }), (o) => -o.price)[0];
