@@ -98,9 +98,11 @@ module.exports = class ClaimOperation extends Operation {
         }
 
         if(myRoom) {
-            if(this.memory.autoPlanRoom && !this.memory.roomPlanned) {
-                remoteRoom.ai().constructions.planRoomLayout();
-                this.memory.roomPlanned = true;
+            if(this.memory.autoPlanRoom) {
+                if(!this.memory.roomPlanned) {
+                    remoteRoom.ai().constructions.planRoomLayout();
+                    this.memory.roomPlanned = true;
+                }
 
                 let spawn = _.find(remoteRoom.ai().constructions.buildings, (b) => b.type === "spawn");
                 if(spawn) {
