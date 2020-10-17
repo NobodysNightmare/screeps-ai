@@ -9,7 +9,10 @@ module.exports = {
                 for(let dy = -r; dy <= r; dy++) {
                     if(Math.abs(dx) !== r && Math.abs(dy) !== r) continue;
 
-                    result.push(this.offset(parsedRoom, dx, dy));
+                    let resultRoom = this.offset(parsedRoom, dx, dy);
+
+                    // describeExits will return null for non-existing rooms
+                    if(Game.map.describeExits(resultRoom)) result.push(resultRoom);
                 }
             }
         }
