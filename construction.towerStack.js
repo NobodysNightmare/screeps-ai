@@ -1,3 +1,5 @@
+const layout = require("helper.layout");
+
 const roadParts = [
     { x: -1, y: 0 },
     { x: 1,  y: 0 },
@@ -73,9 +75,29 @@ module.exports = {
     removeBuilding: function(memory, flag) {
         memory.pop();
     },
-    plan: function() {
-        // TODO: replace this stub
-        return [];
+    plan: function(spaceFinder, buildings, room) {
+        if(_.filter(buildings, (b) => b.type === this.type).length > 0) return [];
+
+        let spaces = spaceFinder.findSpaces(5, 3);
+        if(spaces.length === 0) return [];
+
+        let storage = _.filter(buildings, (b) => b.type === "storage")[0];
+        if(!storage) return [];
+
+        let preferredPos = storage.memory;
+        let space = _.sortBy(spaces, (s) => layout.distanceFromSpace(preferredPos, s))[0];
+
+        // TODO: placing close to storage and with kinda random direction...
+        // this all needs to be improved, but at least towers are planned at all
+        let direction = space.height >= 5 ? 1 : 2;
+        let pos = null;
+        if(direction === 1) {
+            pos = layout.alignInSpace(preferredPos, space, { x: 1, y: 4, width: 3, height: 5 });
+        } else {
+            pos = layout.alignInSpace(preferredPos, space, { x: 0, y: 1, width: 5, height: 3 });
+        }
+
+        return [{ x: pos.x, y: pos.y, dir: direction }];
     }
 };
 

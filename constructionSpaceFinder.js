@@ -22,6 +22,10 @@ class Rectangle {
 
         return true;
     }
+
+    toString() {
+        return `Rectangle(pos(${this.x}, ${this.y}); size(${this.width}, ${this.height}))`;
+    }
 }
 
 module.exports = class ConstructionSpaceFinder {
