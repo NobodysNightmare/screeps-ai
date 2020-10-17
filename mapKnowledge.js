@@ -29,6 +29,7 @@ module.exports = class MapKnowledge {
         let sources = room.find(FIND_SOURCES).length;
         knowledge.mineral = mineral && mineral.mineralType;
         knowledge.sources = sources;
+        knowledge.claimable = !!room.controller;
 
         knowledge.plainTiles = 0;
         knowledge.swampTiles = 0;
@@ -48,6 +49,7 @@ module.exports = class MapKnowledge {
     }
 
     static updateRoomKnowledge(knowledge, room) {
+        knowledge.lastUpdate = Game.time;
         if(room.controller) {
             if(room.controller.owner) {
                 knowledge.owner = room.controller.owner.username;

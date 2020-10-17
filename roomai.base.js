@@ -10,6 +10,7 @@ const aspects = [
     require("roomaspect.remoteMines"),
     require("roomaspect.masons"),
     require("roomaspect.constructions"),
+    require("roomaspect.intelligence"),
     require("roomaspect.labs"),
     require("roomaspect.factory"),
     require("roomaspect.operations"),
