@@ -46,6 +46,7 @@ const TradeLogger = require("global.tradeLogger");
 const PixelTrader = require("global.pixelTrader");
 
 global.AbsolutePosition = require("absolutePosition");
+global.MapKnowledge = require("mapKnowledge");
 
 require("operation");
 require("roomui");
@@ -113,10 +114,10 @@ module.exports.loop = function() {
         }
 
         suppressErrors(() => ShardTravel.loadArrivals());
-
         runCreeps();
-
         suppressErrors(() => ShardTravel.announceDepartures());
+
+        suppressErrors(() => MapKnowledge.updateKnowledge());
 
         if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
 
