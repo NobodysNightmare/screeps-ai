@@ -13,22 +13,46 @@ const profitVisual = require("visual.roomProfit");
 const energyExcessThreshold = 20000;
 const secondCarrierMinCapacity = 400;
 
+const targetRemoteMineCount = 2;
+
+function isAcceptableMine(roomName) {
+    let knowledge = MapKnowledge.roomKnowledge(roomName);
+    if(!knowledge) return false;
+    // mines need a source, but should not be center rooms (which have hostile NPCs)
+    if(knowledge.sources < 1 || knowledge.sources > 2) return false;
+    if(knowledge.owner) return false;
+
+    // has another room already chosen this mine?
+    if(knowledge.remoteMineOf) {
+        let ownerRoom = Game.rooms[knowledge.remoteMineOf];
+        if(ownerRoom && ownerRoom.ai()) return false;
+    }
+
+    return true;
+}
+
 module.exports = class RemoteMinesAspect {
     constructor(roomai) {
         this.roomai = roomai;
         this.room = roomai.room;
+        if(!this.room.memory.remoteMines) this.room.memory.remoteMines = [];
+        this.remoteMines = this.room.memory.remoteMines;
     }
 
     run() {
         if(!this.room.storage) return;
-        if(!this.room.memory.remoteMines) return;
+        if(this.remoteMines.length < targetRemoteMineCount) {
+           if(!Memory.disableAutoExpansion && Game.time % 2000 === 0) {
+               this.planRemoteMines();
+           }
+        }
 
         // TODO: only disable endangered remote mines
         if(this.roomai.defense.defcon >= 3) return;
 
         let hasExcessEnergy = this.roomai.trading.requiredExportFromRoom(RESOURCE_ENERGY) >= energyExcessThreshold;
 
-        for(var roomName of this.room.memory.remoteMines) {
+        for(var roomName of this.remoteMines) {
             var remoteRoom = Game.rooms[roomName];
             if(remoteRoom) {
                 if(this.isInvaderRoom(remoteRoom)) continue;
@@ -128,6 +152,21 @@ module.exports = class RemoteMinesAspect {
         if(_.isString(result)) {
             profitVisual.addCost(targetRoom, spawnHelper.costForParts(parts));
         }
+    }
+
+    planRemoteMines() {
+        // TODO: extend to one room past a remote mine (room -> mine 1 -> mine 2) if not enough direct neighbours
+        let candidates = Game.map.describeExits(this.room.name);
+        candidates = _.filter(candidates, (r) => !this.remoteMines.includes(r) && isAcceptableMine(r));
+        candidates = _.sortBy(candidates, (r) => -MapKnowledge.roomKnowledge(r).sources);
+        for(let roomName of _.take(candidates, targetRemoteMineCount - this.remoteMines.length)) {
+            this.addRemoteMine(roomName);
+        }
+    }
+
+    addRemoteMine(roomName) {
+        this.remoteMines.push(roomName);
+        MapKnowledge.roomKnowledge(roomName).remoteMineOf = this.room.name;
     }
 }
 

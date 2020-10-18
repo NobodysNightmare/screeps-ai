@@ -22,6 +22,14 @@ If `true`, power is sold on the market rather than being refined.
 If `true`, no trading will be performed with other players. Market code will
 only consider NPC traders to sell resources.
 
+#### `Memory.disableAutoExpansion`
+
+If `true`, the AI will not try to automatically expand into new rooms.
+This is useful if politics should drive expansion.
+
+Note: Automatic expansion is currently experimental. It affects both
+claiming new rooms and choosing remote mines.
+
 ### Constructions
 
 Multiple structures and structure groups can be pre-planned.
