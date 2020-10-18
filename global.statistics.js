@@ -47,6 +47,7 @@ module.exports = {
     },
     empireStats: function(myRooms) {
         myRooms = _.filter(myRooms, (r) => r.storage);
+        let chartingThreshold = Game.time - 15000;
 
         return {
             resources: {
@@ -62,7 +63,8 @@ module.exports = {
             },
             creeps: Object.keys(Game.creeps).length,
             creepRoles: _.mapValues(_.groupBy(Game.creeps, (c) => c.memory.role), (creeps) => creeps.length),
-            playerTrades: Memory.tradeLogs && Memory.tradeLogs.players
+            playerTrades: Memory.tradeLogs && Memory.tradeLogs.players,
+            chartedRooms: _.filter(MapKnowledge.memory, (k) => k.lastUpdate >= chartingThreshold).length
         };
     },
     roomStats: function(myRooms) {
