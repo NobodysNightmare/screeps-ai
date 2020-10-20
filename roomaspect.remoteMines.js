@@ -155,13 +155,23 @@ module.exports = class RemoteMinesAspect {
     }
 
     planRemoteMines() {
-        // TODO: extend to one room past a remote mine (room -> mine 1 -> mine 2) if not enough direct neighbours
-        let candidates = Game.map.describeExits(this.room.name);
-        candidates = _.filter(candidates, (r) => !this.remoteMines.includes(r) && isAcceptableMine(r));
-        candidates = _.sortBy(candidates, (r) => -MapKnowledge.roomKnowledge(r).sources);
-        for(let roomName of _.take(candidates, targetRemoteMineCount - this.remoteMines.length)) {
+        let missingMines = targetRemoteMineCount - this.remoteMines.length
+
+        let candidates = this.possibleRemoteMines(Object.values(Game.map.describeExits(this.room.name)));
+        for(let roomName of _.take(candidates, missingMines)) {
             this.addRemoteMine(roomName);
+            missingMines--;
         }
+
+        if(missingMines > 0) {
+            candidates = this.possibleRemoteMines(_.flatten(_.map(this.remoteMines, (r) => Object.values(Game.map.describeExits(r)))));
+            for(let roomName of _.take(candidates, missingMines)) this.addRemoteMine(roomName);
+        }
+    }
+
+    possibleRemoteMines(roomNames) {
+        roomNames = _.filter(roomNames, (r) => r !== this.room.name && !this.remoteMines.includes(r) && isAcceptableMine(r));
+        return _.sortBy(roomNames, (r) => -MapKnowledge.roomKnowledge(r).sources);
     }
 
     addRemoteMine(roomName) {
