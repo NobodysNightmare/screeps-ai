@@ -22,10 +22,16 @@ module.exports = class MapKnowledge {
         }
     }
 
-    static roomKnowledge(name) {
+    static roomKnowledge(room) {
+        let name = room.name || room;
         if(!this.memory[name]) this.memory[name] = {};
 
         return this.memory[name];
+    }
+
+    static knowledgeList() {
+        let rooms = Object.keys(this.memory);
+        return _.map(rooms, (r) => ({ name: r, knowledge: this.roomKnowledge(r) }));
     }
 
     static get memory() {

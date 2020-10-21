@@ -46,6 +46,7 @@ const ShardTravel = require("global.shardTravel");
 const TradeLogger = require("global.tradeLogger");
 
 global.AbsolutePosition = require("absolutePosition");
+global.ExpansionPlanner = require("global.expansionPlanner");
 global.MapKnowledge = require("mapKnowledge");
 global.SegmentScanner = require("global.segmentScanner");
 
@@ -137,6 +138,8 @@ module.exports.loop = function() {
 
         new ConstructionSitesCleaner().run();
 
+        suppressErrors(() => new ExpansionPlanner().run());
+
         suppressErrors(() => new TradeLogger().logTrades());
         suppressErrors(() => new PixelTrader().run());
 
@@ -155,6 +158,8 @@ module.exports.loop = function() {
         if(Game.cpu.bucket >= 9999 && Game.cpu.generatePixel) {
             Game.cpu.generatePixel();
         }
+
+        ExpansionPlanner.sampleCpuUsage();
 
         globalStatistics.run();
         profitVisual.run();
