@@ -40,14 +40,14 @@ const logistic = require("helper.logistic");
 const globalStatistics = require("global.statistics");
 const profitVisual = require("visual.roomProfit");
 
-const SegmentScanner = require("global.segmentScanner");
+const PixelTrader = require("global.pixelTrader");
 const SegmentExport = require("global.segmentExport");
 const ShardTravel = require("global.shardTravel");
 const TradeLogger = require("global.tradeLogger");
-const PixelTrader = require("global.pixelTrader");
 
 global.AbsolutePosition = require("absolutePosition");
 global.MapKnowledge = require("mapKnowledge");
+global.SegmentScanner = require("global.segmentScanner");
 
 require("operation");
 require("roomui");

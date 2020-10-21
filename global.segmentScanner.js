@@ -1,25 +1,37 @@
-const partners = [
-    { name: "Geir1983", segment: 99 },
-    { name: "likeafox", segment: 99 },
-    { name: "admon", segment: 99 }
-];
-
 const segmentImports = [
     require("segmentimport.trading")
 ];
 
 module.exports = class SegmentScanner {
+    static addPartner(name, segment) {
+        Memory.segmentScanner.partners.push({ name: name, segment: segment });
+    }
+
+    static removePartner(name) {
+        Memory.segmentScanner.partners = _.filter(Memory.segmentScanner.partners, (p) => p.name !== name);
+    }
+
+    static listPartners() {
+        for(let partner of Memory.segmentScanner.partners) {
+            console.log(`Scanning ${partner.name} at segment ${partner.segment}`);
+        }
+    }
+
     constructor() {
         if(!Memory.segmentScanner) {
             Memory.segmentScanner = {
-                lastScan: 0
+                lastScan: 0,
+                partners: []
             }
         }
 
         this.memory = Memory.segmentScanner;
+        if(!this.memory.partners) this.memory.partners = [];
     }
 
     run() {
+        if(this.memory.partners.length === 0) return;
+
         let segment = RawMemory.foreignSegment;
         if(segment) {
             let data = JSON.parse(segment.data);
@@ -28,7 +40,7 @@ module.exports = class SegmentScanner {
                 new importer(data, segment.username).run();
             }
         } else {
-            let partner = partners[this.memory.lastScan];
+            let partner = this.memory.partners[this.memory.lastScan];
             console.log(`SegmentScanner: Unexpected empty segment for partner ${partner.name}`);
         }
 
@@ -36,8 +48,8 @@ module.exports = class SegmentScanner {
     }
 
     scanNext() {
-        let nextScan = (this.memory.lastScan + 1) % partners.length;
-        let partner = partners[nextScan];
+        let nextScan = (this.memory.lastScan + 1) % this.memory.partners.length;
+        let partner = this.memory.partners[nextScan];
         RawMemory.setActiveForeignSegment(partner.name, partner.segment);
         this.memory.lastScan = nextScan;
     }
