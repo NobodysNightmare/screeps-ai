@@ -150,6 +150,8 @@ module.exports.loop = function() {
             suppressErrors(() => ui.render());
         }
 
+        suppressErrors(() => MapKnowledge.drawMapVisuals());
+
         if(Game.cpu.bucket >= 9999 && Game.cpu.generatePixel) {
             Game.cpu.generatePixel();
         }

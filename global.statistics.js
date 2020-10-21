@@ -1,5 +1,7 @@
 const refreshInterval = 5;
 
+const roomKnowledgeOutdatedAfter = 15000;
+
 function totalAmount(room, resource) {
     if(room.terminal) {
         return room.storage.store[resource] + room.terminal.store[resource];
@@ -47,7 +49,7 @@ module.exports = {
     },
     empireStats: function(myRooms) {
         myRooms = _.filter(myRooms, (r) => r.storage);
-        let chartingThreshold = Game.time - 15000;
+        let chartingThreshold = Game.time - roomKnowledgeOutdatedAfter;
 
         return {
             resources: {

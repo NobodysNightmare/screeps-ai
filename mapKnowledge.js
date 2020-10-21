@@ -1,4 +1,12 @@
+const roomKnowledgeOutdatedAfter = 15000;
 
+const mineralColors = {
+    K: "#aa55ff",
+    L: "#55ff55",
+    U: "#55aaff",
+    X: "#ff5555",
+    Z: "#ffff55"
+}
 
 module.exports = class MapKnowledge {
     static updateKnowledge() {
@@ -60,4 +68,24 @@ module.exports = class MapKnowledge {
             }
         }
     }
+
+    static drawMapVisuals() {
+        for(let roomName in this.memory) {
+            let knowledge = this.memory[roomName];
+            let updatedColor = '#ff0000';
+            if(knowledge.lastUpdate) {
+                if(knowledge.lastUpdate < Game.time - roomKnowledgeOutdatedAfter) updatedColor = '#ffff00';
+                else updatedColor = '#00ff00';
+            }
+
+            Game.map.visual.circle(new RoomPosition(3, 3, roomName), { radius: 2, fill: updatedColor })
+            if(knowledge.mineral) {
+                let color = mineralColors[knowledge.mineral] || '#ffffff';
+                Game.map.visual.text(knowledge.mineral, new RoomPosition(46, 46, roomName), { fontSize: 8, color: color, align: 'center', opacity: 1.0 })
+            }
+        }
+    }
 }
+
+const profiler = require("screeps-profiler");
+profiler.registerClass(module.exports, 'MapKnowledge');
