@@ -4,15 +4,15 @@ module.exports = {
         if(positions.length === 0) return null;
 
         return {
-            x: _.sum(_.map(positions, (p) => p.x)) / positions.length,
-            y: _.sum(_.map(positions, (p) => p.y)) / positions.length
+            x: Math.round(_.sum(_.map(positions, (p) => p.x)) / positions.length),
+            y: Math.round(_.sum(_.map(positions, (p) => p.y)) / positions.length)
         };
     },
 
     centerPos: function(rect) {
         return {
-            x: rect.x + rect.width / 2,
-            y: rect.y + rect.height / 2
+            x: Math.round(rect.x + rect.width / 2),
+            y: Math.round(rect.y + rect.height / 2)
         };
     },
 
@@ -47,8 +47,8 @@ module.exports = {
         let idealCenterY = Math.max(Math.min(targetPos.y, space.y + space.height - (buildingSpec.height / 2)), space.y + buildingSpec.height / 2);
 
         return {
-            x: idealCenterX + (buildingSpec.x - buildingSpec.width / 2),
-            y: idealCenterY + (buildingSpec.y - buildingSpec.height / 2),
+            x: Math.ceil(idealCenterX + (buildingSpec.x - buildingSpec.width / 2)),
+            y: Math.ceil(idealCenterY + (buildingSpec.y - buildingSpec.height / 2)),
         };
     }
 };
