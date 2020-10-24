@@ -53,7 +53,18 @@ module.exports = {
                     }
                 } else if(creep.store[creep.memory.resource] >= creep.store.getCapacity() - (harvestPower * creep.getActiveBodyparts(WORK))) {
                     if(creep.transfer(store, creep.memory.resource) == ERR_NOT_IN_RANGE) {
-                        creep.goTo(store);
+                        // Avoid creep misrouting to a spot where it needs to move
+                        // back and forth between store and target.
+                        if(store.pos.getRangeTo(target) == 2) {
+                            let centerPos = new RoomPosition(
+                                Math.round((target.pos.x + store.pos.x) / 2),
+                                Math.round((target.pos.y + store.pos.y) / 2),
+                                store.pos.roomName
+                            )
+                            creep.goTo({ pos: centerPos });
+                        } else {
+                            creep.goTo(store);
+                        }
                     }
                 }
             } else if(creep.memory.resource === RESOURCE_ENERGY && creep.store.energy >= _.filter(creep.body, (part) => part.type == WORK).length * 5) {
