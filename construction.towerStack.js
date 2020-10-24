@@ -40,6 +40,7 @@ function rotatePositions(positions, direction) {
 }
 
 module.exports = {
+    type: "towerStack",
     outline: function(room, stack) {
         let x = stack.x,
             y = stack.y,

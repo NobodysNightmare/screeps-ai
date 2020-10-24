@@ -41,6 +41,7 @@ function extendExit(exit, position) {
 }
 
 module.exports = {
+    type: "exitWalls",
     outline: function(room, exit) {
         let edge = edgeMappings[exit.edge];
         let positions = [
