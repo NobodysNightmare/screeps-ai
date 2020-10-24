@@ -10,14 +10,15 @@ module.exports = {
         withdrawn: 1,
         harvested: 2,
         moving: 3,
-        pickedUp: 4
+        pickedUp: 4,
+        empty: 5
     },
     obtainEnergy: function(creep, source, considerStorage) {
         this.pickupSpareEnergy(creep);
 
         if(considerStorage) {
             var result = this.obtainEnergyFromStore(creep, creep.room.storage);
-            if(result) {
+            if(result && result !== this.obtainResults.empty) {
                 return result;
             }
         }
@@ -26,9 +27,7 @@ module.exports = {
 
         var store = this.storeFor(source);
         var result = this.obtainEnergyFromStore(creep, store);
-        if(result) {
-            return result;
-        } else {
+        if(result === this.obtainResults.empty && _.find(creep.body, (p) => p.type === WORK)) {
             result = creep.harvest(source);
             if(result == OK) {
                 return this.obtainResults.harvested;
@@ -36,15 +35,24 @@ module.exports = {
                 creep.goTo(source);
                 return this.obtainResults.moving;
             }
+        } else if(result === this.obtainResults.empty) {
+            if(!creep.pos.isNearTo(store)) {
+                creep.goTo(store);
+                return this.obtainResults.moving;
+            }
+        } else {
+            return result;
         }
+
         return null; // something unexpected happened
     },
     obtainEnergyFromStore: function(creep, store) {
-        if(store && (store.energy > 0 || (store.store && store.store.energy > 0))) {
-            var result = creep.withdraw(store, RESOURCE_ENERGY);
-            if(result == OK) {
-                return this.obtainResults.withdrawn;
-            } else if(result == ERR_NOT_IN_RANGE) {
+        if(store) {
+            if(store.store.energy === 0) return this.obtainResults.empty;
+
+            if(creep.pos.isNearTo(store)) {
+                if(creep.withdraw(store, RESOURCE_ENERGY) === OK) return this.obtainResults.withdrawn;
+            } else {
                 creep.goTo(store);
                 return this.obtainResults.moving;
             }
