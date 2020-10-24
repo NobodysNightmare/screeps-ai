@@ -4,6 +4,8 @@ const movement = require("helper.movement");
 const fullHealthEquiv = 50000;
 const emergencyHitPercent = 0.3;
 
+const highPriorityStructures = [STRUCTURE_SPAWN, STRUCTURE_STORAGE, STRUCTURE_TOWER];
+
 module.exports = {
     name: "builder",
     configs: function(workParts) {
@@ -62,8 +64,7 @@ module.exports = {
         return target;
     },
     findHighPriorityConstructionTarget: function(creep, constructions) {
-        if(creep.room.storage) return null;
-        return _.find(constructions, (cs) => cs.structureType === STRUCTURE_STORAGE);
+        return _.find(constructions, (cs) => highPriorityStructures.includes(cs.structureType));
     },
     findNormalPriorityConstructionTarget: function(creep, constructions) {
         let terrain = creep.room.getTerrain();
