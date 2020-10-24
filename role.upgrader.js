@@ -73,12 +73,8 @@ module.exports = {
             }
         }
         else {
-            // when manually obtaining energy, go for the source farther from the
-            // primary spawn, since harvesters are already taking the close one.
-            // choice becomes irrelevant with miners and storage
-            let sources = creep.room.find(FIND_SOURCES);
-            sources = _.sortBy(sources, (s) => -s.pos.getRangeTo(creep.room.ai().spawns.primary));
-            logistic.obtainEnergy(creep, sources[0]);
+            let source = creep.room.controller.pos.findClosestByRange(FIND_SOURCES);
+            logistic.obtainEnergy(creep, source);
             creep.memory.stopped = false;
         }
     }

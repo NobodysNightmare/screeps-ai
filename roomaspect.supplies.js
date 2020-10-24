@@ -13,11 +13,9 @@ module.exports = class SuppliesAspect {
     }
 
     run() {
-        var primarySpawn = this.roomai.spawns.primary;
-        if(primarySpawn) {
-            let source = primarySpawn.pos.findClosestByRange(FIND_SOURCES);
-            this.buildHarvesters(source);
-        }
+        // Choosing source far away from upgraders to avoid conflict
+        let source = _.sortBy(this.room.find(FIND_SOURCES), (s) => -s.pos.getRangeTo(this.room.controller))[0];
+        this.buildHarvesters(source);
 
         if(this.linksEnabled) {
             let collector = spawnHelper.localCreepsWithRole(this.roomai, linkCollector.name)[0];
