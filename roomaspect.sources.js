@@ -40,7 +40,10 @@ module.exports = class SourcesAspect {
         }
 
         for(let source of this.sources) {
-            roads.buildRoadFromTo(this.room, storagePos, source.pos);
+            let store = logistic.storeFor(source);
+            if(!store) continue;
+
+            roads.buildRoadFromTo(this.room, storagePos, store.pos);
         }
     }
 

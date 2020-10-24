@@ -29,8 +29,11 @@ module.exports = class ControllerAspect {
 
         if(this.roomai.intervals.buildComplexStructure.isActive()) {
             let storagePos = this.room.storagePos();
-            if(storagePos) roads.buildRoadFromTo(this.room, storagePos, this.controller.pos);
-            roads.buildRoadAround(this.room, this.controller.pos);
+            let store = logistic.storeFor(this.controller);
+            if(storagePos && store) {
+                roads.buildRoadFromTo(this.room, storagePos, store.pos);
+                roads.buildRoadAround(this.room, store.pos);
+            }
         }
 
         if(this.roomai.mode === "gcl") {
