@@ -10,6 +10,7 @@ const constructions = new Map([
     ["tower", require("construction.tower")],
     ["towerStack", require("construction.towerStack")],
     ["wall", require("construction.wall")],
+    ["exitWalls", require("construction.exitWalls")],
 
     // building extensions last, so that they are processed
     // after spawns, allowing them to be built inside the cluster
@@ -18,6 +19,7 @@ const constructions = new Map([
 ]);
 
 const planningOrder = [
+    "exitWalls",
     "scalableExtensions",
     "spawn",
     "storage",
