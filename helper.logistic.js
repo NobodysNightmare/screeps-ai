@@ -27,7 +27,7 @@ module.exports = {
 
         var store = this.storeFor(source);
         var result = this.obtainEnergyFromStore(creep, store);
-        if(result === this.obtainResults.empty && _.find(creep.body, (p) => p.type === WORK)) {
+        if((!result || result === this.obtainResults.empty) && _.find(creep.body, (p) => p.type === WORK)) {
             result = creep.harvest(source);
             if(result == OK) {
                 return this.obtainResults.harvested;
