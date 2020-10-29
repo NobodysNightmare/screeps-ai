@@ -14,7 +14,7 @@ module.exports = class MapKnowledge {
 
         for(let room of Object.values(Game.rooms)) {
             let knowledge = this.roomKnowledge(room.name);
-            if(_.size(knowledge) === 0) {
+            if(!knowledge.lastUpdate) {
                 this.initializeRoomKnowledge(knowledge, room);
             }
 
