@@ -2,6 +2,7 @@ var spawnHelper = require("helper.spawning");
 var mason = require("role.mason");
 
 const MAX_WALLS = 299950000;
+const MIN_WALLS = 200000;
 
 module.exports = class MasonsAspect {
     constructor(roomai) {
@@ -35,16 +36,16 @@ module.exports = class MasonsAspect {
         let wallHeight = _.min(_.map(this.room.ai().defense.borderStructures, (s) => s.hits));
 
         if(wallHeight == 0 || wallHeight >= MAX_WALLS) return 0;
+        if(this.room.storage.store.energy < 150000) return 0;
 
-        if(this.room.storage.store.energy < 200000) {
-            return 0;
-        } else if(this.room.storage.store.energy < 300000) {
-            return this.roomai.mode == "walls" ? 1 : 0;
-        } else if(this.room.storage.store.energy < 400000) {
-            return this.roomai.mode == "walls" ? 2 : 1;
-        } else {
-            return this.roomai.mode == "walls" ? 3 : 2;
-        }
+        let result = 0;
+        if(this.roomai.mode == "walls") result++;
+        if(this.room.storage.store.energy > 150000 && wallHeight < MIN_WALLS) result++;
+        if(this.room.storage.store.energy > 300000) result++;
+        if(this.room.storage.store.energy > 400000) result++;
+
+
+        return result;
     }
 
     neededForDefense() {
