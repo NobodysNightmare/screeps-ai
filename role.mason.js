@@ -4,6 +4,12 @@ const movement = require("helper.movement");
 
 const NUKE_MARGIN = 1000000;
 
+// returns a value between 0.95 and 1.05 to add some randomness
+// to equivalent walls (different masons will choose different walls)
+function jitter() {
+    return 1 + (0.05 - Math.random() * 0.1);
+}
+
 module.exports = {
     name: "mason",
     configs: function(workParts) {
@@ -73,7 +79,7 @@ module.exports = {
 
         let targets = _.filter(creep.room.ai().defense.borderStructures, (s) => s.hits < s.hitsMax);
         if(targets.length > 0) {
-            return _.sortBy(targets, (t) => t.hits)[0];
+            return _.sortBy(targets, (t) => t.hits * jitter())[0];
         }
 
         return null;
@@ -82,10 +88,9 @@ module.exports = {
         if(!target) return;
         let result = creep.repair(target);
 
-        if(result == OK) {
-            // lock onto target as soon as actual work is happening
-            creep.memory.lastTarget = target.id;
-        } else if(result == ERR_NOT_IN_RANGE) {
+        creep.memory.lastTarget = target.id;
+
+        if(result == ERR_NOT_IN_RANGE) {
             creep.goTo(target, { range: 3 });
         }
     },
