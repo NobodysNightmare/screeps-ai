@@ -10,22 +10,33 @@ module.exports = class IntelligenceAspect {
     }
 
     run() {
-        // TODO: distribute active tick ("0") randomly
-        // so that not all rooms send out creeps/scans at the same time
         if(Game.time % 1500 !== 0) return;
         if(this.room.controller.level < 3) return;
 
-        let scanQueue = _.map(
-            roomNameHelper.roomNamesAround(this.room.name, 10),
-            (r) => ({ room: r, updated: MapKnowledge.roomKnowledge(r).lastUpdate || 0 })
-        );
+        let scanQueue = _.map(roomNameHelper.roomNamesAround(this.room.name, 10), (r) => this.roomInfo(r));
         let minAge = Game.time - 1500;
-        scanQueue = _.map(_.take(_.sortBy(_.filter(scanQueue, (e) => e.updated < minAge), (e) => e.updated), 20), e => e.room);
+        scanQueue = _.sortBy(_.filter(scanQueue, (e) => e.updated < minAge), (e) => e.updated);
 
         if(this.roomai.observer.isAvailable()) {
-            for(let room of scanQueue) this.roomai.observer.observeLater(room);
+            for(let roomInfo of _.take(scanQueue, 50)) {
+                this.roomai.observer.observeLater(roomInfo.room);
+                roomInfo.knowledge.lastScan = Game.time;
+            }
         } else {
-            this.roomai.spawn(discoverer.parts, { role: discoverer.name, targets: scanQueue });
+            scanQueue = _.take(scanQueue, 12);
+            let spawned = this.roomai.spawn(discoverer.parts, { role: discoverer.name, targets: _.map(scanQueue, (ri) => ri.room) });
+            if(_.isString(spawned)) {
+                _.forEach(scanQueue, (ri) => ri.knowledge.lastScan = Game.time);
+            }
+        }
+    }
+
+    roomInfo(roomName) {
+        let knowledge = MapKnowledge.roomKnowledge(roomName);
+        return {
+            room: roomName,
+            updated: _.max([0, knowledge.lastUpdate, knowledge.lastScan]),
+            knowledge: knowledge
         }
     }
 }
