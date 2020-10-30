@@ -6,6 +6,8 @@ const roads = require("construction.roads");
 var carrier = require("role.carrier");
 var miner = require("role.miner");
 
+const mineralExcessThreshold = 50000;
+
 module.exports = class MineralsAspect {
     constructor(roomai) {
         this.roomai = roomai;
@@ -89,7 +91,13 @@ module.exports = class MineralsAspect {
     }
 
     needWorkers() {
-        return this.roomai.canSpawn() && this.mineral.mineralAmount > 0;
+        if(this.roomai.canSpawn() && this.mineral.mineralAmount > 0) {
+            if(this.roomai.trading.requiredExportFromRoom(this.mineral.mineralType) < mineralExcessThreshold) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     storePoisoned() {
