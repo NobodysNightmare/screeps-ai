@@ -5,6 +5,7 @@ const observer = require('role.observer');
 const reserver = require('role.reserver');
 
 const logistic = require("helper.logistic");
+const roads = require("construction.roads");
 const spawnHelper = require("helper.spawning");
 const ff = require("helper.friendFoeRecognition");
 
@@ -65,6 +66,7 @@ module.exports = class RemoteMinesAspect {
                 for(let source of remoteRoom.find(FIND_SOURCES)) {
                     this.spawnMiner(source);
                     this.spawnCarrier(source);
+                    this.buildRoad(source);
                 }
             } else {
                 // TODO: restrict spawning to once every few (500?) ticks
@@ -134,6 +136,12 @@ module.exports = class RemoteMinesAspect {
         }
     }
 
+    buildRoad(source) {
+        if(this.roomai.intervals.buildComplexStructure.isActive() && this.neighbourRooms().includes(source.room.name)) {
+            roads.buildRoadFromTo(this.room, this.room.storage.pos, source.pos);
+        }
+    }
+
     spawnObserver(roomName) {
         if(!_.any(spawnHelper.globalCreepsWithRole(observer.name), (c) => c.memory.target == roomName)) {
             this.spawn(observer.parts, { role: observer.name, target: roomName }, roomName);
@@ -154,10 +162,14 @@ module.exports = class RemoteMinesAspect {
         }
     }
 
+    neighbourRooms() {
+        return Object.values(Game.map.describeExits(this.room.name));
+    }
+
     planRemoteMines() {
         let missingMines = targetRemoteMineCount - this.remoteMines.length
 
-        let candidates = this.possibleRemoteMines(Object.values(Game.map.describeExits(this.room.name)));
+        let candidates = this.possibleRemoteMines(this.neighbourRooms());
         for(let roomName of _.take(candidates, missingMines)) {
             this.addRemoteMine(roomName);
             missingMines--;
