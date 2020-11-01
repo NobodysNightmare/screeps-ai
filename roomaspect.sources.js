@@ -23,7 +23,7 @@ module.exports = class SourcesAspect {
 
     buildRoads() {
         let storagePos = this.room.storagePos();
-        if(!this.roomai.intervals.buildComplexStructure.isActive() || !storagePos) {
+        if(!this.roomai.intervals.buildStructure.isActive() || !storagePos) {
             return;
         }
 

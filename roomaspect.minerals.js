@@ -69,10 +69,10 @@ module.exports = class MineralsAspect {
     }
 
     buildStructures() {
-        if(this.roomai.intervals.buildSimpleStructure.isActive()) {
+        if(this.roomai.intervals.buildStructure.isActive()) {
             this.room.createConstructionSite(this.mineral.pos, STRUCTURE_EXTRACTOR);
         }
-        if(this.roomai.intervals.buildComplexStructure.isActive() && this.room.storage) {
+        if(this.roomai.intervals.buildStructure.isActive() && this.room.storage) {
             let container = logistic.storeFor(this.mineral, true);
             if(container) roads.buildRoadFromTo(this.room, this.room.storage.pos, container.pos);
         }

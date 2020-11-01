@@ -137,7 +137,7 @@ module.exports = class RemoteMinesAspect {
     }
 
     buildRoad(source) {
-        if(this.roomai.intervals.buildComplexStructure.isActive() && this.neighbourRooms().includes(source.room.name)) {
+        if(this.roomai.intervals.buildStructure.isActive() && this.neighbourRooms().includes(source.room.name)) {
             roads.buildRoadFromTo(this.room, this.room.storage.pos, source.pos);
         }
     }

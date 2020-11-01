@@ -13,12 +13,12 @@ module.exports = class ConstructionsAspect {
         let buildProxy = new BuildProxy(this.room);
         for(let building of this.roomai.constructions.buildings) {
             building.outline();
-            if(this.roomai.intervals.buildComplexStructure.isActive()) {
+            if(this.roomai.intervals.buildStructure.isActive()) {
                 building.build(buildProxy);
             }
         }
 
-        if(this.roomai.intervals.buildComplexStructure.isActive()) {
+        if(this.roomai.intervals.buildStructure.isActive()) {
             buildProxy.commit();
         }
 

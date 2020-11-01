@@ -24,7 +24,7 @@ module.exports = class ControllerAspect {
 
         this.buildUpgraders();
 
-        if(this.roomai.intervals.buildComplexStructure.isActive()) {
+        if(this.roomai.intervals.buildStructure.isActive()) {
             let storagePos = this.room.storagePos();
             let store = logistic.storeFor(this.controller);
             if(storagePos && store) {

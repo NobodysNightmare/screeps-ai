@@ -82,7 +82,7 @@ module.exports = class DefenseAspect {
     }
 
     buildRamparts() {
-        if(!this.roomai.intervals.buildComplexStructure.isActive()) {
+        if(!this.roomai.intervals.buildStructure.isActive()) {
             return;
         }
 
