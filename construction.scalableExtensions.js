@@ -26,7 +26,9 @@ const rowSchemes = [
 ];
 
 const minSize = 4;
-const neededExtensions = CONTROLLER_STRUCTURES[STRUCTURE_EXTENSION][8];
+
+// adding the number of spawns to the total, since we know that spawns "steal" three spots
+const neededExtensions = CONTROLLER_STRUCTURES[STRUCTURE_EXTENSION][8] + CONTROLLER_STRUCTURES[STRUCTURE_SPAWN][8];
 
 function eachClusterStructure(cluster, callback) {
     let schemes = Array.from(rowSchemes);
