@@ -75,7 +75,7 @@ module.exports = class TradingAspect {
 
     transferResources() {
         if(this.terminal.cooldown) return;
-        if(Game.time % 5 !== 0) return;
+        if(!this.roomai.intervals.transferResources.isActive()) return;
 
         // reversing to avoid selling off energy before transfering mats
         let resources = Object.keys(this.terminal.store).reverse();

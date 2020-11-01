@@ -1,6 +1,9 @@
 module.exports = class Intervals {
     constructor() {
+        this.transferResources = new Interval(5);
         this.buildStructure = new Interval(100);
+        this.scanRooms = new Interval(1500);
+        this.planRemoteMines = new Interval(2000);
     }
 }
 

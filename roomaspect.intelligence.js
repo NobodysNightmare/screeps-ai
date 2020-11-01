@@ -10,11 +10,11 @@ module.exports = class IntelligenceAspect {
     }
 
     run() {
-        if(Game.time % 1500 !== 0) return;
+        if(!this.roomai.intervals.scanRooms.isActive()) return;
         if(this.room.controller.level < 3) return;
 
         let scanQueue = _.map(roomNameHelper.roomNamesAround(this.room.name, 10), (r) => this.roomInfo(r));
-        let minAge = Game.time - 1500;
+        let minAge = Game.time - this.roomai.intervals.scanRooms.period;
         scanQueue = _.sortBy(_.filter(scanQueue, (e) => e.updated < minAge), (e) => e.updated);
 
         if(this.roomai.observer.isAvailable()) {
