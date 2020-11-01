@@ -34,6 +34,12 @@ module.exports = {
 
         return `${room.horizontalDirection}${room.horizontalDistance}${room.verticalDirection}${room.verticalDistance}`;
     },
+    isCloseToHighway: function(roomName) {
+        let parsedRoom = this.parse(roomName);
+        let hMod = parsedRoom.horizontalDistance % 10;
+        let vMod = parsedRoom.verticalDistance % 10;
+        return hMod === 1 || hMod === 9 || vMod === 1 || vMod === 9;
+    },
     parse: function(roomName) {
         let match = roomNameRegex.exec(roomName);
         return {

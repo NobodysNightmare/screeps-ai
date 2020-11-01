@@ -155,6 +155,7 @@ module.exports.loop = function() {
         }
 
         suppressErrors(() => MapKnowledge.drawMapVisuals());
+        suppressErrors(() => Memory.debugRoomScores && new ExpansionPlanner().drawRoomScores());
 
         if(Game.cpu.bucket >= 9999 && Game.cpu.generatePixel) {
             Game.cpu.generatePixel();
