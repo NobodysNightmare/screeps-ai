@@ -47,6 +47,7 @@ const TradeLogger = require("global.tradeLogger");
 
 global.AbsolutePosition = require("absolutePosition");
 global.ExpansionPlanner = require("global.expansionPlanner");
+global.FriendList = require("global.friendList");
 global.MapKnowledge = require("mapKnowledge");
 global.SegmentScanner = require("global.segmentScanner");
 
