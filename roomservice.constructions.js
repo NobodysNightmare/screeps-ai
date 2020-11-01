@@ -6,6 +6,7 @@ const constructions = new Map([
     ["reactor", require("construction.reactor")],
     ["spawn", require("construction.spawn")],
     ["storage", require("construction.storage")],
+    ["store", require("construction.stores")],
     ["terminal", require("construction.terminal")],
     ["tower", require("construction.tower")],
     ["towerStack", require("construction.towerStack")],
@@ -18,13 +19,16 @@ const constructions = new Map([
     ["extensionCluster", require("construction.extensionCluster")],
 ]);
 
+// Defines the order in which constructions are planned
+// Essentials will even be planned if the room would not automatically layout
 const planningOrder = [
-    "exitWalls",
-    "scalableExtensions",
-    "spawn",
-    "storage",
-    "terminal",
-    "towerStack"
+    { type: "store", essential: true },
+    { type: "exitWalls" },
+    { type: "scalableExtensions" },
+    { type: "spawn" },
+    { type: "storage" },
+    { type: "terminal" },
+    { type: "towerStack" }
 ];
 
 const buildFlagRegex = /^build([A-Za-z]+)$/;
@@ -69,6 +73,13 @@ module.exports = class Constructions {
         }
 
         this.initializeMemory();
+        if(this.buildings.length == 0) {
+            if(Memory.disableAutoExpansion) {
+                this.planRoomLayout({ essentialsOnly: true });
+            } else {
+                this.planRoomLayout();
+            }
+        }
     }
 
     initializeMemory() {
@@ -78,7 +89,7 @@ module.exports = class Constructions {
         }
     }
 
-    planRoomLayout() {
+    planRoomLayout(options) {
         let startTime = Game.cpu.getUsed();
         let proxy = new BuildProxy(this.room);
         let spaceFinder = new ConstructionSpaceFinder(this.room.name, proxy);
@@ -86,7 +97,10 @@ module.exports = class Constructions {
             building.build(proxy);
         }
 
-        for(let type of planningOrder) {
+        for(let planItem of planningOrder) {
+            if(options && options.essentialsOnly && !planItem.essential) continue;
+
+            let type = planItem.type;
             let builder = constructions.get(type);
             let plannedBuildings = builder.plan(spaceFinder, this.buildings, this.room);
 

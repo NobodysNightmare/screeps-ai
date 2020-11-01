@@ -1,4 +1,3 @@
-var store = require("construction.stores");
 var spawnHelper = require("helper.spawning");
 const logistic = require("helper.logistic");
 const roads = require("construction.roads");
@@ -72,9 +71,6 @@ module.exports = class MineralsAspect {
     buildStructures() {
         if(this.roomai.intervals.buildSimpleStructure.isActive()) {
             this.room.createConstructionSite(this.mineral.pos, STRUCTURE_EXTRACTOR);
-        }
-        if(this.roomai.intervals.buildStores.isActive()) {
-            store.buildNextTo(this.mineral);
         }
         if(this.roomai.intervals.buildComplexStructure.isActive() && this.room.storage) {
             let container = logistic.storeFor(this.mineral, true);

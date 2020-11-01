@@ -1,7 +1,6 @@
 const logistic = require('helper.logistic');
 const roads = require("construction.roads");
 const spawnHelper = require("helper.spawning");
-const store = require("construction.stores");
 
 var carrier = require("role.carrier");
 var upgrader = require("role.upgrader");
@@ -21,8 +20,6 @@ module.exports = class ControllerAspect {
             }
         } else if(logistic.storeFor(this.controller)) {
             this.buildCarriers();
-        } else if(this.roomai.intervals.buildStores.isActive()) {
-            store.buildNextTo(this.controller, true);
         }
 
         this.buildUpgraders();

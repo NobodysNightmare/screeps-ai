@@ -2,7 +2,6 @@ const logistic = require('helper.logistic');
 const miner = require("role.miner");
 const roads = require("construction.roads");
 const spawnHelper = require("helper.spawning");
-const store = require("construction.stores");
 
 const energyExcessThreshold = 50000;
 
@@ -18,19 +17,8 @@ module.exports = class SourcesAspect {
     }
 
     run() {
-        this.buildStores();
         this.buildRoads();
         this.buildMiners();
-    }
-
-    buildStores() {
-        if(!this.roomai.intervals.buildStores.isActive()) {
-            return;
-        }
-
-        for(let source of this.sources) {
-            store.buildWithAccessTo(source, true);
-        }
     }
 
     buildRoads() {

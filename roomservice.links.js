@@ -86,7 +86,7 @@ module.exports = class Links {
     }
 
     replaceNextContainerByLink() {
-        if(this.room.ai().intervals.buildStores.isActiveIn(1)) return;
+        if(this.room.ai().intervals.buildComplexStructure.isActiveIn(1)) return;
         if(!this.storage()) return;
         if(buildings.available(this.room, STRUCTURE_LINK) == 0) return;
         if(buildings.underConstruction(this.room, STRUCTURE_LINK) > 0) return;

@@ -2,7 +2,6 @@ module.exports = class Intervals {
     constructor() {
         this.buildSimpleStructure = new Interval(20);
         this.buildComplexStructure = new Interval(100);
-        this.buildStores = new Interval(20);
     }
 }
 
