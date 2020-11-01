@@ -62,11 +62,12 @@ module.exports = {
     addBuilding: function(memory, flag) { },
     removeBuilding: function(memory, flag) { },
     plan: function(spaceFinder, buildings, room) {
+        let existingWalls = _.map(_.filter(buildings, (b) => b.type === this.type), (b) => b.memory);
         let result = [];
         let currentExit = {};
         for(let pos of room.find(FIND_EXIT)) {
             if(!extendExit(currentExit, pos)) {
-                if(currentExit.edge) result.push(currentExit);
+                if(currentExit.edge && !_.any(existingWalls, (w) => w.edge === currentExit.edge && w.start === currentExit.start)) result.push(currentExit);
 
                 let edge = posToEdge(pos);
                 currentExit = {
@@ -77,7 +78,7 @@ module.exports = {
             }
         }
 
-        if(currentExit.edge) result.push(currentExit);
+        if(currentExit.edge && !_.any(existingWalls, (w) => w.edge === currentExit.edge && w.start === currentExit.start)) result.push(currentExit);
 
         return result;
     }
