@@ -91,6 +91,7 @@ module.exports = class Trading {
     // amount of the resource that needs to be evicted from the room because it is
     // over the maximum alloted amount
     requiredExportFromRoom(resource) {
+        if(!this.storage) return 0;
         if(!this.terminal) return 0;
 
         let amountInTerminal = this.terminal.store[resource];
