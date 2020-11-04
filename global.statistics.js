@@ -31,6 +31,7 @@ module.exports = {
         let heapStats = Game.cpu.getHeapStatistics();
 
         stats.gameTime = Game.time;
+        stats.skippedTicks = Memory.stats.skippedTicks;
         stats.gcl = Game.gcl;
         stats.gpl = Game.gpl;
         stats.credits = Game.market.credits;
