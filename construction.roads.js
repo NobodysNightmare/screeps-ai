@@ -6,7 +6,7 @@ const roadableStructures = [
 module.exports = {
     buildRoadFromTo: function(room, start, end) {
         let buildings = room.ai().constructions.buildings;
-        var path = start.findPathTo(end, { ignoreCreeps: true, costCallback: function(roomName, matrix) {
+        var path = start.findPathTo(end, { ignoreCreeps: true, ignoreRoads: true, costCallback: function(roomName, matrix) {
             for(let building of buildings) {
                 building.updateCostMatrix(matrix);
             }
