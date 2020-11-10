@@ -22,7 +22,7 @@ const uiCache = {
     }
 }
 
-global.RoomUI = class RoomUI {
+module.exports = class RoomUI {
     static forRoom(room) {
         return uiCache.getOrAdd(room.name || room);
     }

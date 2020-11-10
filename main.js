@@ -45,14 +45,14 @@ const SegmentExport = require("global.segmentExport");
 const ShardTravel = require("global.shardTravel");
 const TradeLogger = require("global.tradeLogger");
 
-global.AbsolutePosition = require("absolutePosition");
+global.AbsolutePosition = require("global.absolutePosition");
 global.ExpansionPlanner = require("global.expansionPlanner");
 global.FriendList = require("global.friendList");
-global.MapKnowledge = require("mapKnowledge");
+global.MapKnowledge = require("global.mapKnowledge");
+global.RoomUI = require("global.roomui");
 global.SegmentScanner = require("global.segmentScanner");
 
-require("operation");
-require("roomui");
+require("global.operation");
 
 require("patch.controller");
 require("patch.creep");
