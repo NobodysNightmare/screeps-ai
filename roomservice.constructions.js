@@ -28,7 +28,8 @@ const planningOrder = [
     { type: "spawn" },
     { type: "storage" },
     { type: "terminal" },
-    { type: "towerStack" }
+    { type: "towerStack" },
+    { type: "reactor" }
 ];
 
 const buildFlagRegex = /^build([A-Za-z]+)$/;
