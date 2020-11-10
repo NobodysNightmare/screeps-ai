@@ -51,7 +51,7 @@ module.exports = class RemoteMinesAspect {
         // TODO: only disable endangered remote mines
         if(this.roomai.defense.defcon >= 3) return;
 
-        let hasExcessEnergy = this.roomai.trading.requiredExportFromRoom(RESOURCE_ENERGY) >= energyExcessThreshold;
+        let hasExcessEnergy = this.roomai.trading.requiredExportFromRoom(RESOURCE_ENERGY, { showExcess: true }) >= energyExcessThreshold;
 
         for(var roomName of this.remoteMines) {
             var remoteRoom = Game.rooms[roomName];

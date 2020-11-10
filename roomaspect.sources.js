@@ -40,7 +40,7 @@ module.exports = class SourcesAspect {
             return;
         }
 
-        let hasExcessEnergy = this.roomai.trading.requiredExportFromRoom(RESOURCE_ENERGY) >= energyExcessThreshold;
+        let hasExcessEnergy = this.roomai.trading.requiredExportFromRoom(RESOURCE_ENERGY, { showExcess: true }) >= energyExcessThreshold;
         if(hasExcessEnergy) return;
 
         let idealParts = spawnHelper.bestAvailableParts(this.room, miner.energyConfigs);

@@ -88,7 +88,7 @@ module.exports = class MineralsAspect {
 
     needWorkers() {
         if(this.roomai.canSpawn() && this.mineral.mineralAmount > 0) {
-            if(this.roomai.trading.requiredExportFromRoom(this.mineral.mineralType) < mineralExcessThreshold) {
+            if(this.roomai.trading.requiredExportFromRoom(this.mineral.mineralType, { showExcess: true }) < mineralExcessThreshold) {
                 return true;
             }
         }
