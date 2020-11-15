@@ -9,6 +9,8 @@ function eachWallPosition(wall, callback) {
     callback({ x: wall.end.x, y: wall.end.y });
 }
 
+// builds a wall between start and end position.
+// "pure" walls are made entirely of ramparts (any non-first-color flag)
 module.exports = {
     outline: function(room, wall) {
         let start = wall.start;
@@ -29,7 +31,7 @@ module.exports = {
         proxy.planConstruction(wall.end.x, wall.end.y, STRUCTURE_RAMPART);
         let lastWasWall = true;
         eachWallPosition(wall, (pos) => {
-            if(lastWasWall) {
+            if(wall.pure || lastWasWall) {
                 proxy.planConstruction(pos.x, pos.y, STRUCTURE_RAMPART);
             } else {
                 proxy.planConstruction(pos.x, pos.y, STRUCTURE_WALL);
@@ -39,6 +41,8 @@ module.exports = {
         });
     },
     updateCostMatrix: function(matrix, wall) {
+        if(wall.pure) return;
+
         let isWall = false;
         eachWallPosition(wall, (pos) => {
             if(isWall) {
@@ -58,6 +62,7 @@ module.exports = {
             memory.push({ start: { x: flag.pos.x, y: flag.pos.y } });
         } else {
             lastWall.end = { x: flag.pos.x, y: flag.pos.y };
+            if(flag.color > 1) lastWall.pure = true;
         }
     },
     removeBuilding: function(memory, flag) {

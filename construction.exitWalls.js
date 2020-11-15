@@ -60,7 +60,16 @@ module.exports = {
     },
     updateCostMatrix: function(matrix, exit) { },
     addBuilding: function(memory, flag) { },
-    removeBuilding: function(memory, flag) { },
+    removeBuilding: function(memory, flag) {
+        let edge = posToEdge(flag.pos);
+        let pos = flag.pos[edgeMappings[edge].parallel];
+        let wall = _.find(memory, (w) => w.edge === edge && w.start <= pos && w.end >= pos);
+
+        if(wall) {
+            let index = _.findIndex(memory, wall);
+            if(index >= 0) memory.splice(index, 1);
+        }
+    },
     plan: function(spaceFinder, buildings, room) {
         let existingWalls = _.map(_.filter(buildings, (b) => b.type === this.type), (b) => b.memory);
         let result = [];
