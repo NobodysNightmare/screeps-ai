@@ -30,6 +30,11 @@ This is useful if politics should drive expansion.
 Note: Automatic expansion is currently experimental. It affects both
 claiming new rooms and choosing remote mines.
 
+#### `Memory.generatePixels`
+
+Global switch to enable pixel generation. Pixels will be generated whenever the
+bucket is full.
+
 ### Constructions
 
 Multiple structures and structure groups can be pre-planned.
